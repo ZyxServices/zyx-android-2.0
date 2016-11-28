@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/personal_layout"
+    android:layout_height="wrap_content"
+    >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/dip12"
+    android:paddingRight="@dimen/dip12"
+    android:paddingTop="@dimen/dip15"
+    android:paddingBottom="@dimen/dip15"
+    >
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="90dp"
+        android:src="@mipmap/test"
+        android:scaleType="fitXY"
+        android:id="@+id/imageView" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/dip12"
+        >
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="8dp"
+            android:text="2016-9-20"
+            android:textSize="12sp"
+            android:textColor="@color/day_edit_hit_color"
+            />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_below="@+id/tvTitle"
+    android:paddingTop="4dp"
+    >
+    <TextView
+        android:id="@+id/tvApply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="难度: 5.0"
+        android:textColor="@color/day_edit_hit_color"
+        android:textSize="12sp"
+        />
+    <TextView
+        android:layout_width="10dp"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/day_edit_hit_color"
+        android:textSize="12sp"
+        android:text="01:20:10"
+        />
+</LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="找个老岩友带带我"
+            android:textColor="@color/day_edit_color"
+            android:paddingTop="@dimen/dip10"
+            android:textSize="15sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/btn_image"
+        android:layout_gravity="right"
+        android:paddingTop="@dimen/dip10"
+        />
+</LinearLayout>
+    <TextView
+       style="@style/boldlin" />
+</LinearLayout>

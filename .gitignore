@@ -1,0 +1,10 @@
+.gradle
+*.properties
+*.iml
+gradle
+.idea
+build
+/*/*/bin
+/*/*/gen
+/*/*/.settings
+/*/*.iml

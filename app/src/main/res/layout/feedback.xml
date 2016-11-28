@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/personal_layout"
+    >
+    <RelativeLayout
+        style="@style/personal_title_background"
+        >
+        <ImageView
+            android:id="@+id/personal_back"
+            style="@style/personal_back"
+            />
+        <TextView
+            style="@style/personal_title"
+            android:text="意见反馈"
+            />
+        <TextView
+            android:id="@+id/tv_push"
+            style="@style/personal_title"
+            android:text="提交"
+            android:textColor="@color/orange"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
+    <TextView
+        style="@style/finelin" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:paddingRight="12dp"
+        android:paddingLeft="12dp"
+        android:paddingTop="20dp"
+        android:background="@color/white"
+        >
+        <EditText
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:hint="我们需要您宝贵的意见哦"
+            android:textColorHint="@color/day_edit_hit_color"
+            android:gravity="top"
+
+            />
+        <TextView
+            android:id="@+id/tv_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20/500"
+            android:textColor="@color/day_edit_hit_color"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="20dp"
+            />
+    </RelativeLayout>
+
+
+</LinearLayout>

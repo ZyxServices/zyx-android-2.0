@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_home_page_search_result"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    tools:context="com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity">
+    <TextView
+        style="@style/boldlin" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17.5dp"
+        android:layout_marginBottom="17.5dp"
+        android:text="开发背景"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:layout_marginLeft="12dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#999999"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="10dp"
+        android:text="你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋"/>
+    <TextView
+        style="@style/boldlin" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17.5dp"
+        android:layout_marginBottom="17.5dp"
+        android:text="他们都去了"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:layout_marginLeft="12dp" />
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/rvHomePageVenueDetailWhomGone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        app:layoutManager="LinearLayoutManager"
+        android:layout_marginBottom="15dp"
+        />
+    <TextView
+        style="@style/boldlin" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17.5dp"
+        android:layout_marginBottom="17.5dp"
+        android:text="他们都在说"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:layout_marginLeft="12dp" />
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/rvHomePageVenueDetailSay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="50dp"
+        app:layoutManager="LinearLayoutManager"
+        />
+</LinearLayout>

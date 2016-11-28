@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="195dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="发 现 最 勇 敢 的 自 己"
+        android:textSize="12sp"
+        android:textColor="@color/day_edit_hit_color"
+        android:layout_gravity="center"
+        android:drawableTop="@mipmap/img_loggo2"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:text="Copyright © 2016 Qupanyan"
+        android:layout_gravity="center"
+        android:textColor="@color/day_item_color"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        />
+</LinearLayout>

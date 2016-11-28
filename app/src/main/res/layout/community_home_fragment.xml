@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:gravity="center"
+            android:paddingLeft="@dimen/dip12"
+            android:paddingRight="@dimen/dip12"
+            android:paddingTop="20dp"
+            >
+            <ImageView
+                android:id="@+id/ivAdd"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/nav_add"
+                />
+            <android.support.design.widget.TabLayout
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/tab"
+                android:layout_width="0dp"
+                android:layout_weight="8"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                style="@style/PackTabLayout"
+                app:tabIndicatorColor="@color/orange"
+                android:fillViewport="false" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <TextView
+            style="@style/boldlin" />
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            />
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/ivPush"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/btn_write2"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="25dp"
+        android:layout_marginRight="25dp"
+        />
+</FrameLayout>

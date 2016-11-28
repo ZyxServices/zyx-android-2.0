@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">HomeSport</string>
+    <string name="home_tab1">主页</string>
+    <string name="home_tab2">记录</string>
+    <string name="home_tab3">社区</string>
+    <string name="home_tab4">我的</string>
+    <string name="personal_my_active">我的活动</string>
+    <string name="personal_my_dynamic">我的动态</string>
+    <string name="personal_my_collect">我的收藏</string>
+    <string name="personal_setting_data">个人资料</string>
+    <string name="personal_setting_comment">去给我们评分吧</string>
+    <string name="personal_setting_clena">清理缓存</string>
+    <string name="personal_setting_about">关于我们</string>
+    <string name="personal_setting_feedback">意见反馈</string>
+    <string name="personal_setting_push">提交</string>
+    <string name="my_activity">我的活动</string>
+    <string name="personal_setting_feedback_hint">我们需要您提出宝贵的意见,我们才能快速成长哦!</string>
+
+
+</resources>

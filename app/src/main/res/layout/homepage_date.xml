@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="@style/personal_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        style="@style/personal_title_background"
+        >
+        <TextView
+            style="@style/personal_title"
+            android:text="求约"
+            />
+        <ImageView
+            android:id="@+id/ivMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/nav_filter"
+            android:paddingTop="20dp"
+            android:layout_alignParentRight="true"
+            />
+        <ImageView
+            android:id="@+id/ivBack"
+            style="@style/personal_back"
+            />
+    </RelativeLayout>
+<TextView
+    style="@style/finelin"/>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srlRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+        <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:fillViewport="true"
+            android:focusable="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="210dp"
+                    android:layout_height="45dp"
+                    android:layout_centerInParent="true"
+                    android:background="#73000000"
+                    android:text="成都地区A2交流大会"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    />
+            <com.bigkoo.convenientbanner.ConvenientBanner
+                android:id="@+id/cbDateBanner"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                app:canLoop="true"
+                />
+            </RelativeLayout>
+            <TextView
+                style="@style/boldlin" />
+            <android.support.v7.widget.RecyclerView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="LinearLayoutManager"
+                />
+        </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</LinearLayout>

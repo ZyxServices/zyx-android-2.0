@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/personal_layout"
+    android:layout_height="wrap_content"
+    >
+    <RelativeLayout
+        style="@style/personal_title_background"
+        >
+        <ImageView
+            android:id="@+id/personal_back"
+            style="@style/personal_back"
+            />
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/personal_title"
+            />
+    </RelativeLayout>
+    <TextView
+        style="@style/finelin"
+        />
+</LinearLayout>

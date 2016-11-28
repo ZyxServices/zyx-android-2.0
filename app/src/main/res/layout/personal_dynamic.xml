@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="@style/personal_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <include layout="@layout/public_title"/>
+    <TextView
+        style="@style/finelin"
+        />
+    <include layout="@layout/recycleview_layout"/>
+</LinearLayout>
