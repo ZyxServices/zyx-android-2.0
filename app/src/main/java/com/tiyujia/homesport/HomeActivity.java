@@ -69,7 +69,9 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
         try {
             SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
             String token = share.getString("Token",null);
+            int UserId = share.getInt("UserId",0);
             Log.i("token",token);
+            Log.i("UserId",UserId+"");
         }catch (Exception e){
             e.printStackTrace();
         }
