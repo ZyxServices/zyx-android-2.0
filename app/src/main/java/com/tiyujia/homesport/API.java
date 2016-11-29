@@ -1,5 +1,7 @@
 package com.tiyujia.homesport;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by zzqybyb19860112 on 2016/11/10.
  */
@@ -9,4 +11,5 @@ public class API {
     public static final String BASE_URL_NET = "http://182.150.24.10:30089";
     public static final String IMAGE_URL = "http://119.61.66.55:18100/v2/upload";
     public static final String IMAGE_URLS = "http://119.61.66.55:18100/v2/uploads";
+    public static final String simpleDateFormat ="yyyy-MM-dd HH:mm:ss";
 }

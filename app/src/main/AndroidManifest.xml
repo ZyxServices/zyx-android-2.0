@@ -20,6 +20,8 @@
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 地图功能相关权限 -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- 相机功能相关权限 -->
     -<application
     android:name=".App"
     android:theme="@style/AppTheme"

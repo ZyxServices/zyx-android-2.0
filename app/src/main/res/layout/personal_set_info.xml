@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/personal_layout"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     >
     <include layout="@layout/public_title"/>
     <RelativeLayout
@@ -50,6 +52,7 @@
             android:textColor="@color/day_edit_hit_color"
             android:background="@null"
             android:textCursorDrawable="@null"
+            android:gravity="right"
             />
     </RelativeLayout>
     <TextView
@@ -77,6 +80,7 @@
             android:textColor="@color/day_edit_hit_color"
             android:background="@null"
             android:textCursorDrawable="@null"
+            android:gravity="right"
             />
     </RelativeLayout>
     <TextView
@@ -104,6 +108,7 @@
             android:textColor="@color/day_edit_hit_color"
             android:background="@null"
             android:textCursorDrawable="@null"
+            android:gravity="right"
             />
     </RelativeLayout>
     <TextView
@@ -131,6 +136,7 @@
             android:textColor="@color/day_edit_hit_color"
             android:background="@null"
             android:textCursorDrawable="@null"
+            android:gravity="right"
             />
     </RelativeLayout>
     <TextView
@@ -158,6 +164,7 @@
             android:textColor="@color/day_edit_hit_color"
             android:background="@null"
             android:textCursorDrawable="@null"
+            android:gravity="right"
             />
     </RelativeLayout>
 
