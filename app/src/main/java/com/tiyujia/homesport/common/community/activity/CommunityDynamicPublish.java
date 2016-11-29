@@ -67,9 +67,14 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
         switch (position) {
             case IMAGE_ITEM_ADD:
                 //打开选择,本次允许选择的数量
-                ImagePicker.getInstance().setSelectLimit(maxImgCount - selImageList.size());
-                Intent intent = new Intent(this, ImageGridActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_SELECT);
+//                ImagePicker.getInstance().setSelectLimit(maxImgCount - selImageList.size());
+//                Intent intent = new Intent(this, ImageGridActivity.class);
+//                startActivityForResult(intent, REQUEST_CODE_SELECT);
+                /**
+                 * 测试录像与传送服务器
+                 */
+                Intent intent = new Intent(this, CommunityNewVideoActivity.class);
+                startActivity(intent);
                 break;
             default:
                 //打开预览
