@@ -13,7 +13,6 @@ import java.util.logging.Level;
 public class UserInfoModel implements Serializable{
 
     public int state;
-    public String successmsg;
     public UserModel data;
     public class UserModel{
         public String phone;
