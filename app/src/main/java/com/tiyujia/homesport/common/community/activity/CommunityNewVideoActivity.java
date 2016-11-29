@@ -19,7 +19,7 @@ public class CommunityNewVideoActivity extends ImmersiveActivity {
     MediaRecorder mRecorder;
     // 显示视频的SurfaceView
     SurfaceView svCamera;
-    // 记录是否正在进行录制
+    // 记录是否正在进行录制12222222222222222222222222222222
     boolean isRecording = false;
     private SurfaceHolder mSurfaceHolder;
     private Camera myCamera;
