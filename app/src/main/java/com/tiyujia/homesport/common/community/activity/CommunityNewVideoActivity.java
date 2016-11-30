@@ -1,6 +1,5 @@
 package com.tiyujia.homesport.common.community.activity;
 
-import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -8,7 +7,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 
@@ -28,7 +26,6 @@ public class CommunityNewVideoActivity extends ImmersiveActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFormat(PixelFormat.TRANSLUCENT);
         setContentView(R.layout.activity_community_new_video);
         ivCreateVideoOver = (ImageView) findViewById(R.id.ivCreateVideoOver);
         tvCreateVideoBegin = (TextView) findViewById(R.id.tvCreateVideoBegin);

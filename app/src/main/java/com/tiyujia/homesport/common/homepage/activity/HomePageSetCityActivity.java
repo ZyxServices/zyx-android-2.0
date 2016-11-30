@@ -16,20 +16,31 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.lzy.okgo.OkGo;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
+import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageCityAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageGVHotCityAdapter;
 import com.tiyujia.homesport.common.homepage.customview.QuicLocationBar;
 import com.tiyujia.homesport.common.homepage.dao.CityDBManager;
 import com.tiyujia.homesport.common.homepage.entity.CityBean;
+import com.tiyujia.homesport.common.homepage.entity.CityModel;
+import com.tiyujia.homesport.entity.LoadCallback;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Response;
+
 //1
-public class HomePageSetCityActivity extends AppCompatActivity {
+public class HomePageSetCityActivity extends ImmersiveActivity {
     GridView gvHotCity;
     List<String> testCities;
     HomePageGVHotCityAdapter hotCityAdapter;
@@ -195,11 +206,16 @@ public class HomePageSetCityActivity extends AppCompatActivity {
     }
     private void setBaseData() {
         testCities=new ArrayList<>();
-        String[] cities={"成都","北京","上海","重庆","杭州","深圳","南京","合肥","济南","拉萨","西藏","南充","辽宁","长沙","天津","西安"};
-        int number=15;
-        for (int i=0;i<=number;i++){
-            testCities.add(cities[i]);
-        }
-        handler.sendEmptyMessage(HANDLE_HOT_CITY);
+        OkGo.post(API.BASE_URL+"/v2/city/findHotCity")
+                .tag(this)
+                .execute(new LoadCallback<CityModel>(this) {
+                    @Override
+                    public void onSuccess(CityModel cityModel, Call call, Response response) {
+                        for (CityModel.CityList c:cityModel.data){
+                            testCities.add(c.cityName);
+                        }
+                        handler.sendEmptyMessage(HANDLE_HOT_CITY);
+                    }
+                });
     }
 }

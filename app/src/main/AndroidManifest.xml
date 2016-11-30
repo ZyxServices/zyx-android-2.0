@@ -60,6 +60,7 @@
         <activity android:name=".common.personal.activity.PersonalForgetRegister"/>
         <activity android:name=".common.community.activity.CommunityAddAttention"/>
         <activity android:name=".common.community.activity.CommunityDynamicPublish"/>
+        <activity android:name=".common.community.activity.CommunityNewVideoActivity"/>
         <activity android:name=".common.homepage.activity.HomePageVenueSurveyActivity"/>
         <activity android:name=".common.homepage.activity.HomePageDateActivity"/>
         <activity android:name=".common.homepage.activity.HomePageEquipmentActivity"/>
@@ -72,6 +73,7 @@
         <activity android:name=".common.homepage.activity.HomePageSetCityActivity"/>
         <activity android:name=".common.homepage.activity.HomePageWholeSearchActivity"></activity>
         <activity android:name=".common.personal.activity.PersonalOtherHome"/>
+
     </application>
 
 </manifest>

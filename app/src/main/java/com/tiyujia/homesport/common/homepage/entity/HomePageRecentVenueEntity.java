@@ -8,58 +8,148 @@ import java.util.List;
  */
 
 public class HomePageRecentVenueEntity implements Serializable{
-    String bigPicUrl;//大图片地址
-    String venueName;//场馆名字
-    List<String> venueType;//室内室外类型
-    int degreeNumber;//难度系数
-    int numberGone;//去过人数
-    int numberTalk;//评论人数
+    private  int id;
+    private  int type;//场馆类型（1-室内 2-室外）
+    private String name;//场馆名称
+    private double longitude;//经度
+    private double latitude;//纬度
+    private String city;//所属城市
+    private String mark;//描述标签
+    private String description;//场馆介绍
+    private String phone;//联系电话
+    private String address;//场馆地址
+    private List<String> imgUrls;//场馆封面图片地址
+    private int level;//场馆综合难度
+    private long create_time;//创建时间
+    private int distance;//距离当前位置多少米
+    private int pnumber;//到过场馆的人数
+    private int talkNumber;//评论过该场馆的人数？？？？？？？？？？？？？？
 
-    public String getBigPicUrl() {
-        return bigPicUrl;
+    public int getTalkNumber() {
+        return talkNumber;
     }
 
-    public void setBigPicUrl(String bigPicUrl) {
-        this.bigPicUrl = bigPicUrl;
+    public void setTalkNumber(int talkNumber) {
+        this.talkNumber = talkNumber;
     }
 
-    public String getVenueName() {
-        return venueName;
+    public int getId() {
+        return id;
     }
 
-    public void setVenueName(String venueName) {
-        this.venueName = venueName;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public List<String> getVenueType() {
-        return venueType;
+    public int getType() {
+        return type;
     }
 
-    public void setVenueType(List<String> venueType) {
-        this.venueType = venueType;
+    public void setType(int type) {
+        this.type = type;
     }
 
-    public int getDegreeNumber() {
-        return degreeNumber;
+    public String getName() {
+        return name;
     }
 
-    public void setDegreeNumber(int degreeNumber) {
-        this.degreeNumber = degreeNumber;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getNumberGone() {
-        return numberGone;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setNumberGone(int numberGone) {
-        this.numberGone = numberGone;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
-    public int getNumberTalk() {
-        return numberTalk;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setNumberTalk(int numberTalk) {
-        this.numberTalk = numberTalk;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getMark() {
+        return mark;
+    }
+
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public List<String> getImgUrls() {
+        return imgUrls;
+    }
+
+    public void setImgUrls(List<String> imgUrls) {
+        this.imgUrls = imgUrls;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public long getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(long create_time) {
+        this.create_time = create_time;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public int getPnumber() {
+        return pnumber;
+    }
+
+    public void setPnumber(int pnumber) {
+        this.pnumber = pnumber;
     }
 }
