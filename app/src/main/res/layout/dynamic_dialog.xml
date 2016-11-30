@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    >
+    <TextView
+        android:id="@+id/tvVideo"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textColor="@color/day_edit_color"
+        android:text="小视频"
+        android:background="@color/white"
+        android:textSize="18sp"
+        android:gravity="center"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/background"
+        />
+    <TextView
+        android:id="@+id/tvGallery"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textColor="@color/day_edit_color"
+        android:text="相册"
+        android:background="@color/white"
+        android:textSize="18sp"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/background"
+        />
+
+</LinearLayout>

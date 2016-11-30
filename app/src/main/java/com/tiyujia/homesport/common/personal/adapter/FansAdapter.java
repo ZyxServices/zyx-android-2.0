@@ -5,11 +5,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.personal.model.AttentionModel;
 import com.tiyujia.homesport.entity.ActiveModel;
+import com.tiyujia.homesport.util.LvUtil;
+import com.tiyujia.homesport.util.PicUtil;
+import com.tiyujia.homesport.util.PicassoUtil;
+import com.tiyujia.homesport.util.StringUtil;
 
 import java.util.List;
 
@@ -21,38 +29,21 @@ import butterknife.ButterKnife;
  * 邮箱:928902646@qq.com
  */
 
-public class FansAdapter extends  RecyclerView.Adapter {
-    Context context;
-    List<ActiveModel> mDatas;
-
-    public FansAdapter(Context context, List<ActiveModel> mDatas) {
-        this.context = context;
-        this.mDatas = mDatas;
+public class FansAdapter extends BaseQuickAdapter<AttentionModel.AttentionList> {
+Context context;
+    public FansAdapter(List<AttentionModel.AttentionList> data) {
+        super(R.layout.personal_attention_item, data);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.personal_attention_item, null);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        view.setLayoutParams(lp);
-        return new myholder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return mDatas.size();
-    }
-    public class myholder extends RecyclerView.ViewHolder{
-        @Bind(R.id.tv_yes) TextView tv_yes;
-        public myholder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this,itemView);
-            tv_yes.setVisibility(View.VISIBLE);
-        }
+    protected void convert(BaseViewHolder baseViewHolder, AttentionModel.AttentionList attentionList) {
+        baseViewHolder.setText(R.id.tvNickname,attentionList.nickname)
+                .setText(R.id.tvContent,attentionList.signatures);
+        ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
+        ImageView ivLv=baseViewHolder.getView(R.id.ivLv);
+        TextView tv_yes=baseViewHolder.getView(R.id.tv_yes);
+        tv_yes.setVisibility(View.VISIBLE);
+        LvUtil.setLv(ivLv,attentionList.level.pointDesc);
+        PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(attentionList.avatar), 320, 320),ivAvatar,320,320);
     }
 }

@@ -1,35 +1,68 @@
 package com.tiyujia.homesport.common.community.activity;
 
+import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.ui.ImagePreviewDelActivity;
 import com.lzy.imagepicker.view.CropImageView;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.personal.activity.PersonalSetInfo;
+import com.tiyujia.homesport.entity.ImageUploadModel;
+import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.widget.GlideImageLoader;
 import com.tiyujia.homesport.widget.ImagePickerAdapter;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import butterknife.Bind;
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * 作者: Cymbi on 2016/11/18 14:22.1
  * 邮箱:928902646@qq.com
  */
 
-public class CommunityDynamicPublish extends ImmersiveActivity implements ImagePickerAdapter.OnRecyclerViewItemClickListener{
+public class CommunityDynamicPublish extends ImmersiveActivity implements ImagePickerAdapter.OnRecyclerViewItemClickListener,View.OnClickListener{
     public static final int IMAGE_ITEM_ADD = -1;
     public static final int REQUEST_CODE_SELECT = 100;
     public static final int REQUEST_CODE_PREVIEW = 101;
     private ImagePickerAdapter adapter;
     private ArrayList<ImageItem> selImageList; //当前选择的所有图片
     private int maxImgCount = 9;               //允许选择图片最大数
+    private Dialog dialog;
+    private TextView tvVideo;
+    private TextView tvGallery;
+    @Bind(R.id.ivBack)  ImageView ivBack;
+    @Bind(R.id.tvPush)  TextView tvPush;
+    private ArrayList<ImageItem> images;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +80,8 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+        ivBack.setOnClickListener(this);
+        tvPush.setOnClickListener(this);
     }
 
     private void initImagePicker() {
@@ -66,15 +101,7 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
     public void onItemClick(View view, int position) {
         switch (position) {
             case IMAGE_ITEM_ADD:
-                //打开选择,本次允许选择的数量
-//                ImagePicker.getInstance().setSelectLimit(maxImgCount - selImageList.size());
-//                Intent intent = new Intent(this, ImageGridActivity.class);
-//                startActivityForResult(intent, REQUEST_CODE_SELECT);
-                /**
-                 * 测试录像与传送服务器
-                 */
-                Intent intent = new Intent(this, CommunityNewVideoActivity.class);
-                startActivity(intent);
+                showDialogs();
                 break;
             default:
                 //打开预览
@@ -91,7 +118,7 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             //添加图片返回
             if (data != null && requestCode == REQUEST_CODE_SELECT) {
-                ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
                 selImageList.addAll(images);
                 adapter.setImages(selImageList);
             }
@@ -104,5 +131,88 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 adapter.setImages(selImageList);
             }
         }
+    }
+
+    private void showDialogs() {
+        View view = getLayoutInflater().inflate(R.layout.dynamic_dialog, null);
+        dialog = new Dialog(this,R.style.Dialog_Fullscreen);
+        tvVideo=(TextView)view.findViewById(R.id.tvVideo);
+        tvGallery=(TextView)view.findViewById(R.id.tvGallery);
+        //从相册获取
+        tvGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                //打开选择,本次允许选择的数量
+                ImagePicker.getInstance().setSelectLimit(maxImgCount - selImageList.size());
+                Intent intent = new Intent(CommunityDynamicPublish.this, ImageGridActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_SELECT);
+                dialog.dismiss();
+            }
+        });
+        //小视频
+        tvVideo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CommunityDynamicPublish.this, CommunityNewVideoActivity.class);
+                startActivity(intent);
+            }
+        });
+        dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        Window window = dialog.getWindow();
+        // 设置显示动画
+        window.setWindowAnimations(R.style.main_menu_animstyle);
+        WindowManager.LayoutParams wl = window.getAttributes();
+        wl.x = 0;
+        wl.y = getWindowManager().getDefaultDisplay().getHeight();
+        // 以下这两句是为了保证按钮可以水平满屏
+        wl.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        wl.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        // 设置显示位置
+        dialog.onWindowAttributesChanged(wl);
+        // 设置点击外围解散
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.ivBack:
+                finish();
+                break;
+            case R.id.tvPush:
+                ArrayList<File> files = new ArrayList<>();
+                if (images != null && images.size() > 0) {
+                    for (int i = 0; i < images.size(); i++) {
+                        files.add(new File(images.get(i).path));
+                    }
+                }
+                OkGo.post(API.IMAGE_URLS)
+                        .tag(this)
+                        .addFileParams("avatars", files)
+                        .execute(new LoadCallback<ImageUploadModel>(this) {
+                            @Override
+                            public void onSuccess(ImageUploadModel imageUploadModel, Call call, Response response) {
+                                showToast("dfsadafa");
+                            }
+
+                            @Override
+                            public void onError(Call call, Response response, Exception e) {
+                                super.onError(call, response, e);
+                                Log.i("onError",e.getMessage());
+                            }
+                        });
+
+                break;
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Activity销毁时，取消网络请求
+        OkGo.getInstance().cancelTag(this);
     }
 }

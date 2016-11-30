@@ -2,9 +2,11 @@ package com.tiyujia.homesport.common.personal.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -35,10 +37,12 @@ import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.personal.model.UserInfoModel;
+import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.util.GetUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
+import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.StorePhotosUtil;
 import com.tiyujia.homesport.util.StringUtil;
 import com.tiyujia.homesport.util.UploadUtil;
@@ -52,6 +56,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.Bind;
 import chihane.jdaddressselector.AddressSelector;
@@ -103,9 +108,11 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
         personal_back.setOnClickListener(this) ;
         ivAvatar.setOnClickListener(this);
         tvAddress.setOnClickListener(this);
+        tvSex.setOnClickListener(this);
         AddressSelector selector = new AddressSelector(this);
         selector.setOnAddressSelectedListener(this);
         assert tvAddress != null;
+
     }
     private void setData() {
         OkGo.get(API.BASE_URL+"/v2/user/center_info")
@@ -129,7 +136,11 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                                 etSignature.setText("输入您的签名");
                             }
                             if(!TextUtils.isEmpty(sex)){
-                                tvSex.setText(sex);
+                                if(sex.equals("1")){
+                                    tvSex.setText("男");
+                                }else if(sex.equals("0")){
+                                    tvSex.setText("女");
+                                }
                             }else {
                                 tvSex.setText("您的性别");
                             }
@@ -139,7 +150,9 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                                 tvAddress.setText("您的所在地");
                             }
                             if(birthday!=0){
-                                tvBirthday.setText(sex);
+                                String s= API.simpleDateFormat.format(birthday);
+                                String birthdays =s.substring(0,10);
+                                tvBirthday.setText(birthdays);
                             }else {
                                 tvBirthday.setText("您的生日");
                             }
@@ -155,11 +168,35 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
     public void onAddressSelected(Province province, City city, County county, Street street) {
 
         //这里发请求修改城市
-        String s =(province == null ? "" : province.name) +" "+
+        final String address =(province == null ? "" : province.name) +" "+
                 (city == null ? "" :  city.name) +" "+
                 (county == null ? "" :  county.name) +" "+
                 (street == null ? "" :street.name);
-        tvAddress.setText(s);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String uri= API.BASE_URL+"/v2/user/info";
+                    Map<String, String> params=new HashMap<>();
+                    params.put("token",mToken);
+                    params.put("account_id",mUserId+"");
+                    params.put("address",address);
+                    String result= PostUtil.sendPostMessage(uri,params);
+                    Log.e("result",result);
+                    JSONObject json =  new JSONObject(result);
+                    if(json.getInt("state")==200){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvAddress.setText(address);
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
         dialog.dismiss();
     }
     @Override
@@ -174,7 +211,51 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                 dialog.show();
                 break;
             case R.id.ivAvatar:
-             showDialogs();
+                showDialogs();
+                break;
+            case R.id.tvSex:
+                AlertDialog.Builder builder = new AlertDialog.Builder(PersonalSetInfo.this);
+                builder.setTitle("请选择性别");
+                final String[] sexList = {"女", "男"};
+                //    设置一个单项选择下拉框
+                /**
+                 * 第一个参数指定我们要显示的一组下拉单选框的数据集合
+                 * 第二个参数代表索引，指定默认哪一个单选框被勾选上
+                 * 第三个参数给每一个单选项绑定一个监听器
+                 */
+                builder.setSingleChoiceItems(sexList, 0, new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, final int which) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    String uri= API.BASE_URL+"/v2/user/info";
+                                    Map<String, String> params=new HashMap<>();
+                                    params.put("token",mToken);
+                                    params.put("account_id",mUserId+"");
+                                    params.put("sex",which+"");
+                                    String result= PostUtil.sendPostMessage(uri,params);
+                                    Log.e("result",result);
+                                    JSONObject json =  new JSONObject(result);
+                                    if(json.getInt("state")==200){
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                tvSex.setText(sexList[which]);
+                                                showToast("您的性别是:"+sexList[which]);
+                                            }
+                                        });
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
                 break;
         }
     }
@@ -329,9 +410,10 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
             thread1.start();
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        OkGo.getInstance().cancelTag(this);
     }
 }
