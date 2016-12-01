@@ -13,7 +13,6 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity;
@@ -21,6 +20,8 @@ import com.tiyujia.homesport.common.homepage.activity.HomePageVenueSurveyActivit
 import com.tiyujia.homesport.common.homepage.dao.DBVenueContext;
 import com.tiyujia.homesport.common.homepage.entity.HomePageRecentVenueEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageSearchEntity;
+import com.tiyujia.homesport.util.DegreeUtil;
+import com.tiyujia.homesport.util.TypeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,7 @@ public class HomePageRecentVenueAdapter extends RecyclerView.Adapter implements 
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof RecentVenueHolder) {
             RecentVenueHolder holder = (RecentVenueHolder) viewHolder;
-            HomePageRecentVenueEntity data = values.get(position);
+            final HomePageRecentVenueEntity data = values.get(position);
             List<String> urls=data.getImgUrls();
             if (urls!=null&&!urls.equals("")&&!urls.equals("null")&&urls.size()!=0){
                 Picasso.with(context).load(data.getImgUrls().get(0)).into(holder.ivPicVenue);
@@ -75,9 +76,9 @@ public class HomePageRecentVenueAdapter extends RecyclerView.Adapter implements 
             String typeA=type==1?"室内":"室外";
             holder.tvVenueTypeA.setText(typeA);
             holder.tvVenueTypeB.setText("抱石");
-            handleType(holder.tvVenueTypeA, typeA);
+            TypeUtil.handleType(holder.tvVenueTypeA, typeA);
             int degree = data.getLevel();
-            handleDegrees(degree, holder.ivDegree1, holder.ivDegree2, holder.ivDegree3, holder.ivDegree4, holder.ivDegree5);
+            DegreeUtil.handleDegrees(degree, holder.ivDegree1, holder.ivDegree2, holder.ivDegree3, holder.ivDegree4, holder.ivDegree5);
             holder.tvGoneNumber.setText(data.getPnumber() + "人去过");
             holder.tvTalkNumber.setText(data.getTalkNumber() + "");
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -99,31 +100,12 @@ public class HomePageRecentVenueAdapter extends RecyclerView.Adapter implements 
                         }
                         }
                     Intent intent=new Intent(context, HomePageSearchResultActivity.class);
+                    intent.putExtra("venueId",data.getId());
                     context.startActivity(intent);
                 }
             });
         }
     }
-    private void handleDegrees(int degree, ImageView ivDegree1, ImageView ivDegree2, ImageView ivDegree3, ImageView ivDegree4, ImageView ivDegree5) {
-        degree-=1;
-        ImageView[] ivDegrees=new ImageView[]{ivDegree1,ivDegree2,ivDegree3,ivDegree4,ivDegree5};
-        for (int i=0;i<5;i++){
-           for (int j=0;j<=degree;j++){
-               ivDegrees[j].setImageResource(R.mipmap.tab_start_s);
-           }
-        }
-    }
-
-    private void handleType(TextView tvVenueTypeA, String typeA) {
-        if (typeA.equals("室内")){
-            tvVenueTypeA.setBackgroundResource(R.drawable.border_orange);
-            tvVenueTypeA.setTextColor(Color.parseColor("#ff702a"));
-        }else {
-            tvVenueTypeA.setBackgroundResource(R.drawable.border_blue);
-            tvVenueTypeA.setTextColor(Color.parseColor("#2aa7ff"));
-        }
-    }
-
     @Override
     public int getItemCount() {
         return values.size() > 0 ? values.size() : 1;

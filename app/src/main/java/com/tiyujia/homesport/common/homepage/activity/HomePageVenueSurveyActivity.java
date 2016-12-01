@@ -25,6 +25,9 @@ import com.tiyujia.homesport.common.homepage.adapter.HomePageSearchRecordAdapter
 import com.tiyujia.homesport.common.homepage.dao.DBVenueContext;
 import com.tiyujia.homesport.common.homepage.entity.HomePageSearchEntity;
 import com.tiyujia.homesport.common.homepage.fragment.AllVenueFragment;
+import com.tiyujia.homesport.common.homepage.fragment.HardVenueFragment;
+import com.tiyujia.homesport.common.homepage.fragment.HotVenueFragment;
+import com.tiyujia.homesport.common.homepage.fragment.NearVenueFragment;
 import com.tiyujia.homesport.common.personal.fragment.AttendFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 import java.util.ArrayList;
@@ -50,6 +53,9 @@ public class HomePageVenueSurveyActivity extends NewBaseActivity implements View
     private static EditText etVenueSearch;
     DBVenueContext dbVenueContext;
     AllVenueFragment allVenueFragment;
+    NearVenueFragment nearVenueFragment;
+    HotVenueFragment hotVenueFragment;
+    HardVenueFragment hardVenueFragment;
     HomePageSearchRecordAdapter recordAdapter;
     TablayoutVPAdapter tabAdapter;
     public static final int HANDLE_RECORD_DATA=1;
@@ -112,6 +118,9 @@ public class HomePageVenueSurveyActivity extends NewBaseActivity implements View
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 allVenueFragment.adapter.getFilter().filter(s);
+                nearVenueFragment.adapter.getFilter().filter(s);
+                hotVenueFragment.adapter.getFilter().filter(s);
+                hardVenueFragment.adapter.getFilter().filter(s);
                 tabAdapter.notifyDataSetChanged();
                 if (!s.toString().trim().equals("")){
                     llSearchResult.setVisibility(View.GONE);
@@ -130,10 +139,13 @@ public class HomePageVenueSurveyActivity extends NewBaseActivity implements View
         mTitle.add("最热门");
         mTitle.add("难度最大");
         allVenueFragment=new AllVenueFragment();
+        nearVenueFragment=new NearVenueFragment();
+        hotVenueFragment=new HotVenueFragment();
+        hardVenueFragment=new HardVenueFragment();
         mFragments.add(allVenueFragment);
-        mFragments.add(new AttendFragment());
-        mFragments.add(new AttendFragment());
-        mFragments.add(new AttendFragment());
+        mFragments.add(nearVenueFragment);
+        mFragments.add(hotVenueFragment);
+        mFragments.add(hardVenueFragment);
         dbVenueContext=new DBVenueContext(this);
     }
     @Override

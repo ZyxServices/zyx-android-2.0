@@ -1,9 +1,11 @@
 package com.tiyujia.homesport.common.homepage.fragment;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -84,11 +86,18 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     String selectCity;
     private List<HomePageBannerEntity> banners = new ArrayList<>();
     int [] picAddress=new int[]{R.drawable.demo_05,R.drawable.demo_06,R.drawable.demo_09,R.drawable.demo_10};
-    public static final int HANDLE_NEARBY_VENUE=1;
+    public static final int HANDLE_DATA=1;
     Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            switch (msg.what){
+                case HANDLE_DATA:
+                    adapter=new HomePageRecentVenueAdapter(getActivity(),datas);
+                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                    rvRecentVenue.setLayoutManager(layoutManager);
+                    rvRecentVenue.setAdapter(adapter);
+                    break;
+            }
         }
     };
     @Override
@@ -138,10 +147,6 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         banners.add(new HomePageBannerEntity(picAddress[2]));
         banners.add(new HomePageBannerEntity(picAddress[3]));
         setDatas();
-        adapter=new HomePageRecentVenueAdapter(getActivity(),datas);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        rvRecentVenue.setLayoutManager(layoutManager);
-        rvRecentVenue.setAdapter(adapter);
         cbHomePage.setPages(new CBViewHolderCreator<ImageHolderView>() {
             @Override public ImageHolderView createHolder() {
                 return new ImageHolderView();
@@ -186,7 +191,6 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         AMapLocation location = client.getLastKnownLocation();
         final double latitude= location.getLatitude();//纬度
         final double longitude=location.getLongitude();//经度
-        Toast.makeText(getActivity(),"维度："+latitude+"-----经度："+longitude,Toast.LENGTH_LONG).show();
         ArrayList<String> cacheData= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".json");
         if (cacheData==null||cacheData.size()==0) {
             new Thread() {
@@ -200,14 +204,13 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
                     params.put("number", "10");
                     params.put("pageNumber", "1");
                     String result = PostUtil.sendPostMessage(uri, params);
-                    JSONParseUtil.parseNetDataVenue(getActivity(),result,HomePageFragment.this.getClass().getName()+".json",datas, handler, HANDLE_NEARBY_VENUE);
+                    JSONParseUtil.parseNetDataVenue(getActivity(),result,HomePageFragment.this.getClass().getName()+".json",datas, handler, HANDLE_DATA);
                 }
             }.start();
         }else {
-            JSONParseUtil.parseLocalDataVenue(getActivity(),HomePageFragment.this.getClass().getName()+".json",datas, handler, HANDLE_NEARBY_VENUE);
+            JSONParseUtil.parseLocalDataVenue(getActivity(),HomePageFragment.this.getClass().getName()+".json",datas, handler, HANDLE_DATA);
         }
     }
-
     @Override public void onResume() {
         super.onResume();
         cbHomePage.startTurning(2500);
@@ -281,9 +284,25 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
 //            int x = rect.width();
 //            PicassoUtil.handlePic(context, data.bmpUrl, iv, x, 720);
             Picasso.with(getActivity()).load(data.picAddress).into(iv);
+
+
+
+
+//            pos=position;
+//            Rect rect = new Rect();
+//            ((Activity)context).getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+//            int x = rect.width();
+//            if (itemsTemp.get(position).getImageUrl()!=null && !itemsTemp.get(position).getImageUrl().equals("")){
+//                PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, itemsTemp.get(position).getImageUrl(), x, 1920), iv, x, 720);
+//            }else {
+//                PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, itemsTemp.get(position).getBgmUrl(), x, 1920), iv, x, 720);
+//            }
+//            int newPos=position-1==-1?itemsTemp.size()-1:position-1;
+//            banner_title.setText(itemsTemp.get(newPos).title);
         }
     }
     @Override public void onRefresh() {
+        setDatas();
         updateData();
         new Handler().postDelayed(new Runnable() {
             @Override public void run() {
