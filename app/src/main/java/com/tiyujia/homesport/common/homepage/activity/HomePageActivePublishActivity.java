@@ -1,4 +1,4 @@
-package com.tiyujia.homesport.common.record.activity;
+package com.tiyujia.homesport.common.homepage.activity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
  * 邮箱:928902646@qq.com
  */
 
-public class RecordActivePublishActivity extends ImmersiveActivity implements View.OnClickListener{
+public class HomePageActivePublishActivity extends ImmersiveActivity implements View.OnClickListener{
     @Bind(R.id.personal_back)    ImageView personal_back;
     @Bind(R.id.tvPush)    TextView tvPush;
     @Override

@@ -66,7 +66,6 @@ public class RecommendAdapter extends RecyclerView.Adapter {
         @Bind(R.id.nineGrid) NineGridView nineGrid;
         public myholder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
             tv_yes.setVisibility(View.VISIBLE);
         }
     }

@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * 邮箱:928902646@qq.com
  */
 
-public class RecommendFragment extends BaseFragment implements  SwipeRefreshLayout.OnRefreshListener{
+public class RecommendFragment extends BaseFragment {
     private View view;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
@@ -54,6 +54,11 @@ public class RecommendFragment extends BaseFragment implements  SwipeRefreshLayo
     }
 
     @Override
+    protected void initData() {
+
+    }
+
+    /*@Override
     protected void initData() {
         setData();
         recyclerView= (RecyclerView)view.findViewById(R.id.recyclerView);
@@ -87,5 +92,5 @@ public class RecommendFragment extends BaseFragment implements  SwipeRefreshLayo
                 srlRefresh.setRefreshing(false);
             }
         }, 1000);
-    }
+    }*/
 }

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 <LinearLayout style="@style/personal_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -79,6 +84,14 @@
         </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
 </LinearLayout>
+    <ImageView
+    android:id="@+id/ivPush"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:src="@mipmap/btn_write2"
+    android:layout_gravity="bottom|right"
+    android:layout_marginBottom="25dp"
+    android:layout_marginRight="25dp"
+    />
+</FrameLayout>
