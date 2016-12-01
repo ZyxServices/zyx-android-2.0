@@ -57,7 +57,7 @@ public class PersonalFans extends ImmersiveActivity implements View.OnClickListe
         iv_search.setOnClickListener(this);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter=new FansAdapter(null);
+        adapter=new FansAdapter(this,null);
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);
@@ -70,6 +70,7 @@ public class PersonalFans extends ImmersiveActivity implements View.OnClickListe
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
+        tv_title.setText("我的粉丝");
     }
     @Override
     public void onClick(View v) {

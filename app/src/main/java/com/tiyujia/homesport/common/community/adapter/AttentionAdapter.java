@@ -9,8 +9,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.ninegrid.NineGridView;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.personal.model.AttentionModel;
 import com.tiyujia.homesport.entity.ActiveModel;
 
 import java.util.ArrayList;
@@ -24,50 +27,17 @@ import butterknife.ButterKnife;
  * 邮箱:928902646@qq.com
  */
 
-public class AttentionAdapter extends RecyclerView.Adapter {
+public class AttentionAdapter extends BaseQuickAdapter<AttentionModel.AttentionList> {
     Context context;
-    List<ActiveModel> mDatas;
 
-    public AttentionAdapter(Context context, List<ActiveModel> mDatas) {
-        if(mDatas.size()!=0){
-            this.mDatas = mDatas;
-        }else {
-            this.mDatas=new ArrayList<>();
-        }
-        this.context = context;
+
+    public AttentionAdapter(List<AttentionModel.AttentionList> data) {
+        super(data);
     }
+
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.personal_dynamic_item, null);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        view.setLayoutParams(lp);
-        return new myholder(view);
-    }
+    protected void convert(BaseViewHolder baseViewHolder, AttentionModel.AttentionList attentionList) {
 
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return mDatas.size();
-    }
-    public class myholder extends RecyclerView.ViewHolder{
-        @Bind(R.id.me_head) ImageView me_head;
-        @Bind(R.id.iv_lv) ImageView iv_lv;
-        @Bind(R.id.tv_time) TextView tv_time;
-        @Bind(R.id.tv_yes) TextView tv_yes;
-        @Bind(R.id.desc) TextView desc;
-        @Bind(R.id.tv_address) TextView tv_address;
-        @Bind(R.id.tv_msg) TextView tv_msg;
-        @Bind(R.id.tv_zan) TextView tv_zan;
-        @Bind(R.id.nineGrid) NineGridView nineGrid;
-        public myholder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this,itemView);
-            tv_yes.setVisibility(View.GONE);
-        }
     }
 }

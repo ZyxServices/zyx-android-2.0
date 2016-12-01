@@ -18,7 +18,8 @@ public class AttentionModel implements Serializable {
         public  String phone;
         public  String nickname;
         public  String avatar;
-        public  String signatures;
+        public  String signatures;//签名
+        public  String signature;//应该也是签名
         public  leves level;
     }
     public class leves{

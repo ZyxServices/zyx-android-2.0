@@ -28,7 +28,7 @@
             android:layout_marginTop="18dp"
             >
             <TextView
-                android:id="@+id/tv_nickname"
+                android:id="@+id/tvNickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/day_edit_color"
@@ -36,7 +36,7 @@
                 android:textSize="15sp"
                 />
             <TextView
-                android:id="@+id/tv_time"
+                android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/day_edit_hit_color"
@@ -45,11 +45,12 @@
                 />
         </LinearLayout>
         <ImageView
-            android:id="@+id/iv_lv"
+            android:id="@+id/ivLv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/img_lv1"
             android:layout_marginTop="18dp"
+            android:visibility="gone"
             />
         <TextView
             android:layout_width="0dp"
@@ -71,7 +72,7 @@
             />
     </LinearLayout>
     <TextView
-        android:id="@+id/desc"
+        android:id="@+id/tvDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -97,19 +98,19 @@
         android:paddingRight="@dimen/dip12"
         >
         <TextView
-            android:id="@+id/tv_address"
+            android:id="@+id/tvAddress"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:textColor="@color/day_edit_hit_color"
             android:text="成都"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/tv_msg"
+            android:id="@+id/tvMsg"
             style="@style/pack_msg"
             android:text="111"
             />
         <TextView
-            android:id="@+id/tv_zan"
+            android:id="@+id/tvZan"
             style="@style/pack_zan"
             android:text="111"
             />

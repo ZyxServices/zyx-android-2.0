@@ -46,7 +46,7 @@ Context context;
         ImageView ivLv=baseViewHolder.getView(R.id.ivLv);
         TextView tv_not=baseViewHolder.getView(R.id.tv_not);
         tv_not.setVisibility(View.VISIBLE);
-        LvUtil.setLv(ivLv,attention.level.pointDesc);
+       // LvUtil.setLv(ivLv,attention.level.pointDesc);
         PicassoUtil.handlePic(context,PicUtil.getImageUrlDetail(context,StringUtil.isNullAvatar(attention.avatar), 320, 320),ivAvatar,320,320);
     }
 }

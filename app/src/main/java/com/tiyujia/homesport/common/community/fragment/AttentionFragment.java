@@ -28,24 +28,7 @@ public class AttentionFragment extends BaseFragment implements  SwipeRefreshLayo
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
     private ArrayList<ActiveModel> mDatas;
-    public static final int HANDLE_DATA=1;
     private AttentionAdapter adapter;
-    Handler handler=new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case HANDLE_DATA:
-                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                    recyclerView.setLayoutManager(layoutManager);
-                    adapter=new AttentionAdapter(getActivity(),mDatas);
-//                    adapter.setFriends(mDatas);
-//                    adapter.getFilter().filter(HomePageVenueSurveyActivity.getSearchText());
-                    recyclerView.setAdapter(adapter);
-                    srlRefresh.setRefreshing(false);
-                    break;
-            }
-        }
-    };
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,21 +38,10 @@ public class AttentionFragment extends BaseFragment implements  SwipeRefreshLayo
 
     @Override
     protected void initData() {
-        setData();
         recyclerView= (RecyclerView)view.findViewById(R.id.recyclerView);
         srlRefresh= (SwipeRefreshLayout)view.findViewById(R.id.srlRefresh);
         RefreshUtil.refresh(srlRefresh, getActivity());
         srlRefresh.setOnRefreshListener(this);
-    }
-
-    private void setData() {
-        mDatas = new ArrayList<>();
-        for (int i = 0; i < 10; i++)
-        {
-            ActiveModel activeModel=  new ActiveModel();
-            mDatas.add(activeModel);
-        }
-        handler.sendEmptyMessage(HANDLE_DATA);
     }
 
 
