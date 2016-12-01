@@ -77,7 +77,6 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
     private ArrayList<ImageItem> images;
     private String mToken;
     private int mUserId;
-    private String imgUrl="";
     private String local="";
 
 
@@ -208,7 +207,7 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 finish();
                 break;
             case R.id.tvPush:
-                String content=etIssueContent.getText().toString();
+                final String content=etIssueContent.getText().toString();
                 ArrayList<File> files=new ArrayList<>();
                 if(!TextUtils.isEmpty(content)){
                     if (images != null && images.size() > 0) {
@@ -222,11 +221,27 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                     @Override
                                     public void onSuccess(ImageUploadModel imageUploadModel, Call call, Response response) {
                                         List<String> da =imageUploadModel.data;
-                                        String[] str=null;
-                                        str = (String[])da.toArray(new String[da.size()]);
-                                        imgUrl=  StringUtils.join(str,",");
-                                        Log.i("imgUrl",imgUrl);
-                                        showToast("daslsa");
+                                        String[] str = (String[])da.toArray(new String[da.size()]);
+                                        String imgUrl=  StringUtils.join(str,",");
+                                        OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                                .params("userId",mUserId)
+                                                .params("content",content)
+                                                .params("imgUrl",imgUrl)
+                                                .params("visible",0)
+                                                .params("local",local)
+                                                .execute(new LoadCallback<LzyResponse>(CommunityDynamicPublish.this) {
+                                                    @Override
+                                                    public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                                        if(lzyResponse.state==200){
+                                                            showToast("发布成功");
+                                                        }
+                                                    }
+                                                    @Override
+                                                    public void onError(Call call, Response response, Exception e) {
+                                                        super.onError(call, response, e);
+                                                        showToast("失败");
+                                                    }
+                                                });
                                     }
                                     @Override
                                     public void onError(Call call, Response response, Exception e) {
@@ -234,27 +249,29 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                         showToast("onError");
                                     }
                                 });
-                    }else {}
-
-                    OkGo.post(API.BASE_URL+"/v2/cern/insert")
-                            .params("userId",mUserId)
-                            .params("content",content)
-                            .params("imgUrl",imgUrl)
-                            .params("visible",0)
-                            .params("local",local)
-                            .execute(new LoadCallback<LzyResponse>(this) {
-                                @Override
-                                public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
-                                    if(lzyResponse.state==200){
-                                        showToast("发布成功");
+                    }else {
+                        OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                .params("userId",mUserId)
+                                .params("content",content)
+                                .params("visible",0)
+                                .params("local",local)
+                                .execute(new LoadCallback<LzyResponse>(CommunityDynamicPublish.this) {
+                                    @Override
+                                    public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                        if(lzyResponse.state==200){
+                                            showToast("发布成功");
+                                        }
                                     }
-                                }
-                                @Override
-                                public void onError(Call call, Response response, Exception e) {
-                                    super.onError(call, response, e);
-                                    showToast("失败");
-                                }
-                            });
+                                    @Override
+                                    public void onError(Call call, Response response, Exception e) {
+                                        super.onError(call, response, e);
+                                        showToast("失败");
+                                    }
+                                });
+
+                    }
+
+
                 }else {
                     showToast("还没有填写内容哟~");
                 }
