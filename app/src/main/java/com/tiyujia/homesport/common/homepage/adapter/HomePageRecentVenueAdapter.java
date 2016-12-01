@@ -13,7 +13,6 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity;
@@ -21,9 +20,12 @@ import com.tiyujia.homesport.common.homepage.activity.HomePageVenueSurveyActivit
 import com.tiyujia.homesport.common.homepage.dao.DBVenueContext;
 import com.tiyujia.homesport.common.homepage.entity.HomePageRecentVenueEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageSearchEntity;
+import com.tiyujia.homesport.util.DegreeUtil;
+import com.tiyujia.homesport.util.TypeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by zzqybyb19860112 on 2016/11/11.1
@@ -61,19 +63,24 @@ public class HomePageRecentVenueAdapter extends RecyclerView.Adapter implements 
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof RecentVenueHolder) {
             RecentVenueHolder holder = (RecentVenueHolder) viewHolder;
-            HomePageRecentVenueEntity data = values.get(position);
-            Picasso.with(context).load(data.getBigPicUrl()).into(holder.ivPicVenue);
-            holder.tvVenueName.setText(data.getVenueName());
-            List<String> types = data.getVenueType();
-            String typeA = types.get(0);
-            String typeB = types.get(1);
+            final HomePageRecentVenueEntity data = values.get(position);
+            List<String> urls=data.getImgUrls();
+            if (urls!=null&&!urls.equals("")&&!urls.equals("null")&&urls.size()!=0){
+                Picasso.with(context).load(data.getImgUrls().get(0)).into(holder.ivPicVenue);
+            }else {
+                int []demo=new int[]{R.drawable.demo_05,R.drawable.demo_06,R.drawable.demo_09,R.drawable.demo_10};
+                Picasso.with(context).load(demo[new Random().nextInt(4)]).into(holder.ivPicVenue);
+            }
+            holder.tvVenueName.setText(data.getName());
+            int type = data.getType();
+            String typeA=type==1?"室内":"室外";
             holder.tvVenueTypeA.setText(typeA);
-            holder.tvVenueTypeB.setText(typeB);
-            handleType(holder.tvVenueTypeA, typeA);
-            int degree = data.getDegreeNumber();
-            handleDegrees(degree, holder.ivDegree1, holder.ivDegree2, holder.ivDegree3, holder.ivDegree4, holder.ivDegree5);
-            holder.tvGoneNumber.setText(data.getNumberGone() + "人去过");
-            holder.tvTalkNumber.setText(data.getNumberTalk() + "");
+            holder.tvVenueTypeB.setText("抱石");
+            TypeUtil.handleType(holder.tvVenueTypeA, typeA);
+            int degree = data.getLevel();
+            DegreeUtil.handleDegrees(degree, holder.ivDegree1, holder.ivDegree2, holder.ivDegree3, holder.ivDegree4, holder.ivDegree5);
+            holder.tvGoneNumber.setText(data.getPnumber() + "人去过");
+            holder.tvTalkNumber.setText(data.getTalkNumber() + "");
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -93,31 +100,12 @@ public class HomePageRecentVenueAdapter extends RecyclerView.Adapter implements 
                         }
                         }
                     Intent intent=new Intent(context, HomePageSearchResultActivity.class);
+                    intent.putExtra("venueId",data.getId());
                     context.startActivity(intent);
                 }
             });
         }
     }
-    private void handleDegrees(int degree, ImageView ivDegree1, ImageView ivDegree2, ImageView ivDegree3, ImageView ivDegree4, ImageView ivDegree5) {
-        degree-=1;
-        ImageView[] ivDegrees=new ImageView[]{ivDegree1,ivDegree2,ivDegree3,ivDegree4,ivDegree5};
-        for (int i=0;i<5;i++){
-           for (int j=0;j<=degree;j++){
-               ivDegrees[j].setImageResource(R.mipmap.tab_start_s);
-           }
-        }
-    }
-
-    private void handleType(TextView tvVenueTypeA, String typeA) {
-        if (typeA.equals("室内")){
-            tvVenueTypeA.setBackgroundResource(R.drawable.border_orange);
-            tvVenueTypeA.setTextColor(Color.parseColor("#ff702a"));
-        }else {
-            tvVenueTypeA.setBackgroundResource(R.drawable.border_blue);
-            tvVenueTypeA.setTextColor(Color.parseColor("#2aa7ff"));
-        }
-    }
-
     @Override
     public int getItemCount() {
         return values.size() > 0 ? values.size() : 1;
@@ -165,7 +153,7 @@ public class HomePageRecentVenueAdapter extends RecyclerView.Adapter implements 
                     final ArrayList<HomePageRecentVenueEntity> newValues = new ArrayList<HomePageRecentVenueEntity>();
                     for (int i = 0; i < count; i++) {
                         final HomePageRecentVenueEntity value = inviteMessages.get(i);
-                        String username = value.getVenueName();
+                        String username = value.getName();
                         // First match against the whole ,non-splitted value，假如含有关键字的时候，添加
                         if (username.contains(prefixString)) {
                             newValues.add(value);

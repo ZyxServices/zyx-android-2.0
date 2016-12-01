@@ -38,6 +38,9 @@
                 android:textSize="15sp"
                 android:textColor="#333333"
                 android:id="@+id/tvVenueName"
+                android:singleLine="true"
+                android:maxEms="12"
+                android:ellipsize="end"
                 android:text="成都理工大学攀岩基地"/>
             <LinearLayout
                 android:layout_width="wrap_content"

@@ -1,11 +1,14 @@
 package com.tiyujia.homesport.common.homepage.fragment;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +22,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.squareup.picasso.Picasso;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
 import com.tiyujia.homesport.BaseFragment;
 import com.tiyujia.homesport.R;
@@ -39,10 +46,14 @@ import com.tiyujia.homesport.common.homepage.entity.HomePageRecentVenueEntity;
 import com.tiyujia.homesport.common.homepage.net.HomePageDataManager;
 import com.tiyujia.homesport.entity.Result;
 import com.tiyujia.homesport.common.homepage.service.HomePageService;
+import com.tiyujia.homesport.util.CacheUtils;
+import com.tiyujia.homesport.util.JSONParseUtil;
+import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import butterknife.Bind;
@@ -67,7 +78,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     @Bind(R.id.tvSearchCity)            TextView tvSearchCity;
     @Bind(R.id.tvSearchDetail)            TextView tvSearchDetail;
     HomePageRecentVenueAdapter adapter;
-    List<HomePageRecentVenueEntity> datas;
+    List<HomePageRecentVenueEntity> datas=new ArrayList<>();
     private Toolbar tb;
     private AppBarLayout appbar;
     private State state;
@@ -75,6 +86,20 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     String selectCity;
     private List<HomePageBannerEntity> banners = new ArrayList<>();
     int [] picAddress=new int[]{R.drawable.demo_05,R.drawable.demo_06,R.drawable.demo_09,R.drawable.demo_10};
+    public static final int HANDLE_DATA=1;
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case HANDLE_DATA:
+                    adapter=new HomePageRecentVenueAdapter(getActivity(),datas);
+                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                    rvRecentVenue.setLayoutManager(layoutManager);
+                    rvRecentVenue.setAdapter(adapter);
+                    break;
+            }
+        }
+    };
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.homepage_fragment,null);
@@ -122,10 +147,6 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         banners.add(new HomePageBannerEntity(picAddress[2]));
         banners.add(new HomePageBannerEntity(picAddress[3]));
         setDatas();
-        adapter=new HomePageRecentVenueAdapter(getActivity(),datas);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        rvRecentVenue.setLayoutManager(layoutManager);
-        rvRecentVenue.setAdapter(adapter);
         cbHomePage.setPages(new CBViewHolderCreator<ImageHolderView>() {
             @Override public ImageHolderView createHolder() {
                 return new ImageHolderView();
@@ -165,29 +186,31 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
             }
         }, 500);
     }
-
     private void setDatas() {
-        datas=new ArrayList<>();
-        String []types={"室内","室外"};
-        for (int i=0;i<10;i++){
-            HomePageRecentVenueEntity entity=new HomePageRecentVenueEntity();
-            entity.setBigPicUrl(R.drawable.demo_05+"");
-            entity.setVenueName("成都体育馆");
-            entity.setDegreeNumber(new Random().nextInt(5)+1);
-            entity.setNumberGone(new Random().nextInt(1200)+1);
-            entity.setNumberTalk(new Random().nextInt(3200)+1);
-            List<String> typeList=new ArrayList<>();
-            if (i%2==0){
-                typeList.add(types[0]);
-            }else {
-                typeList.add(types[1]);
-            }
-            typeList.add("抱石");
-            entity.setVenueType(typeList);
-            datas.add(entity);
+        AMapLocationClient client = App.mLocationClient;
+        AMapLocation location = client.getLastKnownLocation();
+        final double latitude= location.getLatitude();//纬度
+        final double longitude=location.getLongitude();//经度
+        ArrayList<String> cacheData= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".json");
+        if (cacheData==null||cacheData.size()==0) {
+            new Thread() {
+                @Override
+                public void run() {
+                    String uri = API.BASE_URL + "/v2/venue/findVenue";
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("type", "2");
+                    params.put("lng", longitude + "");
+                    params.put("lat", latitude + "");
+                    params.put("number", "10");
+                    params.put("pageNumber", "1");
+                    String result = PostUtil.sendPostMessage(uri, params);
+                    JSONParseUtil.parseNetDataVenue(getActivity(),result,HomePageFragment.this.getClass().getName()+".json",datas, handler, HANDLE_DATA);
+                }
+            }.start();
+        }else {
+            JSONParseUtil.parseLocalDataVenue(getActivity(),HomePageFragment.this.getClass().getName()+".json",datas, handler, HANDLE_DATA);
         }
     }
-
     @Override public void onResume() {
         super.onResume();
         cbHomePage.startTurning(2500);
@@ -201,11 +224,15 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         cbHomePage.stopTurning();
         getActivity().unregisterReceiver(mReceiver);
     }
+    private boolean isFirstReceive=true;
     private class HomePageFragmentReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
-            String city=intent.getStringExtra("CITY");
-            tvSearchCity.setText(city);
+            if (isFirstReceive) {
+                String city = intent.getStringExtra("CITY");
+                tvSearchCity.setText(city);
+                isFirstReceive=false;
+            }
         }
     }
     @Override
@@ -257,9 +284,25 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
 //            int x = rect.width();
 //            PicassoUtil.handlePic(context, data.bmpUrl, iv, x, 720);
             Picasso.with(getActivity()).load(data.picAddress).into(iv);
+
+
+
+
+//            pos=position;
+//            Rect rect = new Rect();
+//            ((Activity)context).getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+//            int x = rect.width();
+//            if (itemsTemp.get(position).getImageUrl()!=null && !itemsTemp.get(position).getImageUrl().equals("")){
+//                PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, itemsTemp.get(position).getImageUrl(), x, 1920), iv, x, 720);
+//            }else {
+//                PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, itemsTemp.get(position).getBgmUrl(), x, 1920), iv, x, 720);
+//            }
+//            int newPos=position-1==-1?itemsTemp.size()-1:position-1;
+//            banner_title.setText(itemsTemp.get(newPos).title);
         }
     }
     @Override public void onRefresh() {
+        setDatas();
         updateData();
         new Handler().postDelayed(new Runnable() {
             @Override public void run() {

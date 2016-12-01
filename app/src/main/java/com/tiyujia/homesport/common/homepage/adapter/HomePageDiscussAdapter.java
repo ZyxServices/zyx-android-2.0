@@ -1,31 +1,20 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.lzy.ninegrid.ImageInfo;
-import com.lzy.ninegrid.NineGridView;
-import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.entity.CallBackDetailEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageDiscussEntity;
-import com.w4lle.library.NineGridAdapter;
 import com.w4lle.library.NineGridlayout;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,39 +92,5 @@ public class HomePageDiscussAdapter  extends RecyclerView.Adapter{
             nglMainUserImage= (NineGridlayout) itemView.findViewById(R.id.nglMainUserImage);
             rvDiscussCallBack= (RecyclerView) itemView.findViewById(R.id.rvDiscussCallBack);
         }
-    }
-   private class NGLAdapter extends NineGridAdapter {
-
-        public NGLAdapter(Context context, List list) {
-            super(context, list);
-        }
-
-        @Override
-        public int getCount() {
-            return (list == null) ? 0 : list.size();
-        }
-
-        @Override
-        public String getUrl(int position) {
-            return (String)getItem(position);
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return (list == null) ? null : list.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-       @Override
-       public View getView(int i, View view) {
-           ImageView iv = new ImageView(context);
-           iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-           Picasso.with(context).load(getUrl(i)).into(iv);
-           return iv;
-       }
     }
 }
