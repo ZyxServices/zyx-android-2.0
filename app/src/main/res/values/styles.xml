@@ -157,4 +157,7 @@
         <item name="android:windowEnterAnimation">@anim/dialog_in_anim</item>
         <item name="android:windowExitAnimation">@anim/dialog_out_anim</item>
     </style>
+    <style name="checkboxk_select" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/chebox_select</item>
+        </style>
 </resources>

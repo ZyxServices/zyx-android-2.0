@@ -394,7 +394,7 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
             Thread thread1=new Thread(){
                 @Override
                 public void run() {
-                    String path= UploadUtil.getAbsoluteImagePath(PersonalSetInfo.this,originalUri);
+                    String path= UploadUtil.getImageAbsolutePath(PersonalSetInfo.this,originalUri);
                     picAddress=UploadUtil.getNetWorkImageAddress(path, PersonalSetInfo.this);
                     runOnUiThread(new Runnable() {
                         @Override
