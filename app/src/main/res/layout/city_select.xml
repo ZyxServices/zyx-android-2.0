@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/personal_layout">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="29dp"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        >
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="0.83"
+            android:layout_height="29dp"
+            android:id="@+id/etWholeSearch"
+            android:textColor="@color/day_edit_color"
+            android:background="@drawable/background_search"
+            android:layout_centerVertical="true"
+            android:textSize="12sp"
+            android:paddingLeft="10dp"
+            android:hint="搜索附近位置"
+            android:textCursorDrawable="@null"
+            android:drawableLeft="@mipmap/btn_seach2"
+            android:drawablePadding="5dp"
+            android:layout_marginRight="12dp"
+            android:textColorHint="@color/day_edit_hit_color"
+            />
+        <TextView
+            android:id="@+id/tvWholeSearchClose"
+            android:layout_width="0dp"
+            android:layout_weight="0.09"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:textColor="@color/orange"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            />
+    </LinearLayout>
+
+    <include layout="@layout/recycleview_layout"/>
+
+    <TextView
+       style="@style/boldlin" />
+</LinearLayout>
