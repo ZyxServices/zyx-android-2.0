@@ -14,6 +14,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -27,13 +29,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lzy.imagepicker.ImagePicker;
+import com.lzy.imagepicker.bean.ImageItem;
+import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.lzy.imagepicker.ui.ImagePreviewDelActivity;
+import com.lzy.imagepicker.view.CropImageView;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
 import com.tiyujia.homesport.common.personal.activity.PersonalSetInfo;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.StorePhotosUtil;
 import com.tiyujia.homesport.util.UploadUtil;
+import com.tiyujia.homesport.widget.GlideImageLoader;
+import com.tiyujia.homesport.widget.ImagePickerAdapter;
 import com.tiyujia.homesport.widget.picker.SlideDateTimeListener;
 import com.tiyujia.homesport.widget.picker.SlideDateTimePicker;
 
@@ -43,6 +53,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,7 +68,7 @@ import butterknife.ButterKnife;
  * 邮箱:928902646@qq.com
  */
 
-public class HomePageActivePublishActivity extends ImmersiveActivity implements View.OnClickListener{
+public class HomePageActivePublishActivity extends ImmersiveActivity implements View.OnClickListener,ImagePickerAdapter.OnRecyclerViewItemClickListener{
     @Bind(R.id.personal_back)    ImageView personal_back;
     @Bind(R.id.tvPush)    TextView tvPush;
     @Bind(R.id.tvUploadImage)    TextView tvUploadImage;
@@ -71,6 +82,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     @Bind(R.id.reStartTime)    RelativeLayout reStartTime;
     @Bind(R.id.reEndTime)    RelativeLayout reEndTime;
     @Bind(R.id.reApplyEndTiem)    RelativeLayout reApplyEndTiem;
+    @Bind(R.id.revImage)    RecyclerView revImage;
     private SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private int type=0;//活动类型(1、求约 2、求带)
     private Dialog cameradialog;
@@ -82,17 +94,33 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     private String picAddress;
     private int maxPeople=0;//报名人数限制(0 为不限制)
     private int paymentType=0;//付费类型(0奖励 1免费 2 AA)
-    private TextView dsadsa;
-
+    public static final int IMAGE_ITEM_ADD = -1;
+    public static final int REQUEST_CODE_SELECT = 100;
+    public static final int REQUEST_CODE_PREVIEW = 101;
+    private ImagePickerAdapter adapter;
+    private ArrayList<ImageItem> selImageList; //当前选择的所有图片
+    private int maxImgCount = 9;               //允许选择图片最大数
+    private ArrayList<ImageItem> images;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_active_publish);
         ButterKnife.bind(this);
         initview();
+        initImagePicker();
+        initWidget();
     }
+
+    private void initWidget() {
+        selImageList = new ArrayList<>();
+        adapter = new ImagePickerAdapter(this, selImageList, maxImgCount);
+        adapter.setOnItemClickListener(this);
+        revImage.setLayoutManager(new GridLayoutManager(this, 4));
+        revImage.setHasFixedSize(true);
+        revImage.setAdapter(adapter);
+    }
+
     private void initview() {
-        dsadsa=(TextView)findViewById(R.id.tvVideo);
         personal_back.setOnClickListener(this);
         tvPush.setOnClickListener(this);
         tvUploadImage.setOnClickListener(this);
@@ -104,6 +132,38 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
         if(!myRadioGroup.isClickable()){
         type=0;
         }else{}
+    }
+
+    private void initImagePicker() {
+        ImagePicker imagePicker = ImagePicker.getInstance();
+        imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器
+        imagePicker.setShowCamera(true);                      //显示拍照按钮
+        imagePicker.setCrop(false);                           //允许裁剪（单选才有效）
+        imagePicker.setSaveRectangle(true);                   //是否按矩形区域保存
+        imagePicker.setSelectLimit(maxImgCount);              //选中数量限制
+        imagePicker.setStyle(CropImageView.Style.RECTANGLE);  //裁剪框的形状
+        imagePicker.setFocusWidth(800);                       //裁剪框的宽度。单位像素（圆形自动取宽高最小值）
+        imagePicker.setFocusHeight(800);                      //裁剪框的高度。单位像素（圆形自动取宽高最小值）
+        imagePicker.setOutPutX(1000);                         //保存文件的宽度。单位像素
+        imagePicker.setOutPutY(1000);                         //保存文件的高度。单位像素
+    }
+    @Override
+    public void onItemClick(View view, int position) {
+        switch (position) {
+            case IMAGE_ITEM_ADD:
+                //打开选择,本次允许选择的数量
+                ImagePicker.getInstance().setSelectLimit(maxImgCount - selImageList.size());
+                Intent intent = new Intent(HomePageActivePublishActivity.this, ImageGridActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_SELECT);
+                break;
+            default:
+                //打开预览
+                Intent intentPreview = new Intent(this, ImagePreviewDelActivity.class);
+                intentPreview.putExtra(ImagePicker.EXTRA_IMAGE_ITEMS, (ArrayList<ImageItem>) adapter.getImages());
+                intentPreview.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, position);
+                startActivityForResult(intentPreview, REQUEST_CODE_PREVIEW);
+                break;
+        }
     }
     @Override
     public void onClick(View v) {
@@ -336,6 +396,22 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
             };
             thread1.setPriority(8);
             thread1.start();
+        }
+        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+            //添加图片返回
+            if (data != null && requestCode == REQUEST_CODE_SELECT) {
+                images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                selImageList.addAll(images);
+                adapter.setImages(selImageList);
+            }
+        } else if (resultCode == ImagePicker.RESULT_CODE_BACK) {
+            //预览图片返回
+            if (data != null && requestCode == REQUEST_CODE_PREVIEW) {
+                ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_IMAGE_ITEMS);
+                selImageList.clear();
+                selImageList.addAll(images);
+                adapter.setImages(selImageList);
+            }
         }
     }
 }

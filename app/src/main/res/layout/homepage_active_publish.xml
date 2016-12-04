@@ -22,134 +22,136 @@
             android:layout_alignParentRight="true"
             />
     </RelativeLayout>
-    <TextView
-        style="@style/finelin" />
+
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp">
-        <ImageView
-            android:id="@+id/ivBackground"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:visibility="gone"
-            />
-        <TextView
-            android:id="@+id/tvUploadImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="上传封面图"
-            android:textSize="15sp"
-            android:drawablePadding="15dp"
-            android:layout_centerInParent="true"
-            android:textColor="@color/day_edit_hit_color"
-            android:drawableTop="@mipmap/btn_add3"
-            />
-    </RelativeLayout>
-    <TextView
-        style="@style/boldlin" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:hint="请输入活动名称"
-        android:textColorHint="@color/day_edit_hit_color"
-        android:paddingLeft="@dimen/dip12"
-        android:gravity="center_vertical"
-        android:textColor="@color/day_edit_color"
-        android:textSize="15sp"
-        android:textCursorDrawable="@null"
-        />
-    <TextView
-        style="@style/boldlin" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:hint="请输入活动内容"
-        android:paddingLeft="@dimen/dip12"
-        android:textColorHint="@color/day_edit_hit_color"
-        android:gravity="top"
-        android:textColor="@color/day_edit_color"
-        android:textSize="15sp"
-        android:textCursorDrawable="@null"
-        />
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/revImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:choiceMode="singleChoice"
-            android:divider="@null"
-            android:fadingEdge="none"
-            android:layout_margin="@dimen/dip16"
-            android:listSelector="@android:color/transparent"
-            android:scrollbarStyle="outsideOverlay"
-            app:layoutManager="android.support.v7.widget.GridLayoutManager"
-            app:spanCount="4"
-            tools:listitem="@layout/list_item_image"/>
-    <TextView
-        style="@style/boldlin" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:paddingLeft="@dimen/dip12"
-        android:paddingRight="@dimen/dip12"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:text="约什么"
-            android:textColor="@color/day_edit_hit_color"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
-        <RadioGroup
-            android:id="@+id/myRadioGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
             >
-        <RadioButton
-            android:id="@+id/rbDate"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="15sp"
-            android:text="求约"
-            android:button="@drawable/radiobutton"
-            android:textColor="@color/day_edit_color"
-            android:paddingLeft="4dp"
-            />
-        <RadioButton
-            android:id="@+id/rbLead"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="15sp"
-            android:text="求带"
-            android:checked="true"
-            android:layout_marginLeft="20dp"
-            android:button="@drawable/radiobutton"
-            android:textColor="@color/day_edit_color"
-            android:paddingLeft="4dp"
-            />
-        </RadioGroup>
-    </LinearLayout>
-    <TextView
-        style="@style/boldlin" />
-    <include layout="@layout/record_active_publish_two"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp">
+                <ImageView
+                    android:id="@+id/ivBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:visibility="gone"
+                    />
+                <TextView
+                    android:id="@+id/tvUploadImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="上传封面图"
+                    android:textSize="15sp"
+                    android:drawablePadding="15dp"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/day_edit_hit_color"
+                    android:drawableTop="@mipmap/btn_add3"
+                    />
+            </RelativeLayout>
+            <TextView
+                style="@style/boldlin" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:hint="请输入活动名称"
+                android:textColorHint="@color/day_edit_hit_color"
+                android:paddingLeft="@dimen/dip12"
+                android:gravity="center_vertical"
+                android:textColor="@color/day_edit_color"
+                android:textSize="15sp"
+                android:textCursorDrawable="@null"
+                />
+            <TextView
+                style="@style/boldlin" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:hint="请输入活动内容"
+                android:paddingLeft="@dimen/dip12"
+                android:textColorHint="@color/day_edit_hit_color"
+                android:gravity="top"
+                android:textColor="@color/day_edit_color"
+                android:textSize="15sp"
+                android:textCursorDrawable="@null"
+                />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/revImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:choiceMode="singleChoice"
+                android:divider="@null"
+                android:fadingEdge="none"
+                android:layout_margin="@dimen/dip16"
+                android:listSelector="@android:color/transparent"
+                android:scrollbarStyle="outsideOverlay"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                app:spanCount="4"
+                tools:listitem="@layout/list_item_image"/>
+            <TextView
+                style="@style/boldlin" />
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:paddingLeft="@dimen/dip12"
+                android:paddingRight="@dimen/dip12"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="约什么"
+                    android:textColor="@color/day_edit_hit_color"
+                    />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+                <RadioGroup
+                    android:id="@+id/myRadioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    >
+                    <RadioButton
+                        android:id="@+id/rbDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="15sp"
+                        android:text="求约"
+                        android:button="@drawable/radiobutton"
+                        android:textColor="@color/day_edit_color"
+                        android:paddingLeft="4dp"
+                        />
+                    <RadioButton
+                        android:id="@+id/rbLead"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textSize="15sp"
+                        android:text="求带"
+                        android:checked="true"
+                        android:layout_marginLeft="20dp"
+                        android:button="@drawable/radiobutton"
+                        android:textColor="@color/day_edit_color"
+                        android:paddingLeft="4dp"
+                        />
+                </RadioGroup>
+            </LinearLayout>
+            <TextView
+                style="@style/boldlin" />
+            <include layout="@layout/record_active_publish_two"/>
+
+        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+
+    <TextView
+        style="@style/finelin" />
 </LinearLayout>
