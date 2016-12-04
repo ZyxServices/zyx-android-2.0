@@ -39,8 +39,6 @@ public class AttendFragment extends BaseFragment implements  SwipeRefreshLayout.
                     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
                     recyclerView.setLayoutManager(layoutManager);
                     adapter=new TestAdapter(getActivity(),mDatas);
-//                    adapter.setFriends(mDatas);
-//                    adapter.getFilter().filter(HomePageVenueSurveyActivity.getSearchText());
                     recyclerView.setAdapter(adapter);
                     srlRefresh.setRefreshing(false);
                     break;

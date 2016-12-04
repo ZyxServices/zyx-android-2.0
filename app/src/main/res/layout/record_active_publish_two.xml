@@ -122,11 +122,15 @@
                 android:text="报名人数"
                 android:textColor="@color/day_edit_hit_color"
                 />
-            <TextView
+            <EditText
                 android:id="@+id/tvNumber"
                 style="@style/personal_item_imageview"
                 android:textColor="@color/day_edit_color"
-                android:text="无限制"
+                android:hint="无限制"
+                android:textSize="15sp"
+                android:inputType="number"
+                android:textCursorDrawable="@null"
+                android:textColorHint="@color/day_edit_hit_color"
                 />
         </RelativeLayout>
     </LinearLayout>
@@ -151,7 +155,7 @@
             android:layout_weight="1"
             />
         <RadioGroup
-            android:id="@+id/myRadioGroup"
+            android:id="@+id/PriceRadioGroup"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal"
@@ -202,6 +206,7 @@
         android:background="@color/background"
         >
         <CheckBox
+            android:id="@+id/Chckbox"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="点击发布表示您已同意"

@@ -56,6 +56,7 @@
             <TextView
                 style="@style/boldlin" />
             <EditText
+                android:id="@+id/etTitle"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:hint="请输入活动名称"
@@ -69,6 +70,7 @@
             <TextView
                 style="@style/boldlin" />
             <EditText
+                android:id="@+id/etContent"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:hint="请输入活动内容"
@@ -114,7 +116,7 @@
                     android:layout_weight="1"
                     />
                 <RadioGroup
-                    android:id="@+id/myRadioGroup"
+                    android:id="@+id/DateRadioGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
