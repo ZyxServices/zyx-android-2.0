@@ -1,6 +1,8 @@
 package com.tiyujia.homesport.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 作者: Cymbi on 2016/11/14 11:24.
@@ -8,121 +10,38 @@ import java.io.Serializable;
  */
 
 public class ActiveModel implements Serializable {
-    private String avatar;
-    private String nickname;
-    private String title;
-    private String apply_lable;
-    private String background;
-    private String active_lable;
-    private String address;
-    private String lv;
-    private Long time;
-    private int apply;
-    private int award;
-    private int msg;
-    private int zan;
-
-    public String getLv() {
-        return lv;
+    public int state;
+    public List<Active> data;
+    public class Active implements Serializable{
+        public int id;//活动id
+        public Userinfo user;
+        public String title;
+        public String imgUrls;
+        public String activityType;
+        public long startTime;//活动开始时间
+        public long endTime;//活动结束时间
+        public long lastTime;//报名截止时间
+        public long createTime;//创建时间
+        public int maxPeople;//最大人数
+        public int memberPeople;//活动报名人数
+        public int paymentType;//付费类型（0奖励 1免费 2AA）
+        public int price;//活动价格
+        public int zan;//赞
+        public int commentNumber;//评论数
+        public String city;//城市
+        public class Userinfo{
+            public int id;
+            public String nickname;
+            public String avatar;
+            public Level level;
+            public class Level{
+                public int id;//不知道是啥id
+                public int userId;//用户id
+                public int step;//不知道
+                public int pointCount;
+                public String pointDesc;//等级名
+            }
+        }
     }
 
-    public void setLv(String lv) {
-        this.lv = lv;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getApply_lable() {
-        return apply_lable;
-    }
-
-    public void setApply_lable(String apply_lable) {
-        this.apply_lable = apply_lable;
-    }
-
-    public String getBackground() {
-        return background;
-    }
-
-    public void setBackground(String background) {
-        this.background = background;
-    }
-
-    public String getActive_lable() {
-        return active_lable;
-    }
-
-    public void setActive_lable(String active_lable) {
-        this.active_lable = active_lable;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Long getTime() {
-        return time;
-    }
-
-    public void setTime(Long time) {
-        this.time = time;
-    }
-
-    public int getApply() {
-        return apply;
-    }
-
-    public void setApply(int apply) {
-        this.apply = apply;
-    }
-
-    public int getAward() {
-        return award;
-    }
-
-    public void setAward(int award) {
-        this.award = award;
-    }
-
-    public int getMsg() {
-        return msg;
-    }
-
-    public void setMsg(int msg) {
-        this.msg = msg;
-    }
-
-    public int getZan() {
-        return zan;
-    }
-
-    public void setZan(int zan) {
-        this.zan = zan;
-    }
 }

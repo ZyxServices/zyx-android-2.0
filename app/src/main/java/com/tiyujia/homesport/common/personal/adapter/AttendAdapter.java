@@ -21,16 +21,6 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel> {
     }
     @Override
     protected void convert(BaseViewHolder baseViewHolder, ActiveModel activeModel) {
-        baseViewHolder.setText(R.id.tv_title,activeModel.getTitle())
-                .setText(R.id.tv_nickname,activeModel.getNickname())
-                .setText(R.id.tv_time,sdf.format(new Date(activeModel.getTime()))+"")
-                .setText(R.id.tv_apply_lable,activeModel.getApply_lable())
-                .setText(R.id.tv_active_lable,activeModel.getActive_lable())
-                .setText(R.id.tv_apply,activeModel.getApply()+"")
-                .setText(R.id.tv_award,activeModel.getAward()+"")
-                .setText(R.id.tv_address,activeModel.getAddress())
-                .setText(R.id.tv_msg,activeModel.getMsg()+"")
-                .setText(R.id.tv_zan,activeModel.getZan()+"");
 
     }
 }

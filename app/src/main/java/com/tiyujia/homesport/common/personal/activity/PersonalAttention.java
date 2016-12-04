@@ -56,7 +56,7 @@ public class PersonalAttention extends ImmersiveActivity implements View.OnClick
         iv_search.setOnClickListener(this);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter=new AttentionAdapter(null);
+        adapter=new AttentionAdapter(this,null);
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);

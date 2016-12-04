@@ -4,7 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -16,12 +18,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -34,11 +39,14 @@ import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.ui.ImagePreviewDelActivity;
 import com.lzy.imagepicker.view.CropImageView;
+import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
 import com.tiyujia.homesport.common.personal.activity.PersonalSetInfo;
+import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.StorePhotosUtil;
 import com.tiyujia.homesport.util.UploadUtil;
@@ -52,6 +60,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.net.URI;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,6 +71,8 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * 作者: Cymbi on 2016/11/18 15:22.test
@@ -75,25 +86,35 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     @Bind(R.id.tvStartTime)    TextView tvStartTime;
     @Bind(R.id.tvEndTime)    TextView tvEndTime;
     @Bind(R.id.tvApplyEndTime)    TextView tvApplyEndTime;
-    @Bind(R.id.myRadioGroup)    RadioGroup myRadioGroup;
-    @Bind(R.id.rbDate)    RadioButton rbDate;
-    @Bind(R.id.rbLead)    RadioButton rbLead;
+    @Bind(R.id.tvAddress)    TextView tvAddress;
+    @Bind(R.id.etTitle)    EditText etTitle;
+    @Bind(R.id.tvNumber)    EditText tvNumber;
+    @Bind(R.id.etContent)    EditText etContent;
+    @Bind(R.id.PriceRadioGroup)    RadioGroup PriceRadioGroup;
+    @Bind(R.id.DateRadioGroup)    RadioGroup DateRadioGroup;
+    @Bind(R.id.rbDate)    RadioButton rbDate;//求约
+    @Bind(R.id.rbLead)    RadioButton rbLead;//求带
+    @Bind(R.id.rbAA)    RadioButton rbAA;//AA
+    @Bind(R.id.rbAward)    RadioButton rbAward;//奖励
+    @Bind(R.id.rbFree)    RadioButton rbFree;//免费
     @Bind(R.id.ivBackground)    ImageView ivBackground;
     @Bind(R.id.reStartTime)    RelativeLayout reStartTime;
     @Bind(R.id.reEndTime)    RelativeLayout reEndTime;
     @Bind(R.id.reApplyEndTiem)    RelativeLayout reApplyEndTiem;
     @Bind(R.id.revImage)    RecyclerView revImage;
+    @Bind(R.id.Chckbox)    CheckBox Chckbox;
     private SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    private int type=0;//活动类型(1、求约 2、求带)
+    private int type;//活动类型(1、求约 2、求带)
     private Dialog cameradialog;
     private String fileName;
     private final int PIC_FROM_CAMERA = 1;
     private Bitmap bitmap;
+    private double price=0;//价格
     private String  imageUrl;//封面图片
     private List<String > descimage;//内容图片
     private String picAddress;
     private int maxPeople=0;//报名人数限制(0 为不限制)
-    private int paymentType=0;//付费类型(0奖励 1免费 2 AA)
+    private int paymentType=1;//付费类型(0奖励 1免费 2 AA)
     public static final int IMAGE_ITEM_ADD = -1;
     public static final int REQUEST_CODE_SELECT = 100;
     public static final int REQUEST_CODE_PREVIEW = 101;
@@ -101,16 +122,25 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     private ArrayList<ImageItem> selImageList; //当前选择的所有图片
     private int maxImgCount = 9;               //允许选择图片最大数
     private ArrayList<ImageItem> images;
+    private String mToken;
+    private int mUserId;
+    private Date Apply,End,Start;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_active_publish);
         ButterKnife.bind(this);
+        setInfo();
         initview();
         initImagePicker();
         initWidget();
     }
-
+    private void setInfo() {
+        SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        mToken=share.getString("Token","");
+        mUserId=share.getInt("UserId",0);
+    }
     private void initWidget() {
         selImageList = new ArrayList<>();
         adapter = new ImagePickerAdapter(this, selImageList, maxImgCount);
@@ -128,10 +158,6 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
         reStartTime.setOnClickListener(this);
         reEndTime.setOnClickListener(this);
         reApplyEndTiem.setOnClickListener(this);
-
-        if(!myRadioGroup.isClickable()){
-        type=0;
-        }else{}
     }
 
     private void initImagePicker() {
@@ -158,7 +184,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                 break;
             default:
                 //打开预览
-                Intent intentPreview = new Intent(this, ImagePreviewDelActivity.class);
+                Intent intentPreview = new Intent(HomePageActivePublishActivity.this, ImagePreviewDelActivity.class);
                 intentPreview.putExtra(ImagePicker.EXTRA_IMAGE_ITEMS, (ArrayList<ImageItem>) adapter.getImages());
                 intentPreview.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, position);
                 startActivityForResult(intentPreview, REQUEST_CODE_PREVIEW);
@@ -172,7 +198,109 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                 finish();
                 break;
             case  R.id.tvPush:
+                if(imageUrl==null||
+                        TextUtils.isEmpty(etContent.getText())||
+                        TextUtils.isEmpty(etTitle.getText())||
+                        TextUtils.isEmpty(tvStartTime.getText())||
+                        TextUtils.isEmpty(tvApplyEndTime.getText())||
+                        TextUtils.isEmpty(tvEndTime.getText())||
+                        TextUtils.isEmpty(tvAddress.getText()))
+                {showToast("信息填写不完整");}
+                else {
+                    if(!Chckbox.isChecked()){
+                        showToast("未同意体育家活动发布服务协议无法发布活动哟");
+                    }else{
+                        String Content= etContent.getText().toString();
+                        String Title= etTitle.getText().toString();
+                        String Address= tvAddress.getText().toString();
+                        if(TextUtils.isEmpty(tvNumber.getText())||tvNumber.getText().equals("无限制")){
+                            maxPeople=0;
+                        }else {maxPeople=Integer.parseInt(tvNumber.getText().toString());}
+                        String ApplyEndTime=tvApplyEndTime.getText().toString();
+                        String EndTime=tvEndTime.getText().toString();
+                        String StartTime=tvStartTime.getText().toString();
+                        try {
+                            Apply=mFormatter.parse(ApplyEndTime);
+                            End=mFormatter.parse(EndTime);
+                            Start=mFormatter.parse(StartTime);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        long  startTime=Start.getTime();
+                        long  endTime=End.getTime();
+                        long  lastTime=Apply.getTime();
+                        //付费类型
+                        PriceRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                                if(rbAA.getId()==checkedId){
+                                    paymentType=2;
+                                }else if(rbAward.getId()==checkedId){
+                                    paymentType=0;
+                                }else if(rbFree.getId()==checkedId){
+                                    paymentType=1;
+                                }
+                                paymentType=1;
+                            }
+                        });
+                        //活动类型
+                        DateRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                                if(rbDate.getId()==checkedId){
+                                    type=1;
+                                }else if(rbLead.getId()==checkedId){
+                                    type=2;
+                                }
+                                type=2;
+                            }
+                        });
+                        if(startTime>endTime){
+                            showToast("开始时间不能小于结束时间");
+                        }else if(lastTime>endTime){
+                            showToast("报名截止时间不能大于结束时间");
+                        }else if(startTime>lastTime){
+                            showToast("开始时间不能大于报名截止时间");
+                        }else if(lastTime<startTime){
+                            showToast("报名截止时间不能小于开始时间");
+                        }
+                        else {
+                            OkGo.post(API.BASE_URL+"/v2/activity/release")
+                                    .params("token",mToken)
+                                    .params("userId",mUserId)
+                                    .params("imageUrl",imageUrl)
+                                    .params("title",Title)
+                                    .params("desc",Content)
+                                    .params("type",type)
+                                    .params("startTime",startTime)
+                                    .params("endTime",endTime)
+                                    .params("lastTime",lastTime)
+                                    .params("address",Address)
+                                    .params("maxPeople",maxPeople)
+                                    .params("price",price)
+                                    .params("city","成都")
+                                    .params("paymentType",paymentType)
+                                    .execute(new LoadCallback<LzyResponse>(this) {
+                                        @Override
+                                        public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                            if(lzyResponse.state==200){
+                                                showToast("发布成功");
+                                                finish();
+                                            }else {
+                                                showToast("服务器错误");
+                                            }
+                                        }
 
+                                        @Override
+                                        public void onError(Call call, Response response, Exception e) {
+                                            super.onError(call, response, e);
+                                            showToast("网络错误");
+                                        }
+                                    });
+                        }
+
+                    }
+                }
                 break;
             case R.id.tvUploadImage:
                 showDialogs();
