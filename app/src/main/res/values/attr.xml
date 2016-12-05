@@ -86,5 +86,4 @@
         <attr name="stateResId" format="reference" /><!--单个星星不同状态下对应的图标-->
         <attr name="differentSize" format="boolean" /><!--是否支持大小不等星星样式-->
     </declare-styleable>
-
 </resources>

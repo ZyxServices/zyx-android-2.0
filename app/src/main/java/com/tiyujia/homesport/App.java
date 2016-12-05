@@ -64,7 +64,7 @@ public class App extends Application {
          * 注意：只有在高精度模式下的单次定位有效，其他方式无效
          */
         option.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        option.setGpsFirst(true);
+        option.setGpsFirst(false);
         // 设置是否开启缓存
         option.setLocationCacheEnable(true);
         //设置是否等待设备wifi刷新，如果设置为true,会自动变为单次定位，持续定位时不要使用
