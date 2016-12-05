@@ -116,7 +116,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                                  }
                                  tvName.setText(nickname);
                                  tvLv.setText(level);
-                                 tvGz.setText(gz+"");
+                                 tvGz.setText(gz-1+"");
                                  tvFs.setText(fs+"");
                                  tvCoin.setText(coin+"");
                              }
@@ -180,5 +180,17 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                 getActivity().startActivity(new Intent(getActivity(), PersonalLogin.class));
                 break;
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setData();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        OkGo.getInstance().cancelTag(this);
     }
 }

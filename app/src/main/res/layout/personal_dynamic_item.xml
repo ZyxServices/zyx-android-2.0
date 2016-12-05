@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/personal_layout"
     android:background="@color/white"
+    android:layout_height="wrap_content"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +15,7 @@
         >
         <com.makeramen.roundedimageview.RoundedImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/me_head"
+            android:id="@+id/ivAvatar"
             style="@style/small_avatar"
             app:riv_oval="true"
             app:riv_tile_mode="clamp"
@@ -28,7 +29,7 @@
             android:layout_marginTop="18dp"
             >
             <TextView
-                android:id="@+id/tv_nickname"
+                android:id="@+id/tvNickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/day_edit_color"
@@ -36,7 +37,7 @@
                 android:textSize="15sp"
                 />
             <TextView
-                android:id="@+id/tv_time"
+                android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/day_edit_hit_color"
@@ -45,11 +46,12 @@
                 />
         </LinearLayout>
         <ImageView
-            android:id="@+id/iv_lv"
+            android:id="@+id/ivLv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/img_lv1"
             android:layout_marginTop="18dp"
+            android:visibility="gone"
             />
         <TextView
             android:layout_width="0dp"
@@ -71,24 +73,29 @@
             />
     </LinearLayout>
     <TextView
-        android:id="@+id/desc"
-        android:layout_width="match_parent"
+        android:id="@+id/tvDesc"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:textColor="#88333333"
+        android:singleLine="true"
         android:textSize="12sp"
-        tools:text="\t\t描述描述描述描述描述描述描述描述"/>
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="@dimen/dip12"
+        tools:text="描述描述描述描述描述描述描述描述"/>
 
-    <com.lzy.ninegrid.NineGridView
-        android:id="@+id/nineGrid"
+    <com.tiyujia.homesport.entity.MyGridView
+        android:id="@+id/gridview"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:ngv_gridSpacing="3dp"
-        app:ngv_maxSize="9"
-        app:ngv_mode="grid"
-        app:ngv_singleImageRatio="1"
-        app:ngv_singleImageSize="250dp"/>
+        android:numColumns="3"
+        android:layout_margin="@dimen/dip12"
+        android:verticalSpacing="5dp"
+        android:horizontalSpacing="5dp"
+        android:scrollbars="none"
+        />
     <LinearLayout
         android:id="@+id/re1"
         style="@style/pack_re1"
@@ -97,19 +104,20 @@
         android:paddingRight="@dimen/dip12"
         >
         <TextView
-            android:id="@+id/tv_address"
+            android:id="@+id/tvAddress"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:textColor="@color/day_edit_hit_color"
             android:text="成都"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/tv_msg"
+            android:id="@+id/tvMsg"
             style="@style/pack_msg"
             android:text="111"
+            android:gravity="center"
             />
         <TextView
-            android:id="@+id/tv_zan"
+            android:id="@+id/tvZan"
             style="@style/pack_zan"
             android:text="111"
             />

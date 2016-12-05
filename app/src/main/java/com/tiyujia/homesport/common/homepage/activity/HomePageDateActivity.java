@@ -1,5 +1,6 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +28,7 @@ import butterknife.ButterKnife;
 public class HomePageDateActivity extends ImmersiveActivity implements View.OnClickListener ,SwipeRefreshLayout.OnRefreshListener{
     @Bind(R.id.ivMenu) ImageView ivMenu;
     @Bind(R.id.ivBack) ImageView ivBack;
+    @Bind(R.id.ivPush) ImageView ivPush;
     @Bind(R.id.tvTitle) TextView tvTitle;
     @Bind(R.id.cbDateBanner) ConvenientBanner cbDateBanner;
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
@@ -62,6 +64,7 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
     private void setView() {
         ivMenu.setOnClickListener(this);
         ivBack.setOnClickListener(this);
+        ivPush.setOnClickListener(this);
     }
 
     @Override
@@ -72,6 +75,9 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
                     break;
                 case R.id.ivMenu:
 
+                    break;
+                case R.id.ivPush:
+                    startActivity(new Intent(this,HomePageActivePublishActivity.class));
                     break;
             }
     }

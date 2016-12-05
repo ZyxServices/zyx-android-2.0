@@ -36,7 +36,6 @@
         android:textColor="@color/day_edit_hit_color"
         android:padding="@dimen/dip12"
         android:textSize="@dimen/sp_12"
-        android:visibility="gone"
         />
     <include layout="@layout/recycleview_layout"/>
 </LinearLayout>

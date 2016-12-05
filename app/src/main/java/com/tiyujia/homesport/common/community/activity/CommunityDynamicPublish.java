@@ -2,7 +2,9 @@ package com.tiyujia.homesport.common.community.activity;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -12,15 +14,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -28,21 +31,30 @@ import com.lzy.imagepicker.ui.ImagePreviewDelActivity;
 import com.lzy.imagepicker.view.CropImageView;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.personal.activity.PersonalSetInfo;
 import com.tiyujia.homesport.entity.ImageUploadModel;
+import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.StringUtil;
 import com.tiyujia.homesport.widget.GlideImageLoader;
 import com.tiyujia.homesport.widget.ImagePickerAdapter;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
+
+import static com.loc.c.e;
 
 /**
  * 作者: Cymbi on 2016/11/18 14:22.1
@@ -61,17 +73,28 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
     private TextView tvGallery;
     @Bind(R.id.ivBack)  ImageView ivBack;
     @Bind(R.id.tvPush)  TextView tvPush;
+    @Bind(R.id.etIssueContent)  EditText etIssueContent;
     private ArrayList<ImageItem> images;
+    private String mToken;
+    private int mUserId;
+    private String local="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.community_dynamic_publish);
+        setInfo();
         initImagePicker();
         initWidget();
 
     }
 
+    private void setInfo() {
+        SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        mToken=share.getString("Token","");
+        mUserId=share.getInt("UserId",0);
+    }
     private void initWidget() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.revImage);
         selImageList = new ArrayList<>();
@@ -184,28 +207,74 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 finish();
                 break;
             case R.id.tvPush:
-                ArrayList<File> files = new ArrayList<>();
-                if (images != null && images.size() > 0) {
-                    for (int i = 0; i < images.size(); i++) {
-                        files.add(new File(images.get(i).path));
+                final String content=etIssueContent.getText().toString();
+                ArrayList<File> files=new ArrayList<>();
+                if(!TextUtils.isEmpty(content)){
+                    if (images != null && images.size() > 0) {
+                        for (int i = 0; i < images.size(); i++) {
+                            files.add(new File(images.get(i).path));
+                        }
+                        OkGo.post(API.IMAGE_URLS)
+                                .tag(this)
+                                .addFileParams("avatars", files)
+                                .execute(new LoadCallback<ImageUploadModel>(this) {
+                                    @Override
+                                    public void onSuccess(ImageUploadModel imageUploadModel, Call call, Response response) {
+                                        List<String> da =imageUploadModel.data;
+                                        String[] str = (String[])da.toArray(new String[da.size()]);
+                                        String imgUrl=  StringUtils.join(str,",");
+                                        OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                                .params("userId",mUserId)
+                                                .params("content",content)
+                                                .params("imgUrl",imgUrl)
+                                                .params("visible",0)
+                                                .params("local",local)
+                                                .execute(new LoadCallback<LzyResponse>(CommunityDynamicPublish.this) {
+                                                    @Override
+                                                    public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                                        if(lzyResponse.state==200){
+                                                            showToast("发布成功");
+                                                        }
+                                                    }
+                                                    @Override
+                                                    public void onError(Call call, Response response, Exception e) {
+                                                        super.onError(call, response, e);
+                                                        showToast("失败");
+                                                    }
+                                                });
+                                    }
+                                    @Override
+                                    public void onError(Call call, Response response, Exception e) {
+                                        super.onError(call, response, e);
+                                        showToast("onError");
+                                    }
+                                });
+                    }else {
+                        OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                .params("userId",mUserId)
+                                .params("content",content)
+                                .params("visible",0)
+                                .params("local",local)
+                                .execute(new LoadCallback<LzyResponse>(CommunityDynamicPublish.this) {
+                                    @Override
+                                    public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                        if(lzyResponse.state==200){
+                                            showToast("发布成功");
+                                        }
+                                    }
+                                    @Override
+                                    public void onError(Call call, Response response, Exception e) {
+                                        super.onError(call, response, e);
+                                        showToast("失败");
+                                    }
+                                });
+
                     }
+
+
+                }else {
+                    showToast("还没有填写内容哟~");
                 }
-                OkGo.post(API.IMAGE_URLS)
-                        .tag(this)
-                        .addFileParams("avatars", files)
-                        .execute(new LoadCallback<ImageUploadModel>(this) {
-                            @Override
-                            public void onSuccess(ImageUploadModel imageUploadModel, Call call, Response response) {
-                                showToast("dfsadafa");
-                            }
-
-                            @Override
-                            public void onError(Call call, Response response, Exception e) {
-                                super.onError(call, response, e);
-                                Log.i("onError",e.getMessage());
-                            }
-                        });
-
                 break;
         }
     }

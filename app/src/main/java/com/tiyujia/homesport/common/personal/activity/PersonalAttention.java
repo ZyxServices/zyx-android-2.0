@@ -56,7 +56,7 @@ public class PersonalAttention extends ImmersiveActivity implements View.OnClick
         iv_search.setOnClickListener(this);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter=new AttentionAdapter(null);
+        adapter=new AttentionAdapter(this,null);
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);
@@ -68,6 +68,7 @@ public class PersonalAttention extends ImmersiveActivity implements View.OnClick
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
+        tv_title.setText("我的关注");
     }
     @Override
     public void onClick(View v) {

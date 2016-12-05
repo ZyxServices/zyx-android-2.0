@@ -31,8 +31,9 @@ import butterknife.ButterKnife;
 
 public class FansAdapter extends BaseQuickAdapter<AttentionModel.AttentionList> {
 Context context;
-    public FansAdapter(List<AttentionModel.AttentionList> data) {
+    public FansAdapter(Context context,List<AttentionModel.AttentionList> data) {
         super(R.layout.personal_attention_item, data);
+        this.context=context;
     }
 
     @Override

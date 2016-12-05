@@ -48,7 +48,7 @@ public class PersonalEquipmentShow extends ImmersiveActivity {
         initdata();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recycle.setLayoutManager(layoutManager);
-        recycle.setAdapter(new DynamicAdapter(this,mDatas));
+       // recycle.setAdapter(new DynamicAdapter(this,mDatas));
 
     }
 
