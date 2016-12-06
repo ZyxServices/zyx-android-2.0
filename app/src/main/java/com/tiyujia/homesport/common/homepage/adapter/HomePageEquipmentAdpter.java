@@ -52,7 +52,6 @@ public class HomePageEquipmentAdpter extends BaseQuickAdapter<EquipmentModel.Equ
         NineGridlayout nineGrid=baseViewHolder.getView(R.id.nineGrid);
         if(equipment.imgUrl!=null){
             String str= equipment.imgUrl;
-
             ArrayList<String> imgUrls=new ArrayList<>();
             if(str.contains(",")){
                 String[] s=str.split(",");
