@@ -8,10 +8,14 @@ import android.util.Log;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.common.homepage.entity.HomePageRecentVenueEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchActiveEntity;
+import com.tiyujia.homesport.common.homepage.entity.SearchCourseEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchDynamicEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchEquipEntity;
+import com.tiyujia.homesport.common.homepage.entity.SearchUserEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchVenueEntity;
+import com.tiyujia.homesport.common.homepage.entity.UserModelEntity;
 import com.tiyujia.homesport.common.homepage.entity.VenueWholeBean;
+import com.tiyujia.homesport.common.homepage.entity.WholeSearchEntity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -307,5 +311,243 @@ public class JSONParseUtil {
         List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
         String result=cacheData.get(0);
         handleSearchVenue(result,list,handler,state);
+    }
+    public static void parseNetDataSearchCourse(Context context, String result, String name, List<SearchCourseEntity> list, Handler handler, int state){
+        CacheUtils.writeJson(context, result, name, false);
+        handleSearchCourse(result,list,handler,state);
+    }
+    private static void handleSearchCourse(String result,  List<SearchCourseEntity> list, Handler handler, int stateFinal){
+        try {
+            if (list.size() != 0) {
+                list.clear();
+            }
+            JSONObject object=new JSONObject(result);
+            int state = object.getInt("state");
+            if (state!=200) {
+                handler.sendEmptyMessage(stateFinal);
+                return;
+            }else {
+                JSONArray array=object.getJSONArray("data");
+                for (int i=0;i<array.length();i++){
+                    JSONObject data=array.getJSONObject(i);
+                    SearchCourseEntity entity=new SearchCourseEntity();
+                    entity.setCourseId(data.getInt("id"));
+                    entity.setCourseTitle(data.getString("title"));
+                    entity.setCoursePicture(API.PICTURE_URL+data.getString("imgUrl"));
+                    list.add(entity);
+                }
+                handler.sendEmptyMessage(stateFinal);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void parseLocalDataSearchCourse(Context context, String name, List<SearchCourseEntity> list, Handler handler, int state){
+        List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
+        String result=cacheData.get(0);
+        handleSearchCourse(result,list,handler,state);
+    }
+    public static void parseNetDataSearchUser(Context context, String result, String name, List<SearchUserEntity> list, Handler handler, int state){
+        CacheUtils.writeJson(context, result, name, false);
+        handleSearchUser(result,list,handler,state);
+    }
+    private static void handleSearchUser(String result,  List<SearchUserEntity> list, Handler handler, int stateFinal){
+        try {
+            if (list.size() != 0) {
+                list.clear();
+            }
+            JSONObject object=new JSONObject(result);
+            int state = object.getInt("state");
+            if (state!=200) {
+                handler.sendEmptyMessage(stateFinal);
+                return;
+            }else {
+                JSONArray array=object.getJSONArray("data");
+                for (int i=0;i<array.length();i++){
+                    JSONObject data=array.getJSONObject(i);
+                    SearchUserEntity entity=new SearchUserEntity();
+                    entity.setUserId(data.getInt("id"));
+                    String tempStr=data.getString("avatar");
+                    boolean isUrlRight=(tempStr==null||!tempStr.contains(".jpg")||!tempStr.contains(".png")||!tempStr.contains(".bmp")||!tempStr.contains(".gif"))?false:true;
+                    if (isUrlRight){
+                        entity.setUserPhotoUrl(API.PICTURE_URL+tempStr);
+                    }else {
+                        entity.setUserPhotoUrl(API.PICTURE_URL+"group1/M00/00/0F/dz1CN1g3_KmAXQW8AAAGQaCJo8Q077.jpg");
+                    }
+                    entity.setUserName(data.getString("nickname"));
+                    String level=data.getString("level");
+                    UserModelEntity modelEntity=new UserModelEntity();
+                    if (!level.equals("")&&level!=null&&!level.equals("null")){
+                       JSONObject obj=new JSONObject(level);
+                        modelEntity.setPraiseCount(obj.getInt("pointCount"));
+                        modelEntity.setUserLabel(obj.getString("pointDesc"));
+                        modelEntity.setUserStep(obj.getInt("step"));
+                        modelEntity.setUserModelId(obj.getInt("id"));
+                    }else {
+                        modelEntity=null;
+                    }
+                    entity.setEntity(modelEntity);
+                    list.add(entity);
+                }
+                handler.sendEmptyMessage(stateFinal);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void parseLocalDataSearchUser(Context context, String name, List<SearchUserEntity> list, Handler handler, int state){
+        List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
+        String result=cacheData.get(0);
+        handleSearchUser(result,list,handler,state);
+    }
+    public static void parseNetDataSearchAll(Context context, String result, String name, WholeSearchEntity data, Handler handler, int state){
+        CacheUtils.writeJson(context, result, name, false);
+        handleSearchAll(result,data,handler,state);
+    }
+    private static void handleSearchAll(String result,  WholeSearchEntity entity, Handler handler, int stateFinal){
+        try {
+            if (entity!=null) {
+                entity=new WholeSearchEntity();
+            }
+            JSONObject object=new JSONObject(result);
+            int state = object.getInt("state");
+            if (state!=200) {
+                handler.sendEmptyMessage(stateFinal);
+                return;
+            }else {
+                JSONObject jsonObject=object.getJSONObject("data");
+                //-------------------装备---------------------\\
+                JSONArray equipArray=jsonObject.getJSONArray("Equip");
+                List<SearchEquipEntity> equipEntityList=new ArrayList<>();
+                for (int i=0;i<equipArray.length();i++){
+                    JSONObject obj=equipArray.getJSONObject(i);
+                    SearchEquipEntity searchEquipEntity=new SearchEquipEntity();
+                    searchEquipEntity.setEquipId(obj.getInt("id"));
+                    searchEquipEntity.setEquipTitle(obj.getString("title"));
+                    String imageUrl=obj.getString("imgUrl");
+                    List<String> images=new ArrayList<>();
+                    if (imageUrl!=null&&!imageUrl.equals("")){
+                        String urlList[]=imageUrl.split(",");
+                        if (urlList.length!=0){
+                            for (String s:urlList){
+                                images.add(API.PICTURE_URL+s);
+                            }
+                        }
+                    }
+                    searchEquipEntity.setEquipImageUrls(images);
+                    equipEntityList.add(searchEquipEntity);
+                }
+                entity.setEquipList(equipEntityList);
+                //-------------------用户---------------------\\
+                JSONArray userArray=jsonObject.getJSONArray("User");
+                List<SearchUserEntity> userEntityList=new ArrayList<>();
+                for (int i=0;i<userArray.length();i++){
+                    JSONObject obj=userArray.getJSONObject(i);
+                    SearchUserEntity searchUserEntity=new SearchUserEntity();
+                    searchUserEntity.setUserId(obj.getInt("id"));
+                    String tempStr=obj.getString("avatar");
+                    boolean isUrlRight=(tempStr==null||!tempStr.contains(".jpg")||!tempStr.contains(".png")||!tempStr.contains(".bmp")||!tempStr.contains(".gif"))?false:true;
+                    if (isUrlRight){
+                        searchUserEntity.setUserPhotoUrl(API.PICTURE_URL+tempStr);
+                    }else {
+                        searchUserEntity.setUserPhotoUrl(API.PICTURE_URL+"group1/M00/00/0F/dz1CN1g3_KmAXQW8AAAGQaCJo8Q077.jpg");
+                    }
+                    searchUserEntity.setUserName(obj.getString("nickname"));
+                    String level=obj.getString("level");
+                    UserModelEntity modelEntity=new UserModelEntity();
+                    if (!level.equals("")&&level!=null&&!level.equals("null")){
+                        JSONObject obj1=new JSONObject(level);
+                        modelEntity.setPraiseCount(obj1.getInt("pointCount"));
+                        modelEntity.setUserLabel(obj1.getString("pointDesc"));
+                        modelEntity.setUserStep(obj1.getInt("step"));
+                        modelEntity.setUserModelId(obj1.getInt("id"));
+                    }else {
+                        modelEntity=null;
+                    }
+                    searchUserEntity.setEntity(modelEntity);
+                    userEntityList.add(searchUserEntity);
+                }
+                entity.setUserList(userEntityList);
+                //------------------场馆---------------------\\
+                JSONArray venueArray=jsonObject.getJSONArray("Venues");
+                List<SearchVenueEntity> venueEntityList=new ArrayList<>();
+                for (int i=0;i<venueArray.length();i++){
+                    JSONObject obj=venueArray.getJSONObject(i);
+                    SearchVenueEntity searchVenueEntity=new SearchVenueEntity();
+                    searchVenueEntity.setVenueId(obj.getInt("id"));
+                    searchVenueEntity.setVenueName(obj.getString("name"));
+                    searchVenueEntity.setVenueType(Integer.valueOf(obj.getString("type")));
+                    searchVenueEntity.setVenueMark(obj.getString("mark"));
+                    String imageUrl=obj.getString("imgUrl");
+                    searchVenueEntity.setVenuePicture(API.PICTURE_URL+imageUrl);
+                    searchVenueEntity.setVenueDegree(obj.getInt("level"));
+                    venueEntityList.add(searchVenueEntity);
+                }
+                entity.setVenueList(venueEntityList);
+                //------------------动态---------------------\\
+                JSONArray dynamicArray=jsonObject.getJSONArray("Concern");
+                List<SearchDynamicEntity> dynamicEntityList=new ArrayList<>();
+                for (int i=0;i<dynamicArray.length();i++){
+                    JSONObject obj=dynamicArray.getJSONObject(i);
+                    SearchDynamicEntity searchDynamicEntity=new SearchDynamicEntity();
+                    searchDynamicEntity.setDynamicId(obj.getInt("id"));
+                    searchDynamicEntity.setDynamicTitle(obj.getString("topicContent"));
+                    String imageUrl=obj.getString("imgUrl");
+                    List<String> images = new ArrayList<>();
+                    if (imageUrl!=null&&!imageUrl.equals("")) {
+                        String urlList[] = imageUrl.split(",");
+                        if (urlList.length != 0) {
+                            for (String s : urlList) {
+                                images.add(API.PICTURE_URL + s);
+                            }
+                        }
+                    }
+                    searchDynamicEntity.setDynamicImageList(images);
+                    dynamicEntityList.add(searchDynamicEntity);
+                }
+                entity.setDynamicList(dynamicEntityList);
+                //------------------活动---------------------\\
+                JSONArray activeArray=jsonObject.getJSONArray("Activity");
+                List<SearchActiveEntity> activeEntityList=new ArrayList<>();
+                for (int i=0;i<activeArray.length();i++){
+                    JSONObject obj=activeArray.getJSONObject(i);
+                    SearchActiveEntity searchActiveEntity=new SearchActiveEntity();
+                    String type=obj.getString("activityType").equals("0")?"求约":"求带";
+                    searchActiveEntity.setActiveId(obj.getInt("id"));
+                    searchActiveEntity.setType(type);
+                    searchActiveEntity.setImageUrl(API.PICTURE_URL+obj.getString("imgUrl"));
+                    searchActiveEntity.setTitle(obj.getString("title"));
+                    searchActiveEntity.setAlreadyRegistered(obj.getInt("alreadyPeople"));
+                    int restNumber=obj.getInt("maxPeople")-obj.getInt("alreadyPeople");
+                    searchActiveEntity.setRestNumber(restNumber);
+                    searchActiveEntity.setReward(obj.getInt("price"));
+                    activeEntityList.add(searchActiveEntity);
+                }
+                entity.setActiveList(activeEntityList);
+                //------------------教程---------------------\\
+                JSONArray courseArray=jsonObject.getJSONArray("Activity");
+                List<SearchCourseEntity> courseEntityList=new ArrayList<>();
+                for (int i=0;i<courseArray.length();i++){
+                    JSONObject obj=activeArray.getJSONObject(i);
+                    SearchCourseEntity searchCourseEntity=new SearchCourseEntity();
+                    searchCourseEntity.setCourseId(obj.getInt("id"));
+                    searchCourseEntity.setCourseTitle(obj.getString("title"));
+                    searchCourseEntity.setCoursePicture(API.PICTURE_URL+obj.getString("imgUrl"));
+                    courseEntityList.add(searchCourseEntity);
+                }
+                entity.setCourseList(courseEntityList);
+                Message message=new Message();
+                message.what=stateFinal;
+                message.obj=entity;
+                handler.sendMessage(message);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void parseLocalDataSearchAll(Context context, String name, WholeSearchEntity data, Handler handler, int state){
+        List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
+        String result=cacheData.get(0);
+        handleSearchAll(result,data,handler,state);
     }
 }
