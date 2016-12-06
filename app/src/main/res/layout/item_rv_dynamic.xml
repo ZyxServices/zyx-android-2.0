@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvDynamicTitle"
+        android:text="一激动忘记了上图，张继科是哪个？？？？"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        android:paddingTop="18dp"
+        android:paddingBottom="10dp"
+        android:lineSpacingExtra="12dp"
+        />
+    <com.w4lle.library.NineGridlayout
+        android:id="@+id/nglDynamicImages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        />
+    <TextView
+        style="@style/finelin" />
+</LinearLayout>

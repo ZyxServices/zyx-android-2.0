@@ -50,7 +50,7 @@ public class HomePageVenueSurveyActivity extends NewBaseActivity implements View
     @Bind(R.id.llEndSearch)         LinearLayout llEndSearch;
     @Bind(R.id.tabResult)           LinearLayout tabResult;//搜索结果布局
     @Bind(R.id.llSearchResult)      LinearLayout llSearchResult;//搜索记录布局
-    private static EditText etVenueSearch;
+    public static EditText etVenueSearch;
     DBVenueContext dbVenueContext;
     AllVenueFragment allVenueFragment;
     NearVenueFragment nearVenueFragment;
@@ -99,9 +99,10 @@ public class HomePageVenueSurveyActivity extends NewBaseActivity implements View
         setView();
         tabAdapter=new TablayoutVPAdapter(getSupportFragmentManager(),mFragments,mTitle);
         vp.setAdapter(tabAdapter);
+        vp.setOffscreenPageLimit(3);
+        vp.setCurrentItem(0);
         //tablayout和viewpager关联
         tab.setupWithViewPager(vp);
-        vp.setOffscreenPageLimit(4);
         tab.setTabsFromPagerAdapter(tabAdapter);
         tab.setTabGravity(TabLayout.GRAVITY_FILL);
         tab.setTabMode(TabLayout.MODE_FIXED);
@@ -117,10 +118,14 @@ public class HomePageVenueSurveyActivity extends NewBaseActivity implements View
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.i("tag",allVenueFragment.toString());//有
+                Log.i("tag",allVenueFragment.adapter.toString());//有
+                Log.i("tag",hotVenueFragment.toString());//有
+                Log.i("tag",hotVenueFragment.adapter.toString());//空
                 allVenueFragment.adapter.getFilter().filter(s);
-                nearVenueFragment.adapter.getFilter().filter(s);
                 hotVenueFragment.adapter.getFilter().filter(s);
                 hardVenueFragment.adapter.getFilter().filter(s);
+                nearVenueFragment.adapter.getFilter().filter(s);
                 tabAdapter.notifyDataSetChanged();
                 if (!s.toString().trim().equals("")){
                     llSearchResult.setVisibility(View.GONE);

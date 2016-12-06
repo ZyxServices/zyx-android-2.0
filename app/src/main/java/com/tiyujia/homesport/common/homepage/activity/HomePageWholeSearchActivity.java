@@ -15,9 +15,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.adapter.HomePageRecentVenueAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.WholeSearchRecordAdapter;
 import com.tiyujia.homesport.common.homepage.dao.DBWholeContext;
 import com.tiyujia.homesport.common.homepage.entity.WholeBean;
+import com.tiyujia.homesport.common.homepage.fragment.ActiveSearchFragment;
+import com.tiyujia.homesport.common.homepage.fragment.AllVenueFragment;
+import com.tiyujia.homesport.common.homepage.fragment.DynamicSearchFragment;
+import com.tiyujia.homesport.common.homepage.fragment.EquipSearchFragment;
+import com.tiyujia.homesport.common.homepage.fragment.VenueSearchFragment;
 import com.tiyujia.homesport.common.homepage.fragment.WholeSearchFragment;
 import com.tiyujia.homesport.common.personal.fragment.AttendFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
@@ -32,7 +38,7 @@ public class HomePageWholeSearchActivity extends NewBaseActivity implements View
     @Bind(R.id.tvWholeSearchClose)      TextView tvWholeSearchClose;
     @Bind(R.id.tvClearWholeRecord)      TextView tvClearWholeRecord;
     @Bind(R.id.tvWholeSearchTitle)      TextView tvWholeSearchTitle;
-    @Bind(R.id.etWholeSearch)           EditText etWholeSearch;
+    static EditText etWholeSearch;
     @Bind(R.id.rvWholeSearchResult)     RecyclerView rvWholeSearchResult;
     @Bind(R.id.llWholeSearchResult)     LinearLayout llWholeSearchResult;//显示搜索记录的布局
     @Bind(R.id.tabResult)               LinearLayout tabResult;//显示搜索结果的布局
@@ -41,7 +47,11 @@ public class HomePageWholeSearchActivity extends NewBaseActivity implements View
     private List<WholeBean> list;
     DBWholeContext wholeContext;
     WholeSearchRecordAdapter wholeAdapter;
-    WholeSearchFragment wholeFragment;
+    WholeSearchFragment wholeSearchFragment;
+    ActiveSearchFragment activeSearchFragment;
+    EquipSearchFragment equipSearchFragment;
+    DynamicSearchFragment dynamicSearchFragment;
+    VenueSearchFragment venueSearchFragment;
     TablayoutVPAdapter tabAdapter;
     public static final int HANDLE_WHOLE_RECORD_DATA=1;
     Handler handler=new Handler(){
@@ -58,7 +68,7 @@ public class HomePageWholeSearchActivity extends NewBaseActivity implements View
                         wholeAdapter.setOnItemClickListener(new WholeSearchRecordAdapter.OnItemClickListener() {
                             @Override
                             public void onItemClick(String searchText) {
-                                if (wholeFragment!=null){
+                                if (wholeSearchFragment!=null){
                                     // wholeFragment.adapter.getFilter().filter(searchText);
                                     tabAdapter.notifyDataSetChanged();
                                     llWholeSearchResult.setVisibility(View.GONE);
@@ -82,6 +92,7 @@ public class HomePageWholeSearchActivity extends NewBaseActivity implements View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page_whole_search);
         setView();
+        etWholeSearch= (EditText) findViewById(R.id.etWholeSearch);
         tabAdapter=new TablayoutVPAdapter(getSupportFragmentManager(),mFragments,mTitle);
         vp.setAdapter(tabAdapter);
         //tablayout和viewpager关联
@@ -97,13 +108,19 @@ public class HomePageWholeSearchActivity extends NewBaseActivity implements View
         mTitle.add("活动");
         mTitle.add("装备");
         mTitle.add("动态");
-        mTitle.add("教程");
         mTitle.add("场馆");
-        wholeFragment=new WholeSearchFragment();
-        mFragments.add(wholeFragment);
-        mFragments.add(new AttendFragment());
-        mFragments.add(new AttendFragment());
-        mFragments.add(new AttendFragment());
+        mTitle.add("教程");
+        mTitle.add("用户");
+        wholeSearchFragment=new WholeSearchFragment();
+        activeSearchFragment=new ActiveSearchFragment();
+        equipSearchFragment=new EquipSearchFragment();
+        dynamicSearchFragment=new DynamicSearchFragment();
+        venueSearchFragment=new VenueSearchFragment();
+        mFragments.add(wholeSearchFragment);
+        mFragments.add(activeSearchFragment);
+        mFragments.add(equipSearchFragment);
+        mFragments.add(dynamicSearchFragment);
+        mFragments.add(venueSearchFragment);
         mFragments.add(new AttendFragment());
         mFragments.add(new AttendFragment());
         wholeContext=new DBWholeContext(this);
@@ -128,6 +145,13 @@ public class HomePageWholeSearchActivity extends NewBaseActivity implements View
             case R.id.tvWholeSearchClose:
                 finish();
                 break;
+        }
+    }
+    public static String getSearchText(){
+        if (etWholeSearch==null){
+            return "";
+        }else {
+            return etWholeSearch.getText().toString().trim().equals("")?"":etWholeSearch.getText().toString().trim();
         }
     }
 }

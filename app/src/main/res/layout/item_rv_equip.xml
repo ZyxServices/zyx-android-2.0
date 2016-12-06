@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="图多就有真相"
+        android:textColor="#333333"
+        android:textSize="15sp"
+        android:paddingTop="10dp"
+        android:paddingBottom="15dp"
+        android:id="@+id/tvEquipTitle"
+        android:singleLine="true"
+        android:ellipsize="end"/>
+    <com.w4lle.library.NineGridlayout
+        android:id="@+id/nglEquipImages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        />
+    <TextView
+        style="@style/finelin" />
+</LinearLayout>

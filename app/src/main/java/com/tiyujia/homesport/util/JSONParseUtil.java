@@ -7,6 +7,10 @@ import android.util.Log;
 
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.common.homepage.entity.HomePageRecentVenueEntity;
+import com.tiyujia.homesport.common.homepage.entity.SearchActiveEntity;
+import com.tiyujia.homesport.common.homepage.entity.SearchDynamicEntity;
+import com.tiyujia.homesport.common.homepage.entity.SearchEquipEntity;
+import com.tiyujia.homesport.common.homepage.entity.SearchVenueEntity;
 import com.tiyujia.homesport.common.homepage.entity.VenueWholeBean;
 
 import org.json.JSONArray;
@@ -54,7 +58,7 @@ public class JSONParseUtil {
                     if (images!=null&&!images.equals("")&&!images.equals("null")){
                         String [] imageUrls=images.split(",");
                         for (String s:imageUrls){
-                            urls.add(s);
+                            urls.add(API.PICTURE_URL+s);
                         }
                     }else {
                         urls=new ArrayList<>();
@@ -63,7 +67,11 @@ public class JSONParseUtil {
                     String level=data.getString("level");
                     int degree=5;
                     if (!level.equals("")&&!level.equals("null")&&level!=null){
-                        degree=Integer.valueOf(level);
+                        int tmpDegreee=Integer.valueOf(level);
+                        if (tmpDegreee>5){
+                            tmpDegreee=5;
+                        }
+                        degree=tmpDegreee;
                     }
                     entity.setLevel(degree);
                     entity.setCreate_time(data.getInt("create_time"));
@@ -129,5 +137,175 @@ public class JSONParseUtil {
         List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
         String result=cacheData.get(0);
         handleVenueDetail(result,data,handler,state);
+    }
+    public static void parseNetDataSearchActive(Context context, String result, String name, List<SearchActiveEntity> list, Handler handler, int state){
+        CacheUtils.writeJson(context, result, name, false);
+        handleSearchActive(result,list,handler,state);
+    }
+    private static void handleSearchActive(String result,  List<SearchActiveEntity> list, Handler handler, int stateFinal){
+        try {
+            if (list.size() != 0) {
+                list.clear();
+            }
+            JSONObject object=new JSONObject(result);
+            int state = object.getInt("state");
+            if (state!=200) {
+                handler.sendEmptyMessage(stateFinal);
+                return;
+            }else {
+                JSONArray array=object.getJSONArray("data");
+                for (int i=0;i<array.length();i++){
+                    JSONObject data=array.getJSONObject(i);
+                    SearchActiveEntity entity=new SearchActiveEntity();
+                    String type=data.getString("activityType").equals("0")?"求约":"求带";
+                    entity.setActiveId(data.getInt("id"));
+                    entity.setType(type);
+                    entity.setImageUrl(API.PICTURE_URL+data.getString("imgUrl"));
+                    entity.setTitle(data.getString("title"));
+                    entity.setAlreadyRegistered(data.getInt("alreadyPeople"));
+                    int restNumber=data.getInt("maxPeople")-data.getInt("alreadyPeople");
+                    entity.setRestNumber(restNumber);
+                    entity.setReward(data.getInt("price"));
+                    list.add(entity);
+                }
+                handler.sendEmptyMessage(stateFinal);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void parseLocalDataSearchActive(Context context, String name, List<SearchActiveEntity> list, Handler handler, int state){
+        List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
+        String result=cacheData.get(0);
+        handleSearchActive(result,list,handler,state);
+    }
+    public static void parseNetDataSearchEquip(Context context, String result, String name, List<SearchEquipEntity> list, Handler handler, int state){
+        CacheUtils.writeJson(context, result, name, false);
+        handleSearchEquip(result,list,handler,state);
+    }
+    private static void handleSearchEquip(String result,  List<SearchEquipEntity> list, Handler handler, int stateFinal){
+        try {
+            if (list.size() != 0) {
+                list.clear();
+            }
+            JSONObject object=new JSONObject(result);
+            int state = object.getInt("state");
+            if (state!=200) {
+                handler.sendEmptyMessage(stateFinal);
+                return;
+            }else {
+                JSONArray array=object.getJSONArray("data");
+                for (int i=0;i<array.length();i++){
+                    JSONObject data=array.getJSONObject(i);
+                    SearchEquipEntity entity=new SearchEquipEntity();
+                    entity.setEquipId(data.getInt("id"));
+                    entity.setEquipTitle(data.getString("title"));
+                    String imageUrl=data.getString("imgUrl");
+                    List<String> images=new ArrayList<>();
+                    if (imageUrl!=null&&!imageUrl.equals("")){
+                    String urlList[]=imageUrl.split(",");
+                    if (urlList.length!=0){
+                        for (String s:urlList){
+                            images.add(API.PICTURE_URL+s);
+                        }
+                    }
+                    }
+                    entity.setEquipImageUrls(images);
+                    list.add(entity);
+                }
+                handler.sendEmptyMessage(stateFinal);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void parseLocalDataSearchEquip(Context context, String name, List<SearchEquipEntity> list, Handler handler, int state){
+        List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
+        String result=cacheData.get(0);
+        handleSearchEquip(result,list,handler,state);
+    }
+    public static void parseNetDataSearchDynamic(Context context, String result, String name, List<SearchDynamicEntity> list, Handler handler, int state){
+        CacheUtils.writeJson(context, result, name, false);
+        handleSearchDynamic(result,list,handler,state);
+    }
+    private static void handleSearchDynamic(String result,  List<SearchDynamicEntity> list, Handler handler, int stateFinal){
+        try {
+            if (list.size() != 0) {
+                list.clear();
+            }
+            JSONObject object=new JSONObject(result);
+            int state = object.getInt("state");
+            if (state!=200) {
+                handler.sendEmptyMessage(stateFinal);
+                return;
+            }else {
+                JSONArray array=object.getJSONArray("data");
+                for (int i=0;i<array.length();i++){
+                    JSONObject data=array.getJSONObject(i);
+                    SearchDynamicEntity entity=new SearchDynamicEntity();
+                    entity.setDynamicId(data.getInt("id"));
+                    entity.setDynamicTitle(data.getString("topicContent"));
+                    String imageUrl=data.getString("imgUrl");
+                    List<String> images = new ArrayList<>();
+                    if (imageUrl!=null&&!imageUrl.equals("")) {
+                        String urlList[] = imageUrl.split(",");
+                        if (urlList.length != 0) {
+                            for (String s : urlList) {
+                                images.add(API.PICTURE_URL + s);
+                            }
+                        }
+                    }
+                    entity.setDynamicImageList(images);
+                    list.add(entity);
+                }
+                handler.sendEmptyMessage(stateFinal);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void parseLocalDataSearchDynamic(Context context, String name, List<SearchDynamicEntity> list, Handler handler, int state){
+        List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
+        String result=cacheData.get(0);
+        handleSearchDynamic(result,list,handler,state);
+    }
+    public static void parseNetDataSearchVenue(Context context, String result, String name, List<SearchVenueEntity> list, Handler handler, int state){
+        CacheUtils.writeJson(context, result, name, false);
+        handleSearchVenue(result,list,handler,state);
+    }
+    private static void handleSearchVenue(String result,  List<SearchVenueEntity> list, Handler handler, int stateFinal){
+        try {
+            if (list.size() != 0) {
+                list.clear();
+            }
+            JSONObject object=new JSONObject(result);
+            int state = object.getInt("state");
+            if (state!=200) {
+                handler.sendEmptyMessage(stateFinal);
+                return;
+            }else {
+                JSONArray array=object.getJSONArray("data");
+                for (int i=0;i<array.length();i++){
+                    JSONObject data=array.getJSONObject(i);
+                    SearchVenueEntity entity=new SearchVenueEntity();
+                    entity.setVenueId(data.getInt("id"));
+                    entity.setVenueName(data.getString("name"));
+                    entity.setVenueType(Integer.valueOf(data.getString("type")));
+                    entity.setVenueMark(data.getString("mark"));
+                    String imageUrl=data.getString("imgUrl");
+                    entity.setVenuePicture(API.PICTURE_URL+imageUrl);
+                    entity.setVenueDegree(data.getInt("level"));
+                    list.add(entity);
+                }
+                handler.sendEmptyMessage(stateFinal);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void parseLocalDataSearchVenue(Context context, String name, List<SearchVenueEntity> list, Handler handler, int state){
+        List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
+        String result=cacheData.get(0);
+        handleSearchVenue(result,list,handler,state);
     }
 }
