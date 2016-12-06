@@ -59,14 +59,12 @@ public class CommunityAddAttention extends ImmersiveActivity implements View.OnC
         swipeRefresh.setOnRefreshListener(this);
         onRefresh();
     }
-
     private void setInfo() {
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
         tv_title.setText("添加关注");
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -78,7 +76,6 @@ public class CommunityAddAttention extends ImmersiveActivity implements View.OnC
                 break;
         }
     }
-
     @Override
     public void onRefresh() {
         OkGo.post(API.BASE_URL+"/v2/follow/list")
@@ -92,7 +89,6 @@ public class CommunityAddAttention extends ImmersiveActivity implements View.OnC
                             adapter.setNewData(attentionModel.data);
                         }
                     }
-
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);

@@ -16,6 +16,7 @@ import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.personal.model.AttentionModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.StringUtil;
@@ -47,9 +48,11 @@ public class AddAttentionAdapter extends BaseQuickAdapter<AttentionModel.Attenti
         final TextView tv_yes=baseViewHolder.getView(R.id.tv_yes);
         final TextView tv_not=baseViewHolder.getView(R.id.tv_not);
         tv_yes.setVisibility(View.VISIBLE);
-       /* if(attentionList.level!=null||!attentionList.level.equals("null")){
+        if(attentionList.level==null||attentionList.level.equals("null")){
+            LvUtil.setLv(ivLv,"初学乍练");
+        }else {
             LvUtil.setLv(ivLv,attentionList.level.pointDesc);
-        }else {}*/
+        }
         SharedPreferences share = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         final String mToken=share.getString("Token","");
         final int mUserId=share.getInt("UserId",0);
