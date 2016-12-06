@@ -18,17 +18,12 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.personal.adapter.AttentionAdapter;
 import com.tiyujia.homesport.common.personal.adapter.FansAdapter;
 import com.tiyujia.homesport.common.personal.model.AttentionModel;
-import com.tiyujia.homesport.entity.ActiveModel;
 import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.util.RefreshUtil;
 
-import java.util.ArrayList;
-
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Response;
 

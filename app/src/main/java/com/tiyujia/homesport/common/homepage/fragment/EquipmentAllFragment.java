@@ -13,8 +13,7 @@ import android.view.ViewGroup;
 import com.tiyujia.homesport.BaseFragment;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageEquipmentAdpter;
-import com.tiyujia.homesport.common.personal.adapter.TestAdapter;
-import com.tiyujia.homesport.entity.ActiveModel;
+import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.util.RefreshUtil;
 
 import java.util.ArrayList;

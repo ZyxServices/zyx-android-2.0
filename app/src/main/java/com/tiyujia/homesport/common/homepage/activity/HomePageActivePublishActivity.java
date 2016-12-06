@@ -266,6 +266,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                         }
                         else {
                             OkGo.post(API.BASE_URL+"/v2/activity/release")
+                                    .tag(this)
                                     .params("token",mToken)
                                     .params("userId",mUserId)
                                     .params("imageUrl",imageUrl)
