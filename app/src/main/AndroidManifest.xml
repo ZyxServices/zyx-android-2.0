@@ -32,7 +32,7 @@
     android:anyDensity="true"
     android:allowBackup="true">
     <!-- 地图功能配置信息 -->
-    <meta-data android:name="com.amap.api.v2.apikey" android:value="84ae7306712de2d7134d569db2d8df97"/>
+    <meta-data android:name="com.amap.api.v2.apikey" android:value="e6d608c85098eecf2980f025b728a546"/>
     <service android:name="com.amap.api.location.APSService"/>
     <!-- 地图功能配置信息 -->
      <activity android:name=".BootLoaderActivity" android:theme="@style/AppTheme">

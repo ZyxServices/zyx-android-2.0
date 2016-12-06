@@ -39,6 +39,7 @@ public class AllVenueFragment extends BaseFragment implements  SwipeRefreshLayou
     private View view;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
+    boolean isRefresh=false;
     public static HomePageRecentVenueAdapter adapter;
     List<HomePageRecentVenueEntity>  datas=new ArrayList<>();
     public static final int HANDLE_DATA=1;
@@ -49,10 +50,10 @@ public class AllVenueFragment extends BaseFragment implements  SwipeRefreshLayou
                 case HANDLE_DATA:
                     adapter=new HomePageRecentVenueAdapter(getActivity(),datas);
                     adapter.setFriends(datas);
-                    adapter.getFilter().filter(HomePageVenueSurveyActivity.getSearchText());
                     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
                     recyclerView.setLayoutManager(layoutManager);
                     recyclerView.setAdapter(adapter);
+                    adapter.getFilter().filter(isRefresh == true ?HomePageVenueSurveyActivity.etVenueSearch.getText().toString().trim() : HomePageVenueSurveyActivity.getSearchText());
                     srlRefresh.setRefreshing(false);
                     break;
             }
@@ -101,6 +102,7 @@ public class AllVenueFragment extends BaseFragment implements  SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
+        isRefresh=true;
         setData();
         new Handler().postDelayed(new Runnable() {
             @Override public void run() {
