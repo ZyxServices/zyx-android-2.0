@@ -3,13 +3,8 @@ package com.tiyujia.homesport.common.community.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,24 +14,16 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.personal.model.AttentionModel;
-import com.tiyujia.homesport.entity.ActiveModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
-import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.StringUtil;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import okhttp3.Call;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * 作者: Cymbi on 2016/11/15 11:58.1

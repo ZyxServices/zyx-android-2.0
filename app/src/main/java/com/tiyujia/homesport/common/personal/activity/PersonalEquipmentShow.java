@@ -10,8 +10,7 @@ import android.widget.TextView;
 
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.personal.adapter.DynamicAdapter;
-import com.tiyujia.homesport.entity.ActiveModel;
+import com.tiyujia.homesport.common.personal.model.ActiveModel;
 
 import java.util.ArrayList;
 

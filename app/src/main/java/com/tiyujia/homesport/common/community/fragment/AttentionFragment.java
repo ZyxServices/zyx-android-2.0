@@ -2,9 +2,7 @@ package com.tiyujia.homesport.common.community.fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +11,7 @@ import android.view.ViewGroup;
 import com.tiyujia.homesport.BaseFragment;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.adapter.AttentionAdapter;
-import com.tiyujia.homesport.entity.ActiveModel;
+import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.util.RefreshUtil;
 
 import java.util.ArrayList;

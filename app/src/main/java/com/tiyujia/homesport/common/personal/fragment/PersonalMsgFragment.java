@@ -9,20 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.tiyujia.homesport.BaseFragment;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.personal.adapter.MsgAdapter;
-import com.tiyujia.homesport.common.personal.adapter.TestAdapter;
-import com.tiyujia.homesport.entity.ActiveModel;
+import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.util.RefreshUtil;
 
 import java.util.ArrayList;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * 作者: Cymbi on 2016/11/16 10:53.

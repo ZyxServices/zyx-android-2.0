@@ -19,14 +19,10 @@ import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.adapter.AddAttentionAdapter;
 import com.tiyujia.homesport.common.personal.model.AttentionModel;
-import com.tiyujia.homesport.entity.ActiveModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.util.RefreshUtil;
 
-import java.util.ArrayList;
-
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Response;
 
