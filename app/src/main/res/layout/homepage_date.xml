@@ -29,6 +29,7 @@
             />
     </RelativeLayout>
 <TextView
+    android:id="@+id/tvline"
     style="@style/finelin"/>
 
     <android.support.v4.widget.SwipeRefreshLayout

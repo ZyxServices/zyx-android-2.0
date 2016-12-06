@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.entity.ActiveModel;
+import com.tiyujia.homesport.common.personal.model.ActiveModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,21 +54,8 @@ public class TestAdapter extends RecyclerView.Adapter {
         return mDatas.size();
     }
     public class myholder extends RecyclerView.ViewHolder{
-        @Bind(R.id.me_head) ImageView me_head;
-        @Bind(R.id.iv_lv) ImageView iv_lv;
-        @Bind(R.id.iv_background) ImageView iv_background;
-        @Bind(R.id.tv_time) TextView tv_time;
-        @Bind(R.id.tv_apply_lable) TextView tv_apply_lable;
-        @Bind(R.id.tv_active_lable) TextView tv_active_lable;
-        @Bind(R.id.tv_title) TextView tv_title;
-        @Bind(R.id.tv_award) TextView tv_award;
-        @Bind(R.id.tv_address) TextView tv_address;
-        @Bind(R.id.tv_msg) TextView tv_msg;
-        @Bind(R.id.tv_zan) TextView tv_zan;
-        @Bind(R.id.tv_apply) TextView tv_apply;
         public myholder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
         }
     }
 }

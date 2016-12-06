@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,18 +13,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.cache.CacheMode;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.personal.adapter.DynamicAdapter;
 import com.tiyujia.homesport.common.personal.model.MyDynamicModel;
-import com.tiyujia.homesport.entity.ActiveModel;
-import com.tiyujia.homesport.entity.JsonCallback;
-import com.tiyujia.homesport.entity.LoadCallback;
-import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.GetUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
 
@@ -38,9 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
-import okhttp3.Call;
-import okhttp3.Response;
+
 /**
  * 作者: Cymbi on 2016/11/14 17:25.
  * 邮箱:928902646@qq.com

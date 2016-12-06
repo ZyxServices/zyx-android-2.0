@@ -2,17 +2,10 @@ package com.tiyujia.homesport.common.record.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -23,11 +16,9 @@ import android.widget.TextView;
 
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.personal.adapter.TestAdapter;
 import com.tiyujia.homesport.common.record.adapter.RecordTrackAdapter;
-import com.tiyujia.homesport.entity.ActiveModel;
+import com.tiyujia.homesport.common.personal.model.ActiveModel;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.Bind;
