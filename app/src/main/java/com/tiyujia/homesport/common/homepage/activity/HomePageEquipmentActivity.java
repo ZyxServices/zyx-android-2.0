@@ -9,8 +9,6 @@ import android.widget.ImageView;
 
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.homepage.fragment.EquipmentAllFragment;
-import com.tiyujia.homesport.common.personal.fragment.AttendFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 
 import java.util.ArrayList;
@@ -57,10 +55,10 @@ public class HomePageEquipmentActivity extends ImmersiveActivity {
         mTitle.add("动力绳");
         mTitle.add("头盔");
         mTitle.add("主锁");
+        /*mFragment.add(new EquipmentAllFragment());
         mFragment.add(new EquipmentAllFragment());
         mFragment.add(new EquipmentAllFragment());
         mFragment.add(new EquipmentAllFragment());
-        mFragment.add(new EquipmentAllFragment());
-        mFragment.add(new EquipmentAllFragment());
+        mFragment.add(new EquipmentAllFragment());*/
     }
 }

@@ -1,5 +1,6 @@
 package com.tiyujia.homesport.util;
 
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.tiyujia.homesport.R;

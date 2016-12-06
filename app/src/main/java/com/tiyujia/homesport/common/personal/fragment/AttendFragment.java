@@ -60,7 +60,7 @@ public class AttendFragment extends BaseFragment implements  SwipeRefreshLayout.
         recyclerView.setAdapter(adapter);
         RefreshUtil.refresh(srlRefresh,getActivity());
         srlRefresh.setOnRefreshListener(this);
-        adapter.setOnLoadMoreListener(this);
+        //adapter.setOnLoadMoreListener(this);
         onRefresh();
     }
     private void setInfo() {

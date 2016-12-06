@@ -9,8 +9,11 @@ import android.widget.ImageView;
 
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.fragment.CourseActionFragment;
 import com.tiyujia.homesport.common.homepage.fragment.CourseAllFragment;
-import com.tiyujia.homesport.common.homepage.fragment.EquipmentAllFragment;
+import com.tiyujia.homesport.common.homepage.fragment.CourseCordFragment;
+import com.tiyujia.homesport.common.homepage.fragment.CourseNoviceFragment;
+import com.tiyujia.homesport.common.homepage.fragment.CourseStoneFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 
 import java.util.ArrayList;
@@ -59,9 +62,9 @@ public class HomePageCourseActivity extends ImmersiveActivity {
         mTitle.add("动作");
         mTitle.add("新手");
         mFragment.add(new CourseAllFragment());
-        mFragment.add(new EquipmentAllFragment());
-        mFragment.add(new EquipmentAllFragment());
-        mFragment.add(new EquipmentAllFragment());
-        mFragment.add(new EquipmentAllFragment());
+        mFragment.add(new CourseStoneFragment());
+        mFragment.add(new CourseCordFragment());
+        mFragment.add(new CourseActionFragment());
+        mFragment.add(new CourseNoviceFragment());
     }
 }

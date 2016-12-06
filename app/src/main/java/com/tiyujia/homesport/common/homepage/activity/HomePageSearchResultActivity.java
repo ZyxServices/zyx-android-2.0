@@ -1,6 +1,10 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -134,6 +138,7 @@ public class HomePageSearchResultActivity extends ImmersiveActivity implements V
     private void setListeners() {
         ivVenueDetailBack.setOnClickListener(this);
         ivVenueDetailMore.setOnClickListener(this);
+        tvVenuePhone.setOnClickListener(this);
     }
     private void setVenueData() {
         final int venueId=getIntent().getIntExtra("venueId",0);
@@ -213,6 +218,32 @@ public class HomePageSearchResultActivity extends ImmersiveActivity implements V
                 break;
             case R.id.ivVenueDetailMore:
                 Toast.makeText(HomePageSearchResultActivity.this,"吐司",Toast.LENGTH_LONG).show();
+                break;
+            case R.id.tvVenuePhone:
+                final AlertDialog builder = new AlertDialog.Builder(HomePageSearchResultActivity.this).create();
+                builder.setView(getLayoutInflater().inflate(R.layout.call_phone_dialog, null));
+                builder.show();
+                //去掉dialog四边的黑角
+                builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
+                TextView text=(TextView) builder.getWindow().findViewById(R.id.text);
+                text.setText("直接拨打"+tvVenuePhone.getText()+"?");
+                builder.getWindow().findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        builder.dismiss();
+                    }
+                });
+                TextView dialog_confirm=(TextView)builder.getWindow().findViewById(R.id.dialog_confirm);
+                dialog_confirm.setText("拨打");
+                dialog_confirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+tvVenuePhone.getText().toString().trim()));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        builder.dismiss();
+                    }
+                });
                 break;
         }
     }

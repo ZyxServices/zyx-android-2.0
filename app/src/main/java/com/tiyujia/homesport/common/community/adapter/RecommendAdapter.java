@@ -16,6 +16,9 @@ import com.lzy.ninegrid.NineGridView;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.model.RecommendModel;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
+import com.tiyujia.homesport.util.PicUtil;
+import com.tiyujia.homesport.util.PicassoUtil;
+import com.tiyujia.homesport.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,7 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
     }
     @Override
     protected void convert(BaseViewHolder baseViewHolder, RecommendModel.Recommend recommend) {
+        ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
         baseViewHolder.setText(R.id.tvNickname,recommend.userIconVo.nickName)
                 .setText(R.id.tvDesc,recommend.topicContent)
                 .setText(R.id.tvMsg,recommend.commentCounts+"")
@@ -45,5 +49,6 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
         }else {
             baseViewHolder.setText(R.id.tvAddress,"先写一个成都好了");
         }
+        PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(recommend.userIconVo.avatar), 320, 320),ivAvatar,320,320);
     }
 }

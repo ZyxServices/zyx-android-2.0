@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.personal.model.AttentionModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.StringUtil;
@@ -54,6 +56,11 @@ public class AttentionAdapter extends  BaseQuickAdapter<AttentionModel.Attention
         ImageView ivLv=baseViewHolder.getView(R.id.ivLv);
         final TextView tv_not=baseViewHolder.getView(R.id.tv_not);
         tv_not.setVisibility(View.VISIBLE);
+        if(attention.level!=null){
+            LvUtil.setLv(ivLv,attention.level.pointDesc);
+        }else {
+            LvUtil.setLv(ivLv,"初学乍练");
+        }
        // LvUtil.setLv(ivLv,attention.level.pointDesc);
         PicassoUtil.handlePic(context,PicUtil.getImageUrlDetail(context,StringUtil.isNullAvatar(attention.avatar), 320, 320),ivAvatar,320,320);
         tv_not.setOnClickListener(new View.OnClickListener() {
