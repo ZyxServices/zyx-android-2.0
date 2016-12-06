@@ -88,7 +88,7 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
         recyclerView.setAdapter(adapter);
         RefreshUtil.refresh(srlRefresh,this);
         srlRefresh.setOnRefreshListener(this);
-        adapter.setOnLoadMoreListener(this);
+        //adapter.setOnLoadMoreListener(this);
         onRefresh();
     }
     private void setInfo() {

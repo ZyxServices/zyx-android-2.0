@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -90,8 +91,23 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接错误在·");
+                        showToast("网络连接错误");
+                    }
+
+                    @Override
+                    public void onAfter(@Nullable RecommendModel recommendModel, @Nullable Exception e) {
+                        super.onAfter(recommendModel, e);
+                        adapter.removeAllFooterView();
+                        setRefreshing(false);
                     }
                 });
+    }
+    public void setRefreshing(final boolean refreshing) {
+        srlRefresh.post(new Runnable() {
+            @Override
+            public void run() {
+                srlRefresh.setRefreshing(refreshing);
+            }
+        });
     }
 }

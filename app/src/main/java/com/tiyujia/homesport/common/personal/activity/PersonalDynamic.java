@@ -87,7 +87,7 @@ public class PersonalDynamic extends ImmersiveActivity implements SwipeRefreshLa
                         JSONObject  object=  data.getJSONObject(i);
                         int id=object.getInt("id");
                         int userId=object.getInt("userId");
-                        int type=object.getInt("type");
+                   //     int type=object.getInt("type");
                         int zanCounts=object.getInt("zanCounts");
                         int commentCounts=object.getInt("commentCounts");
                         long createTime=object.getLong("createTime");
@@ -109,7 +109,7 @@ public class PersonalDynamic extends ImmersiveActivity implements SwipeRefreshLa
                         MyDynamicModel model =new MyDynamicModel();
                         model.setId(id);
                         model.setUserId(userId);
-                        model.setType(type);
+                      //  model.setType(type);
                         model.setZanCounts(zanCounts);
                         model.setCommentCounts(commentCounts);
                         model.setCreateTime(createTime);
