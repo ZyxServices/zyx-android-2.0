@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -16,6 +18,12 @@ import android.widget.TextView;
 import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageRecentVenueAdapter;
+import com.tiyujia.homesport.common.homepage.adapter.SearchActiveAdapter;
+import com.tiyujia.homesport.common.homepage.adapter.SearchCourseAdapter;
+import com.tiyujia.homesport.common.homepage.adapter.SearchDynamicAdapter;
+import com.tiyujia.homesport.common.homepage.adapter.SearchEquipAdapter;
+import com.tiyujia.homesport.common.homepage.adapter.SearchUserAdapter;
+import com.tiyujia.homesport.common.homepage.adapter.SearchVenueAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.WholeSearchRecordAdapter;
 import com.tiyujia.homesport.common.homepage.dao.DBWholeContext;
 import com.tiyujia.homesport.common.homepage.entity.WholeBean;
@@ -137,6 +145,39 @@ public class HomePageWholeSearchActivity extends NewBaseActivity implements View
     private void setListeners() {
         tvClearWholeRecord.setOnClickListener(this);
         tvWholeSearchClose.setOnClickListener(this);
+        etWholeSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                s=s.toString().trim();
+                if (!s.equals("")){
+                    List<RecyclerView.Adapter> adapters=WholeSearchFragment.adapterList;
+                    SearchCourseAdapter adapter1= (SearchCourseAdapter) adapters.get(0);
+                    adapter1.getFilter().filter(s);
+                    SearchActiveAdapter adapter2= (SearchActiveAdapter) adapters.get(1);
+                    adapter2.getFilter().filter(s);
+                    SearchDynamicAdapter adapter3= (SearchDynamicAdapter) adapters.get(2);
+                    adapter3.getFilter().filter(s);
+                    SearchEquipAdapter adapter4= (SearchEquipAdapter) adapters.get(3);
+                    adapter4.getFilter().filter(s);
+                    SearchVenueAdapter adapter5= (SearchVenueAdapter) adapters.get(4);
+                    adapter5.getFilter().filter(s);
+                    SearchUserAdapter adapter6= (SearchUserAdapter) adapters.get(5);
+                    adapter6.getFilter().filter(s);
+//                    ActiveSearchFragment.adapter.getFilter().filter(s);
+//                    EquipSearchFragment.adapter.getFilter().filter(s);
+//                    DynamicSearchFragment.adapter.getFilter().filter(s);
+//                    VenueSearchFragment.adapter.getFilter().filter(s);
+//                    CourseSearchFragment.adapter.getFilter().filter(s);
+//                    UserSearchFragment.adapter.getFilter().filter(s);
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
     @Override

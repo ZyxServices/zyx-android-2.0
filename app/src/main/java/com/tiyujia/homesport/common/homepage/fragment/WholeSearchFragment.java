@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.tiyujia.homesport.API;
@@ -29,6 +30,7 @@ import com.tiyujia.homesport.util.RefreshUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by zzqybyb19860112 on 2016/11/14.1
@@ -50,6 +52,7 @@ public class WholeSearchFragment extends BaseFragment implements SwipeRefreshLay
     RecyclerView rvSearchUser;
     TextView tvMoreUser;
     WholeSearchEntity wholeSearchEntity;
+    public static List<RecyclerView.Adapter> adapterList=new ArrayList<>();
     private static final int HANDLE_WHOLE_DATA=1;
     Handler handler=new Handler(){
         @Override
@@ -76,6 +79,7 @@ public class WholeSearchFragment extends BaseFragment implements SwipeRefreshLay
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(getActivity());
         rvSearchCourse.setLayoutManager(layoutManager1);
         rvSearchCourse.setAdapter(courseAdapter);
+        adapterList.add(courseAdapter);
         //活动
         SearchActiveAdapter activeAdapter=new SearchActiveAdapter(getActivity(),entity.getActiveList());
         activeAdapter.setFriends(entity.getActiveList());
@@ -83,6 +87,7 @@ public class WholeSearchFragment extends BaseFragment implements SwipeRefreshLay
         RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(getActivity());
         rvSearchActive.setLayoutManager(layoutManager2);
         rvSearchActive.setAdapter(activeAdapter);
+        adapterList.add(activeAdapter);
         //动态
         SearchDynamicAdapter dynamicAdapter=new SearchDynamicAdapter(getActivity(),entity.getDynamicList());
         dynamicAdapter.setFriends(entity.getDynamicList());
@@ -90,6 +95,7 @@ public class WholeSearchFragment extends BaseFragment implements SwipeRefreshLay
         RecyclerView.LayoutManager layoutManager3 = new LinearLayoutManager(getActivity());
         rvSearchDynamic.setLayoutManager(layoutManager3);
         rvSearchDynamic.setAdapter(dynamicAdapter);
+        adapterList.add(dynamicAdapter);
         //装备
         SearchEquipAdapter equipAdapter=new SearchEquipAdapter(getActivity(),entity.getEquipList());
         equipAdapter.setFriends(entity.getEquipList());
@@ -97,6 +103,7 @@ public class WholeSearchFragment extends BaseFragment implements SwipeRefreshLay
         RecyclerView.LayoutManager layoutManager4 = new LinearLayoutManager(getActivity());
         rvSearchEquip.setLayoutManager(layoutManager4);
         rvSearchEquip.setAdapter(equipAdapter);
+        adapterList.add(equipAdapter);
         //场馆
         SearchVenueAdapter venueAdapter=new SearchVenueAdapter(getActivity(),entity.getVenueList());
         venueAdapter.setFriends(entity.getVenueList());
@@ -104,6 +111,7 @@ public class WholeSearchFragment extends BaseFragment implements SwipeRefreshLay
         RecyclerView.LayoutManager layoutManager5 = new LinearLayoutManager(getActivity());
         rvSearchVenue.setLayoutManager(layoutManager5);
         rvSearchVenue.setAdapter(venueAdapter);
+        adapterList.add(venueAdapter);
         //用户
         SearchUserAdapter userAdapter=new SearchUserAdapter(getActivity(),entity.getUserList());
         userAdapter.setFriends(entity.getUserList());
@@ -111,6 +119,7 @@ public class WholeSearchFragment extends BaseFragment implements SwipeRefreshLay
         RecyclerView.LayoutManager layoutManager6 = new LinearLayoutManager(getActivity());
         rvSearchUser.setLayoutManager(layoutManager6);
         rvSearchUser.setAdapter(userAdapter);
+        adapterList.add(userAdapter);
         tvMoreActive.setOnClickListener(this);
         tvMoreEquip.setOnClickListener(this);
         tvMoreDynamic.setOnClickListener(this);

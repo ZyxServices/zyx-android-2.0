@@ -36,7 +36,7 @@ public class DynamicSearchFragment extends BaseFragment implements SwipeRefreshL
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
     List<SearchDynamicEntity> list=new ArrayList<>();
-    SearchDynamicAdapter adapter;
+    public static SearchDynamicAdapter adapter;
     public static final int HANDLE_DYNAMIC_DATA=1;
     Handler handler=new Handler(){
         @Override

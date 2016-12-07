@@ -206,11 +206,11 @@ public class JSONParseUtil {
                     entity.setEquipTitle(data.getString("title"));
                     String imageUrl=data.getString("imgUrl");
                     List<String> images=new ArrayList<>();
-                    if (imageUrl!=null&&!imageUrl.equals("")){
+                    if (imageUrl!=null&&!imageUrl.equals("")&&!imageUrl.equals("null")){
                     String urlList[]=imageUrl.split(",");
                     if (urlList.length!=0){
-                        for (int j=0;j<3;j++){
-                            images.add(API.PICTURE_URL+urlList[j]);
+                        for (String s:urlList){
+                            images.add(API.PICTURE_URL+s);
                         }
                     }
                     }
@@ -254,8 +254,8 @@ public class JSONParseUtil {
                     if (imageUrl!=null&&!imageUrl.equals("")) {
                         String urlList[] = imageUrl.split(",");
                         if (urlList.length != 0) {
-                            for (int j=0;j<3;j++) {
-                                images.add(API.PICTURE_URL + urlList[j]);
+                            for (String s:urlList) {
+                                images.add(API.PICTURE_URL + s);
                             }
                         }
                     }
@@ -426,7 +426,7 @@ public class JSONParseUtil {
                     searchEquipEntity.setEquipTitle(obj.getString("title"));
                     String imageUrl=obj.getString("imgUrl");
                     List<String> images=new ArrayList<>();
-                    if (imageUrl!=null&&!imageUrl.equals("")){
+                    if (imageUrl!=null&&!imageUrl.equals("")&&!imageUrl.equals("null")){
                         String urlList[]=imageUrl.split(",");
                         if (urlList.length!=0){
                             for (int j=0;j<3;j++){
@@ -494,7 +494,7 @@ public class JSONParseUtil {
                     searchDynamicEntity.setDynamicTitle(obj.getString("topicContent"));
                     String imageUrl=obj.getString("imgUrl");
                     List<String> images = new ArrayList<>();
-                    if (imageUrl!=null&&!imageUrl.equals("")) {
+                    if (imageUrl!=null&&!imageUrl.equals("")&&!imageUrl.equals("null")) {
                         String urlList[] = imageUrl.split(",");
                         if (urlList.length != 0) {
                             for (int j=0;j<3;j++) {

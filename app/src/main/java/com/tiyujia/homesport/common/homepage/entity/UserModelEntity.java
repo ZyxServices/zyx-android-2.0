@@ -10,7 +10,16 @@ public class UserModelEntity implements Serializable {
     private int userModelId;//等级制度下的id
     private int userStep;//用户等级
     private String userLabel;//用户等级名称（初学乍练）
+    private String lastDynamic="这是用户的最新动态";//用户最新动态信息（初学乍练）
     private int praiseCount;//点赞次数
+
+    public String getLastDynamic() {
+        return lastDynamic;
+    }
+
+    public void setLastDynamic(String lastDynamic) {
+        this.lastDynamic = lastDynamic;
+    }
 
     public int getUserModelId() {
         return userModelId;

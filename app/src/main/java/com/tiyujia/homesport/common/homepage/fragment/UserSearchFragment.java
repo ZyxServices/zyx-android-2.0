@@ -36,7 +36,7 @@ public class UserSearchFragment extends BaseFragment implements SwipeRefreshLayo
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
     List<SearchUserEntity> list=new ArrayList<>();
-    SearchUserAdapter adapter;
+    public static SearchUserAdapter adapter;
     public static final int HANDLE_USER_DATA=1;
     Handler handler=new Handler(){
         @Override
