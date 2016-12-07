@@ -38,7 +38,9 @@ Context context;
         tv_yes.setVisibility(View.VISIBLE);
         if (attentionList.level!=null&&attentionList.level.equals("")){
             LvUtil.setLv(ivLv,attentionList.level.pointDesc);
-        }else {}
+        }else {
+            LvUtil.setLv(ivLv,"初学乍练");
+        }
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(attentionList.avatar), 320, 320),ivAvatar,320,320);
     }
 }
