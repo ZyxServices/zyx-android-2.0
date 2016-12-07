@@ -5,6 +5,17 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:showIn="@layout/personal_other_home"
+        android:orientation="vertical"
+        >
+       <include layout="@layout/tablayout"/>
+    </LinearLayout>
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/personal_appbar"
         android:layout_width="match_parent"
@@ -37,7 +48,7 @@
                     android:paddingRight="13dp"
                     >
                     <ImageView
-                        android:id="@+id/me_back"
+                        android:id="@+id/ivBack"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@mipmap/navigation_return"
@@ -53,7 +64,7 @@
                         android:textSize="18sp"
                         />
                     <TextView
-                        android:id="@+id/tvAttention"
+                        android:id="@+id/tvAddAttention"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -65,13 +76,4 @@
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:showIn="@layout/personal_other_home"
-        android:orientation="vertical"
-        >
-       <include layout="@layout/tablayout"/>
-    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

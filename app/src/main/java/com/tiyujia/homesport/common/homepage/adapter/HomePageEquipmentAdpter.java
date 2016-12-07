@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.activity.HomePageEquipmentInfo;
 import com.tiyujia.homesport.common.homepage.entity.EquipmentModel;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.util.LvUtil;
@@ -38,7 +40,7 @@ public class HomePageEquipmentAdpter extends BaseQuickAdapter<EquipmentModel.Equ
         this.context=context;
     }
     @Override
-    protected void convert(BaseViewHolder baseViewHolder, EquipmentModel.Equipment equipment) {
+    protected void convert(BaseViewHolder baseViewHolder, final EquipmentModel.Equipment equipment) {
         baseViewHolder.setText(R.id.tvNickname,equipment.userIconVo.nickName)
                 .setText(R.id.tvTitle,equipment.title)
                 .setText(R.id.tMsg,equipment.commentCounts+"")
@@ -83,5 +85,14 @@ public class HomePageEquipmentAdpter extends BaseQuickAdapter<EquipmentModel.Equ
             LvUtil.setLv(ivLv,"初学乍练");
         }
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(equipment.userIconVo.avatar), 320, 320),ivAvatar,320,320);
+       View view= baseViewHolder.getConvertView();
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(mContext,HomePageEquipmentInfo.class);
+                i.putExtra("id",equipment.id);
+                mContext.startActivity(i);
+            }
+        });
     }
 }

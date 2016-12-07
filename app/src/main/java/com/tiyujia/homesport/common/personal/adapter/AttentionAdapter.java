@@ -2,6 +2,7 @@ package com.tiyujia.homesport.common.personal.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.personal.model.AttentionModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -51,7 +53,7 @@ public class AttentionAdapter extends  BaseQuickAdapter<AttentionModel.Attention
         final String mToken=share.getString("Token","");
         final int mUserId=share.getInt("UserId",0);
         baseViewHolder.setText(R.id.tvNickname,attention.nickname)
-        .setText(R.id.tvContent,attention.signatures);
+                .setText(R.id.tvContent,attention.signatures);
         ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
         ImageView ivLv=baseViewHolder.getView(R.id.ivLv);
         final TextView tv_not=baseViewHolder.getView(R.id.tv_not);
@@ -79,6 +81,15 @@ public class AttentionAdapter extends  BaseQuickAdapter<AttentionModel.Attention
                                 }
                             }
                         });
+            }
+        });
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i= new Intent(mContext, PersonalOtherHome.class);
+                i.putExtra("id",attention.id);
+                mContext.startActivity(i);
+
             }
         });
     }

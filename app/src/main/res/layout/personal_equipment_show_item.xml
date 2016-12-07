@@ -13,7 +13,7 @@
         >
         <com.makeramen.roundedimageview.RoundedImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/me_head"
+            android:id="@+id/ivAvatar"
             style="@style/small_avatar"
             app:riv_oval="true"
             app:riv_tile_mode="clamp"
@@ -58,18 +58,18 @@
         android:layout_marginBottom="8dp"
         android:textColor="#88333333"
         android:textSize="12sp"
-        tools:text="\t\t描述描述描述描述描述描述描述描述"/>
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        tools:text="描述描述描述描述描述描述描述描述"/>
 
-    <com.lzy.ninegrid.NineGridView
+    <com.w4lle.library.NineGridlayout
         android:id="@+id/nineGrid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:ngv_gridSpacing="3dp"
-        app:ngv_maxSize="9"
-        app:ngv_mode="grid"
-        app:ngv_singleImageRatio="1"
-        app:ngv_singleImageSize="250dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        />
     <LinearLayout
         android:id="@+id/re1"
         style="@style/pack_re1"
