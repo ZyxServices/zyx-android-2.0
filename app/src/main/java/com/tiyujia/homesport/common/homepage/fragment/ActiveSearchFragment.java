@@ -34,7 +34,7 @@ public class ActiveSearchFragment extends BaseFragment implements SwipeRefreshLa
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
     List<SearchActiveEntity> list=new ArrayList<>();
-    SearchActiveAdapter adapter;
+    public static SearchActiveAdapter adapter;
     public static final int HANDLE_ACTIVE_DATA=1;
     Handler handler=new Handler(){
         @Override

@@ -1,58 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/personal_layout"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp"
     >
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="65dp"
         android:orientation="horizontal"
-        android:paddingTop="15dp"
-        android:paddingBottom="20dp">
-    <com.makeramen.roundedimageview.RoundedImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:scaleType="centerCrop"
-        android:src="@drawable/demo_10"
-        app:riv_oval="true"
-        app:riv_tile_mode="clamp"
-        android:id="@+id/rivUserPhoto"
-        />
+        android:paddingLeft="@dimen/dip12"
+        android:paddingRight="@dimen/dip12"
+        >
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/rivUserPhoto"
+            app:riv_oval="true"
+            app:riv_tile_mode="clamp"
+            style="@style/small_avatar"
+            android:src="@drawable/demo_05"
+            />
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginLeft="12dp"
-            android:orientation="vertical">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dip10"
+            android:layout_marginRight="@dimen/dip12"
+            android:orientation="horizontal"
+            android:layout_marginTop="18dp"
+            >
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="萌妹子"
                 android:id="@+id/tvUserName"
-                android:textColor="#333333"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/day_edit_color"
+                android:text="土拨鼠"
+                android:maxEms="15"
+                android:singleLine="true"
+                android:maxLines="1"
                 android:textSize="15sp"
-                android:gravity="center_vertical"/>
-            <TextView
-                android:layout_width="70dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="#ff0000"
-                android:textColor="#ffffff"
-                android:textSize="15sp"
-                android:text="攀岩达人"
-                android:id="@+id/tvUserLabel"
-                android:gravity="center"
+                />
+            <ImageView
+                android:id="@+id/ivUserLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:src="@mipmap/img_lv3"
                 />
         </LinearLayout>
+        <TextView
+            android:id="@+id/tvUserText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/day_edit_hit_color"
+            android:textSize="12sp"
+            android:paddingTop="2dp"
+            android:ellipsize="end"
+            android:maxEms="15"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:text="这是一条最新动态"
+            android:paddingLeft="@dimen/dip10"
+            />
+    </LinearLayout>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+        <TextView
+            android:id="@+id/tvUserCancel"
+            android:layout_width="70dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="取消"
+            android:textSize="12sp"
+            android:drawableLeft="@mipmap/btn_close"
+            android:background="@drawable/attention_not"
+            android:textColor="@color/day_edit_hit_color"
+            android:visibility="gone"
+            />
+        <TextView
+            android:id="@+id/tvUserConcern"
+            android:layout_width="70dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="关注"
+            android:textSize="12sp"
+            android:drawableLeft="@mipmap/btn_add"
+            android:background="@drawable/attention_yes"
+            android:textColor="@color/green"
+            />
     </LinearLayout>
     <TextView
-        style="@style/finelin"/>
+        style="@style/boldlin" />
 </LinearLayout>

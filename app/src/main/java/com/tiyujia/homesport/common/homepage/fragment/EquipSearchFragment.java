@@ -36,7 +36,7 @@ public class EquipSearchFragment extends BaseFragment implements SwipeRefreshLay
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
     List<SearchEquipEntity> list=new ArrayList<>();
-    SearchEquipAdapter adapter;
+    public static SearchEquipAdapter adapter;
     public static final int HANDLE_EQUIP_DATA=1;
     Handler handler=new Handler(){
         @Override

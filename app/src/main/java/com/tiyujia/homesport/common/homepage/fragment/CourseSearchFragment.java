@@ -32,7 +32,7 @@ public class CourseSearchFragment extends BaseFragment implements SwipeRefreshLa
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
     List<SearchCourseEntity> list=new ArrayList<>();
-    SearchCourseAdapter adapter;
+    public static SearchCourseAdapter adapter;
     public static final int HANDLE_COURSE_DATA=1;
     Handler handler=new Handler(){
         @Override

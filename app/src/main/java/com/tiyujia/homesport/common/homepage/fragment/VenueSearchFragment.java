@@ -36,7 +36,7 @@ public class VenueSearchFragment extends BaseFragment implements SwipeRefreshLay
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
     List<SearchVenueEntity> list=new ArrayList<>();
-    SearchVenueAdapter adapter;
+    public static SearchVenueAdapter adapter;
     public static final int HANDLE_VENUE_DATA=1;
     Handler handler=new Handler(){
         @Override

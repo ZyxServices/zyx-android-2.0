@@ -15,9 +15,9 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageWholeSearchActivity;
-import com.tiyujia.homesport.common.homepage.entity.SearchCourseEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchUserEntity;
 import com.tiyujia.homesport.common.homepage.entity.UserModelEntity;
+import com.tiyujia.homesport.util.LvUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,16 +57,32 @@ public class SearchUserAdapter extends RecyclerView.Adapter implements Filterabl
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof SearchUserHolder){
-            SearchUserHolder holder= (SearchUserHolder) viewHolder;
+            final SearchUserHolder holder= (SearchUserHolder) viewHolder;
             SearchUserEntity entity=values.get(position);
             Picasso.with(context).load(entity.getUserPhotoUrl()).into(holder.rivUserPhoto);
             holder.tvUserName.setText(entity.getUserName());
             UserModelEntity modelEntity=entity.getEntity();
             if (modelEntity==null){
-                holder.tvUserLabel.setText("初学乍练");
+                LvUtil.setLv(holder.ivUserLabel,"初学乍练");
+                holder.tvUserText.setText("一条用户最新动态");
             }else {
-                holder.tvUserLabel.setText(modelEntity.getUserLabel());
+                LvUtil.setLv(holder.ivUserLabel,modelEntity.getUserLabel());
+                holder.tvUserText.setText(modelEntity.getLastDynamic());
             }
+            holder.tvUserConcern.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.tvUserCancel.setVisibility(View.VISIBLE);
+                    holder.tvUserConcern.setVisibility(View.GONE);
+                }
+            });
+            holder.tvUserCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.tvUserConcern.setVisibility(View.VISIBLE);
+                    holder.tvUserCancel.setVisibility(View.GONE);
+                }
+            });
         }
     }
     @Override
@@ -164,12 +180,18 @@ public class SearchUserAdapter extends RecyclerView.Adapter implements Filterabl
     class SearchUserHolder extends RecyclerView.ViewHolder{
         RoundedImageView rivUserPhoto;
         TextView tvUserName;
-        TextView tvUserLabel;
+        ImageView ivUserLabel;
+        TextView tvUserText;
+        TextView tvUserCancel;
+        TextView tvUserConcern;
         public SearchUserHolder(View itemView) {
             super(itemView);
             rivUserPhoto= (RoundedImageView) itemView.findViewById(R.id.rivUserPhoto);
             tvUserName= (TextView) itemView.findViewById(R.id.tvUserName);
-            tvUserLabel= (TextView) itemView.findViewById(R.id.tvUserLabel);
+            tvUserText= (TextView) itemView.findViewById(R.id.tvUserText);
+            tvUserCancel= (TextView) itemView.findViewById(R.id.tvUserCancel);
+            tvUserConcern= (TextView) itemView.findViewById(R.id.tvUserConcern);
+            ivUserLabel= (ImageView) itemView.findViewById(R.id.ivUserLabel);
         }
     }
 }
