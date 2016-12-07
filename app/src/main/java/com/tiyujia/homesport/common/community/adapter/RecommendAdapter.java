@@ -13,12 +13,15 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.ninegrid.NineGridView;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.model.RecommendModel;
+import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.StringUtil;
+import com.w4lle.library.NineGridlayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,7 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
     @Override
     protected void convert(BaseViewHolder baseViewHolder, RecommendModel.Recommend recommend) {
         ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
+        NineGridlayout nineGrid=baseViewHolder.getView(R.id.nineGrid);
         baseViewHolder.setText(R.id.tvNickname,recommend.userIconVo.nickName)
                 .setText(R.id.tvDesc,recommend.topicContent)
                 .setText(R.id.tvMsg,recommend.commentCounts+"")
@@ -50,5 +54,19 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
             baseViewHolder.setText(R.id.tvAddress,"先写一个成都好了");
         }
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(recommend.userIconVo.avatar), 320, 320),ivAvatar,320,320);
+        if(recommend.imgUrl!=null){
+            String str= recommend.imgUrl;
+            ArrayList<String> imgUrls=new ArrayList<>();
+            if(str.contains(",")){
+                String[] s=str.split(",");
+                for(String s1:s){
+                    imgUrls.add(API.PICTURE_URL+s1);
+                }
+            }
+            NGLAdapter adapter = new NGLAdapter(context, imgUrls);
+            nineGrid.setVisibility(View.VISIBLE);
+            nineGrid.setGap(6);
+            nineGrid.setAdapter(adapter);
+        }
     }
 }

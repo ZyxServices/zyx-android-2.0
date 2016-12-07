@@ -1,5 +1,6 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,11 @@ import android.widget.ImageView;
 
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.fragment.EquipmentAllFragment;
+import com.tiyujia.homesport.common.homepage.fragment.EquipmentHelmetFragment;
+import com.tiyujia.homesport.common.homepage.fragment.EquipmentLockFragment;
+import com.tiyujia.homesport.common.homepage.fragment.EquipmentRopeFragment;
+import com.tiyujia.homesport.common.homepage.fragment.EquipmentShoesFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 
 import java.util.ArrayList;
@@ -23,6 +29,7 @@ import butterknife.ButterKnife;
 
 public class HomePageEquipmentActivity extends ImmersiveActivity {
     @Bind(R.id.ivBack)   ImageView ivBack;
+    @Bind(R.id.ivPush)   ImageView ivPush;
     @Bind(R.id.tab)    TabLayout tab;
     @Bind(R.id.vp)    ViewPager vp;
     private List<String> mTitle=new ArrayList<String>();
@@ -47,6 +54,12 @@ public class HomePageEquipmentActivity extends ImmersiveActivity {
                 finish();
             }
         });
+        ivPush.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            startActivity(new Intent(HomePageEquipmentActivity.this,HomePageEquipmentShowActivity.class));
+            }
+        });
     }
 
     private void setview() {
@@ -55,10 +68,10 @@ public class HomePageEquipmentActivity extends ImmersiveActivity {
         mTitle.add("动力绳");
         mTitle.add("头盔");
         mTitle.add("主锁");
-        /*mFragment.add(new EquipmentAllFragment());
         mFragment.add(new EquipmentAllFragment());
-        mFragment.add(new EquipmentAllFragment());
-        mFragment.add(new EquipmentAllFragment());
-        mFragment.add(new EquipmentAllFragment());*/
+        mFragment.add(new EquipmentShoesFragment());
+        mFragment.add(new EquipmentRopeFragment());
+        mFragment.add(new EquipmentHelmetFragment());
+        mFragment.add(new EquipmentLockFragment());
     }
 }

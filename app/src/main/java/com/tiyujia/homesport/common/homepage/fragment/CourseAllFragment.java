@@ -68,8 +68,6 @@ public class CourseAllFragment extends BaseFragment implements SwipeRefreshLayou
         srlRefresh.setOnRefreshListener(this);
         onRefresh();
     }
-
-
     @Override
     public void onRefresh() {
         OkGo.post(API.BASE_URL+"/v2/city/findCourseList")

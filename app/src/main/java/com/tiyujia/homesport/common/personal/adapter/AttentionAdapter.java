@@ -61,7 +61,6 @@ public class AttentionAdapter extends  BaseQuickAdapter<AttentionModel.Attention
         }else {
             LvUtil.setLv(ivLv,"初学乍练");
         }
-       // LvUtil.setLv(ivLv,attention.level.pointDesc);
         PicassoUtil.handlePic(context,PicUtil.getImageUrlDetail(context,StringUtil.isNullAvatar(attention.avatar), 320, 320),ivAvatar,320,320);
         tv_not.setOnClickListener(new View.OnClickListener() {
             @Override

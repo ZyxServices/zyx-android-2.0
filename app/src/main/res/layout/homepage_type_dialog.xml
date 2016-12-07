@@ -82,6 +82,7 @@
                 android:layout_marginRight="15dp"
                 android:button="@null"
                 />
+
             <RadioButton
                 android:id="@+id/rbLeadType"
                 android:layout_width="60dp"

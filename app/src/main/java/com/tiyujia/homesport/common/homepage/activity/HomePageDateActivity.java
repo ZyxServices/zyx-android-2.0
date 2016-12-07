@@ -139,7 +139,7 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
                         rgType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                             @Override
                             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                            if(rbStateAll.getId()==checkedId){
+                            if(rbTypeAll.getId()==checkedId){
                               RgType=0;
                             }
                             if(rbDateType.getId()==checkedId){

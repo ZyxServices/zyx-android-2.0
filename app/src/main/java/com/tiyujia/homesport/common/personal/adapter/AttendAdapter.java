@@ -59,7 +59,7 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
         }else if (active.activityType==1){
             tv_active_lable.setText("求带");
         }
-        if (active.user.level!=null&&active.user.level.equals("")){
+        if (active.user.level!=null||active.user.level.equals("")){
             LvUtil.setLv(ivLv,active.user.level.pointDesc);
         }else {}
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(active.user.avatar), 320, 320),ivAvatar,320,320);
