@@ -209,8 +209,8 @@ public class JSONParseUtil {
                     if (imageUrl!=null&&!imageUrl.equals("")){
                     String urlList[]=imageUrl.split(",");
                     if (urlList.length!=0){
-                        for (String s:urlList){
-                            images.add(API.PICTURE_URL+s);
+                        for (int j=0;j<3;j++){
+                            images.add(API.PICTURE_URL+urlList[j]);
                         }
                     }
                     }
@@ -254,8 +254,8 @@ public class JSONParseUtil {
                     if (imageUrl!=null&&!imageUrl.equals("")) {
                         String urlList[] = imageUrl.split(",");
                         if (urlList.length != 0) {
-                            for (String s : urlList) {
-                                images.add(API.PICTURE_URL + s);
+                            for (int j=0;j<3;j++) {
+                                images.add(API.PICTURE_URL + urlList[j]);
                             }
                         }
                     }
@@ -429,8 +429,8 @@ public class JSONParseUtil {
                     if (imageUrl!=null&&!imageUrl.equals("")){
                         String urlList[]=imageUrl.split(",");
                         if (urlList.length!=0){
-                            for (String s:urlList){
-                                images.add(API.PICTURE_URL+s);
+                            for (int j=0;j<3;j++){
+                                images.add(API.PICTURE_URL+urlList[j]);
                             }
                         }
                     }
@@ -497,8 +497,8 @@ public class JSONParseUtil {
                     if (imageUrl!=null&&!imageUrl.equals("")) {
                         String urlList[] = imageUrl.split(",");
                         if (urlList.length != 0) {
-                            for (String s : urlList) {
-                                images.add(API.PICTURE_URL + s);
+                            for (int j=0;j<3;j++) {
+                                images.add(API.PICTURE_URL + urlList[j]);
                             }
                         }
                     }
