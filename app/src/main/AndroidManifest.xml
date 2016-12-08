@@ -85,60 +85,6 @@
         <activity android:name=".common.homepage.activity.HomePageSetCityActivity"/>
         <activity android:name=".common.homepage.activity.HomePageWholeSearchActivity"></activity>
         <activity android:name=".common.personal.activity.PersonalOtherHome"/>
-
-        <!-- 地图功能配置信息 -->
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="e6d608c85098eecf2980f025b728a546" />
-
-        <service android:name="com.amap.api.location.APSService" />
-        <!-- 地图功能配置信息 -->
-        <activity
-            android:name=".BootLoaderActivity"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".HomeActivity" />
-        <activity android:name=".common.personal.activity.PersonalSystemSetting" />
-        <activity android:name=".common.personal.activity.PersonalSetInfo" />
-        <activity android:name=".common.personal.activity.PersonalFeedback" />
-        <activity android:name=".common.personal.activity.PersonalActive" />
-        <activity android:name=".common.personal.activity.PersonalDynamic" />
-        <activity android:name=".common.personal.activity.PersonalEquipmentShow" />
-        <activity android:name=".common.personal.activity.PersonalAttention" />
-        <activity android:name=".common.personal.activity.PersonalFans" />
-        <activity android:name=".common.personal.activity.PersonalAbout" />
-        <activity android:name=".common.personal.activity.PersonalPanyanGold" />
-        <activity android:name=".common.personal.activity.PersonalPanyanGoldInfo" />
-        <activity android:name=".common.personal.activity.PersonalPanyanGoldRecord" />
-        <activity android:name=".common.personal.activity.PersonalGoldRule" />
-        <activity android:name=".common.personal.activity.PersonalMsg" />
-        <activity android:name=".common.personal.activity.PersonalLogin" />
-        <activity android:name=".common.personal.activity.PersonalRegister" />
-        <activity android:name=".common.personal.activity.PersonalForgetRegister" />
-        <activity android:name=".common.community.activity.CommunityAddAttention" />
-        <activity android:name=".common.community.activity.CommunityDynamicPublish" />
-        <activity android:name=".common.community.activity.CommunityNewVideoActivity" />
-        <activity android:name=".common.homepage.activity.HomePageVenueSurveyActivity" />
-        <activity android:name=".common.homepage.activity.HomePageDateActivity" />
-        <activity android:name=".common.homepage.activity.HomePageEquipmentActivity" />
-        <activity android:name=".common.homepage.activity.HomePageCourseActivity" />
-        <activity android:name=".common.homepage.activity.HomePageSearchResultActivity" />
-        <activity android:name=".common.homepage.activity.HomePageActivePublishActivity" />
-        <activity android:name=".common.homepage.activity.HomePageEquipmentShowActivity" />
-        <activity android:name=".common.homepage.activity.HomePageArticleActivity" />
-        <activity android:name=".common.homepage.activity.HomePageEquipmentInfo" />
-        <activity android:name=".common.record.activity.RecordTopActivity" />
-        <activity android:name=".common.record.activity.RecordTrackActivity" />
-        <activity android:name="com.lzy.imagepicker.ui.ImagePreviewDelActivity" />
-        <activity android:name=".common.homepage.activity.HomePageSetCityActivity" />
-        <activity android:name=".common.homepage.activity.HomePageWholeSearchActivity" />
-        <activity android:name=".common.personal.activity.PersonalOtherHome" />
-        <activity android:name=".common.homepage.activity.CityMapActivity"></activity>
     </application>
 
 </manifest>
