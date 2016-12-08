@@ -3,6 +3,7 @@ package com.tiyujia.homesport.common.homepage.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.entity.DateInfoModel;
 import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -48,6 +50,7 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
     @Bind(R.id.ivAvatar)    ImageView ivAvatar;
     @Bind(R.id.ivBackground)    ImageView ivBackground;
     @Bind(R.id.ivLv)    ImageView ivLv;
+    @Bind(R.id.ivPush)    ImageView ivPush;
     @Bind(R.id.tvTitle)    TextView tvTitle;
     @Bind(R.id.tvTime)    TextView tvTime;
     @Bind(R.id.tvContent)    TextView tvContent;
@@ -60,11 +63,15 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
     @Bind(R.id.srlRefresh)    SwipeRefreshLayout srlRefresh;
     private int activityId;
     private AlertDialog builder;
+    private int mUserId;
+    private String mToken;
+    private int activityUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_date_info);
+        getInfo();
         setView();
         activityId=getIntent().getIntExtra("id",0);
         RefreshUtil.refresh(srlRefresh,this);
@@ -72,10 +79,17 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
         onRefresh();
     }
 
+    private void getInfo() {
+        SharedPreferences share= getSharedPreferences("UserInfo",MODE_PRIVATE);
+        mToken= share.getString("Token","");
+        mUserId=share.getInt("UserId",0);
+    }
+
     private void setView() {
         ivBack.setOnClickListener(this);
         ivShare.setOnClickListener(this);
         tvPhone.setOnClickListener(this);
+        ivPush.setOnClickListener(this);
     }
     @Override
     public void onRefresh() {
@@ -87,6 +101,7 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
                     public void onSuccess(DateInfoModel dateInfoModel, Call call, Response response) {
                         if(dateInfoModel.state==200){
                             tvTitle.setText(dateInfoModel.data.title);
+                            activityUserId=dateInfoModel.data.user.id;
                             String starttime=API.format.format(dateInfoModel.data.startTime);
                             String endtime=API.format.format(dateInfoModel.data.endTime);
                             tvTime.setText(starttime+"—"+endtime);
@@ -249,6 +264,34 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
                         builder.dismiss();
                     }
                 });
+                break;
+            case R.id.ivPush:
+                OkGo.post(API.BASE_URL+"/v2/member/add")
+                        .tag(this)
+                        .params("token",mToken)
+                        .params("userId",mUserId)
+                        .params("activityId",activityId)
+                        .params("activityUserId",activityUserId)
+                        .execute(new LoadCallback<LzyResponse>(this) {
+                            @Override
+                            public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                if(lzyResponse.state==200){
+                                    AlertDialog  builder = new AlertDialog.Builder(HomePageDateInfo.this).create();
+                                    builder.setView(HomePageDateInfo.this.getLayoutInflater().inflate(R.layout.share_succeed_dialog, null));
+                                    builder.show();
+                                    //去掉dialog四边的黑角
+                                    builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
+                                    TextView tvTitle=(TextView)builder.getWindow().findViewById(R.id.tvTitle);
+                                    tvTitle.setText("报名成功");
+                                    TextView tvContent=(TextView)builder.getWindow().findViewById(R.id.tvContent);
+                                    tvContent.setText("感谢您的报名，祝您玩愉快");
+                                }else if(lzyResponse.state==10005){
+                                    showToast("请勿重复报名");
+                                }else if(lzyResponse.state==800){
+                                    showToast("账户失效，请重新注销登录");
+                                }
+                            }
+                        });
                 break;
         }
     }

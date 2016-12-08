@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +16,11 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
@@ -27,6 +33,8 @@ import com.tiyujia.homesport.common.homepage.dao.CityDBManager;
 import com.tiyujia.homesport.common.homepage.entity.CityBean;
 import com.tiyujia.homesport.common.homepage.entity.CityModel;
 import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.util.CityUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,6 +57,8 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
     private HashMap<String, Integer> alphaIndexer;
     private ArrayList<CityBean> mCityNames;
     HomePageCityAdapter cityAdapter;
+    private AMapLocationClientOption locationOption = new AMapLocationClientOption();
+    private AMapLocationClient locationClient = null;
     /**
      * a-z排序
      */
@@ -83,6 +93,7 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
         setContentView(R.layout.activity_home_page_set_city);
         gvHotCity= (GridView) findViewById(R.id.gvHotCity);
         setBaseData();
+        initLocation();
         mQuicLocationBar=(QuicLocationBar)findViewById(R.id.city_loactionbar);
         mQuicLocationBar.setOnTouchLitterChangedListener(new LetterListViewListener());
         overlay=(TextView)findViewById(R.id.city_dialog);
@@ -90,27 +101,43 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
         etSearchCity= (EditText) findViewById(R.id.etSearchCity);
         mCityLit=(ListView) findViewById(R.id.city_list);
         mQuicLocationBar.setTextDialog(overlay);
-        String nowCity=App.nowCity;
-        if (nowCity==null){
+       // String nowCity=App.nowCity;
+       /* if (TextUtils.isEmpty(nowCity)){
             tvNowCity.setText("定位中");
             tvNowCity.postInvalidate();
         }else {
             tvNowCity.setText(nowCity);
             tvNowCity.postInvalidate();
-        }
+        }*/
         initList();
         setListeners();
     }
-
+    private AMapLocationClientOption getDefaultOption(){
+        AMapLocationClientOption mOption = new AMapLocationClientOption();
+        mOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);//可选，设置定位模式，可选的模式有高精度、仅设备、仅网络。默认为高精度模式
+        mOption.setGpsFirst(false);//可选，设置是否gps优先，只在高精度模式下有效。默认关闭
+        mOption.setHttpTimeOut(30000);//可选，设置网络请求超时时间。默认为30秒。在仅设备模式下无效
+        mOption.setInterval(2000);//可选，设置定位间隔。默认为2秒
+        mOption.setNeedAddress(true);//可选，设置是否返回逆地理地址信息。默认是true
+        mOption.setOnceLocation(false);//可选，设置是否单次定位。默认是false
+        mOption.setOnceLocationLatest(true);//可选，设置是否等待wifi刷新，默认为false.如果设置为true,会自动变为单次定位，持续定位时不要使用
+        AMapLocationClientOption.setLocationProtocol(AMapLocationClientOption.AMapLocationProtocol.HTTP);//可选， 设置网络请求的协议。可选HTTP或者HTTPS。默认为HTTP
+        mOption.setSensorEnable(false);//可选，设置是否使用传感器。默认是false
+        mOption.setWifiScan(true); //可选，设置是否开启wifi扫描。默认为true，如果设置为false会同时停止主动刷新，停止以后完全依赖于系统刷新，定位位置可能存在误差
+        return mOption;
+    }
     private void setListeners() {
         tvNowCity.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent=new Intent();
+           /* Intent intent=new Intent();
             Toast.makeText(HomePageSetCityActivity.this,"您已选择城市："+tvNowCity.getText(),Toast.LENGTH_SHORT).show();
             intent.putExtra("SelectCity",tvNowCity.getText());
             setResult(10002,intent);
-            finish();
+            finish();*/
+            // 启动定位
+            locationClient.startLocation();
+
         }
     });
         etSearchCity.addTextChangedListener(new TextWatcher() {
@@ -144,7 +171,36 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
             }
         });
     }
-
+    /**
+     * 定位监听
+     */
+    AMapLocationListener locationListener = new AMapLocationListener() {
+        @Override
+        public void onLocationChanged(AMapLocation loc) {
+            if (null != loc) {
+                //解析定位结果
+                String result = CityUtils.getLocationStr(loc);
+                showToast(result);
+            } else {
+                showToast("定位失败，loc is null");
+            }
+        }
+    };
+    /**
+     * 初始化定位
+     *
+     * @since 2.8.0
+     * @author hongming.wang
+     *
+     */
+    private void initLocation(){
+        //初始化client
+        locationClient = new AMapLocationClient(this.getApplicationContext());
+        //设置定位参数
+        locationClient.setLocationOption(getDefaultOption());
+        // 设置定位监听
+        locationClient.setLocationListener(locationListener);
+    }
     private void initList() {
         mCityNames=getCityNames();
         cityAdapter=new HomePageCityAdapter(this,mCityNames);
