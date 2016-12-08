@@ -1,15 +1,19 @@
 package com.tiyujia.homesport.common.homepage.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +29,7 @@ import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -48,6 +53,7 @@ import com.tiyujia.homesport.entity.Result;
 import com.tiyujia.homesport.common.homepage.service.HomePageService;
 import com.tiyujia.homesport.util.CacheUtils;
 import com.tiyujia.homesport.util.JSONParseUtil;
+import com.tiyujia.homesport.util.PermissionUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
 
@@ -84,6 +90,10 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     private State state;
     private HomePageFragmentReceiver mReceiver;
     String selectCity;
+    AMapLocationClient client;
+    AMapLocationClientOption option;
+    double latitude;
+    double longitude;
     private List<HomePageBannerEntity> banners = new ArrayList<>();
     int [] picAddress=new int[]{R.drawable.demo_05,R.drawable.demo_06,R.drawable.demo_09,R.drawable.demo_10};
     public static final int HANDLE_DATA=1;
@@ -186,11 +196,32 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
             }
         }, 500);
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode==111){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                client.setLocationOption(option);
+                // 启动定位
+                client.startLocation();
+                AMapLocation location = client.getLastKnownLocation();
+                latitude= location.getLatitude();//纬度
+                longitude=location.getLongitude();//经度
+            }else {
+                latitude=30.123;
+                longitude=120.123;
+            }
+        }
+    }
     private void setDatas() {
-        AMapLocationClient client = App.mLocationClient;
-        AMapLocation location = client.getLastKnownLocation();
-        final double latitude= location.getLatitude();//纬度
-        final double longitude=location.getLongitude();//经度
+        client = App.mLocationClient;
+        option=new AMapLocationClientOption();
+        App.resetOption(option);
+        String[] requestPermissions=new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE};
+        if (!PermissionUtil.hasPermission(getActivity(),requestPermissions)){
+            PermissionUtil.requestPermission(getActivity(),111,requestPermissions);
+        }
         ArrayList<String> cacheData= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".json");
         if (cacheData==null||cacheData.size()==0) {
             new Thread() {

@@ -123,9 +123,9 @@ public class HomePageVenueSurveyActivity extends NewBaseActivity implements View
                 Log.i("tag",hotVenueFragment.toString());//有
                 Log.i("tag",hotVenueFragment.adapter.toString());//空
                 allVenueFragment.adapter.getFilter().filter(s);
-                hotVenueFragment.adapter.getFilter().filter(s);
-                hardVenueFragment.adapter.getFilter().filter(s);
-                nearVenueFragment.adapter.getFilter().filter(s);
+//                hotVenueFragment.adapter.getFilter().filter(s);
+//                hardVenueFragment.adapter.getFilter().filter(s);
+//                nearVenueFragment.adapter.getFilter().filter(s);
                 tabAdapter.notifyDataSetChanged();
                 if (!s.toString().trim().equals("")){
                     llSearchResult.setVisibility(View.GONE);

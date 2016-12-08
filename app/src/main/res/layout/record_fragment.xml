@@ -148,6 +148,7 @@
         android:layout_gravity="center"
         android:src="@mipmap/btn_adress2"
         android:layout_alignParentRight="true"
+        android:id="@+id/ivJumpToMap"
         />
 </RelativeLayout>
     <TextView
