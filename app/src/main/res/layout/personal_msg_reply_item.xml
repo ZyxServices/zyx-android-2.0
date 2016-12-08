@@ -18,7 +18,7 @@
             android:orientation="horizontal"
             >
             <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/me_head"
+                android:id="@+id/ivAvatar"
                 app:riv_oval="true"
                 app:riv_tile_mode="clamp"
                 style="@style/small_avatar"
@@ -37,7 +37,7 @@
                     android:layout_marginTop="18dp"
                     >
                     <TextView
-                        android:id="@+id/tv_nickname"
+                        android:id="@+id/tvNickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/day_edit_color"
@@ -45,7 +45,7 @@
                         android:textSize="15sp"
                         />
                     <ImageView
-                        android:id="@+id/iv_lv"
+                        android:id="@+id/ivLv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@mipmap/img_lv1"
@@ -54,7 +54,7 @@
                         />
                 </LinearLayout>
                 <TextView
-                    android:id="@+id/tv_time"
+                    android:id="@+id/tvTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/day_edit_hit_color"
@@ -73,7 +73,7 @@
         <TextView
             style="@style/finelin" />
         <TextView
-            android:id="@+id/tv_reply_content"
+            android:id="@+id/tvReplyContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
@@ -89,6 +89,7 @@
             android:orientation="horizontal"
             >
             <TextView
+                android:id="@+id/tvReplyType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
@@ -98,7 +99,7 @@
                 android:paddingLeft="10dp"
                 />
             <TextView
-                android:id="@+id/tv_title"
+                android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
@@ -109,7 +110,7 @@
                 />
         </LinearLayout>
         <TextView
-            android:id="@+id/tv_reply"
+            android:id="@+id/tvReply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="13sp"

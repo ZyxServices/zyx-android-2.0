@@ -22,10 +22,10 @@ import java.util.List;
  * 邮箱:928902646@qq.com
  */
 
-public class MsgAdapter extends BaseQuickAdapter<MsgModel.Msg> {
+public class MsgReplyAdapter extends BaseQuickAdapter<MsgModel.Msg> {
 
-    public MsgAdapter(List<MsgModel.Msg> data) {
-        super(R.layout.personal_msg_item, data);
+    public MsgReplyAdapter(List<MsgModel.Msg> data) {
+        super(R.layout.personal_msg_reply_item, data);
     }
     @Override
     protected void convert(BaseViewHolder baseViewHolder, MsgModel.Msg msg) {
@@ -38,8 +38,17 @@ public class MsgAdapter extends BaseQuickAdapter<MsgModel.Msg> {
         }
         baseViewHolder.setText(R.id.tvNickname,msg.userVo.nickName)
                 .setText(R.id.tvTime, TimeUtil.formatFriendly(date))
-                .setText(R.id.tvTitle,msg.toObject.toTitle)
-                .setText(R.id.tvReplyType,msg.fromContent);
+                .setText(R.id.tvReplyContent,msg.fromContent)
+                .setText(R.id.tvTitle,msg.toObject.toTitle);
+        if(msg.bodyType==0){
+            baseViewHolder.setText(R.id.tvReplyType,"回复了我的文章： ");
+        }else if(msg.bodyType==1){
+            baseViewHolder.setText(R.id.tvReplyType,"回复了我的动态： ");
+        }else if(msg.bodyType==2){
+            baseViewHolder.setText(R.id.tvReplyType,"回复了我的装备： ");
+        }else if(msg.bodyType==3){
+            baseViewHolder.setText(R.id.tvReplyType,"回复了我的活动： ");
+        }
         ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
         ImageView ivLv=baseViewHolder.getView(R.id.ivLv);
         if (msg.userVo.level!=null&&msg.userVo.level.equals("")){

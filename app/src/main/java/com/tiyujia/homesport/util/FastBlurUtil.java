@@ -34,16 +34,10 @@ public class FastBlurUtil {
 
 
     public static Bitmap GetUrlBitmap(String url, int scaleRatio) {
-
-
         int blurRadius = 8;//通常设置为8就行。
         if (scaleRatio <= 0) {
             scaleRatio = 10;
         }
-
-
-
-
         Bitmap originBitmap = null;
         InputStream in = null;
         BufferedOutputStream out = null;
@@ -68,8 +62,6 @@ public class FastBlurUtil {
             return null;
         }
     }
-
-
     private static void copy(InputStream in, OutputStream out)
             throws IOException {
         byte[] b = new byte[IO_BUFFER_SIZE];
@@ -78,10 +70,6 @@ public class FastBlurUtil {
             out.write(b, 0, read);
         }
     }
-
-
-
-
     //    把本地图片毛玻璃化
     public static Bitmap toBlur(Bitmap originBitmap, int scaleRatio) {
         //        int scaleRatio = 10;

@@ -47,9 +47,7 @@ public class PersonalLogin extends ImmersiveActivity implements View.OnClickList
         ivBack.setOnClickListener(this);
         tvRegister.setOnClickListener(this);
         tvLogin.setOnClickListener(this);
-
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -78,12 +76,10 @@ public class PersonalLogin extends ImmersiveActivity implements View.OnClickList
                                             String Token=Response.data.getToken().toString();
                                             String Nickname=Response.data.getNickname().toString();
                                             String Phone=Response.data.getPhone().toString();
-                                          //  String Avatar=Response.data.getAvatar().toString();
                                             int UserId=Response.data.getId();
                                             etr.putString("Token",Token);
                                             etr.putString("NickName",Nickname);
                                             etr.putString("Phone",Phone);
-                                           // etr.putString("Avatar",Avatar);
                                             etr.putInt("UserId",UserId);
                                             etr.apply();
                                             Intent i=new Intent(PersonalLogin.this, HomeActivity.class);
@@ -94,6 +90,10 @@ public class PersonalLogin extends ImmersiveActivity implements View.OnClickList
                                             InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                                             im.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
                                             finish();
+                                        } else if(Response.state==40001){
+                                            showToast("密码错误") ;
+                                        } else if(Response.state==40003){
+                                            showToast("用户名错误") ;
                                         }
                                     }
 

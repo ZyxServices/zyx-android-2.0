@@ -10,7 +10,10 @@ import android.widget.TextView;
 
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.personal.fragment.PersonalMsgFragment;
+import com.tiyujia.homesport.common.personal.fragment.PersonalMsgApplyFragment;
+import com.tiyujia.homesport.common.personal.fragment.PersonalMsgReplyFragment;
+import com.tiyujia.homesport.common.personal.fragment.PersonalMsgSystemFragment;
+import com.tiyujia.homesport.common.personal.fragment.PersonalMsgZanFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ public class PersonalMsg extends ImmersiveActivity {
     @Bind(R.id.tv_title)   TextView tv_title;
     private List<String> mTitle=new ArrayList<String>();
     private List<Fragment> mFragment = new ArrayList<Fragment>();
+    private int msg_type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,9 +60,9 @@ public class PersonalMsg extends ImmersiveActivity {
         mTitle.add("报名");
         mTitle.add("点赞");
         mTitle.add("系统消息");
-        mFragment.add(new PersonalMsgFragment());
-        mFragment.add(new PersonalMsgFragment());
-        mFragment.add(new PersonalMsgFragment());
-        mFragment.add(new PersonalMsgFragment());
+        mFragment.add(new PersonalMsgReplyFragment());
+        mFragment.add(new PersonalMsgApplyFragment());
+        mFragment.add(new PersonalMsgZanFragment());
+        mFragment.add(new PersonalMsgSystemFragment());
     }
 }
