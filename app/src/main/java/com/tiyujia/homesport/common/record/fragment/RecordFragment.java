@@ -10,12 +10,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tiyujia.homesport.BaseFragment;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.activity.CityMapActivity;
 import com.tiyujia.homesport.common.record.activity.RecordTopActivity;
 import com.tiyujia.homesport.common.record.activity.RecordTrackActivity;
 
@@ -30,6 +32,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
     private TextView tvTop,tvRecord;
     private AlertDialog builder;
     private LinearLayout llTrack;
+    private ImageView ivJumpToMap;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,9 +45,11 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
         tvTop=(TextView)view.findViewById(R.id.tvTop);
         tvRecord=(TextView)view.findViewById(R.id.tvRecord);
         llTrack=(LinearLayout)view.findViewById(R.id.llTrack);
+        ivJumpToMap= (ImageView) view.findViewById(R.id.ivJumpToMap);
         tvTop.setOnClickListener(this);
         tvRecord.setOnClickListener(this);
         llTrack.setOnClickListener(this);
+        ivJumpToMap.setOnClickListener(this);
     }
 
     @Override
@@ -72,6 +77,10 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                 break;
             case R.id.llTrack:
                 getActivity().startActivity(new Intent(getActivity(),RecordTrackActivity.class));
+                break;
+            case R.id.ivJumpToMap:
+                Intent intent=new Intent(getActivity(),CityMapActivity.class);
+                getActivity().startActivityForResult(intent,2345);
                 break;
         }
     }

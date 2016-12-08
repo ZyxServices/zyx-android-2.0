@@ -1,17 +1,16 @@
 package com.tiyujia.homesport;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.lzy.okgo.OkGo;
-import com.tiyujia.homesport.common.homepage.fragment.HomePageFragment;
+import com.tiyujia.homesport.util.PermissionUtil;
 
 /**
  * 作者: Cymbi on 2016/10/19 17:25.1
@@ -56,7 +55,7 @@ public class App extends Application {
         return mContext;
     }
 
-    private   void resetOption(AMapLocationClientOption option) {
+    public static  void resetOption(AMapLocationClientOption option) {
         option= new AMapLocationClientOption();
         option.setNeedAddress(true);
         /**
@@ -71,5 +70,11 @@ public class App extends Application {
         option.setOnceLocationLatest(true);
         //设置是否使用传感器
         option.setInterval(2000);//设置定位间隔,单位毫秒,默认为2000ms
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mLocationClient.onDestroy();
     }
 }

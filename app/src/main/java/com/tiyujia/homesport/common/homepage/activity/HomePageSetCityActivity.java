@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +15,6 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
@@ -29,13 +27,11 @@ import com.tiyujia.homesport.common.homepage.dao.CityDBManager;
 import com.tiyujia.homesport.common.homepage.entity.CityBean;
 import com.tiyujia.homesport.common.homepage.entity.CityModel;
 import com.tiyujia.homesport.entity.LoadCallback;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-
 import okhttp3.Call;
 import okhttp3.Response;
 
@@ -107,6 +103,16 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
     }
 
     private void setListeners() {
+        tvNowCity.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent=new Intent();
+            Toast.makeText(HomePageSetCityActivity.this,"您已选择城市："+tvNowCity.getText(),Toast.LENGTH_SHORT).show();
+            intent.putExtra("SelectCity",tvNowCity.getText());
+            setResult(10002,intent);
+            finish();
+        }
+    });
         etSearchCity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

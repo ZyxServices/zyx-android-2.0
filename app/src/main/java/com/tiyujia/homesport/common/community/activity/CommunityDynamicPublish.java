@@ -54,7 +54,6 @@ import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
 
-import static com.loc.c.e;
 
 /**
  * 作者: Cymbi on 2016/11/18 14:22.1
