@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +33,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
     private TextView tvTop,tvRecord;
     private AlertDialog builder;
     private LinearLayout llTrack;
-    private ImageView ivJumpToMap;
+    private RelativeLayout rlJumpToMap;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,11 +46,11 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
         tvTop=(TextView)view.findViewById(R.id.tvTop);
         tvRecord=(TextView)view.findViewById(R.id.tvRecord);
         llTrack=(LinearLayout)view.findViewById(R.id.llTrack);
-        ivJumpToMap= (ImageView) view.findViewById(R.id.ivJumpToMap);
+        rlJumpToMap= (RelativeLayout) view.findViewById(R.id.rlJumpToMap);
         tvTop.setOnClickListener(this);
         tvRecord.setOnClickListener(this);
         llTrack.setOnClickListener(this);
-        ivJumpToMap.setOnClickListener(this);
+        rlJumpToMap.setOnClickListener(this);
     }
 
     @Override
@@ -78,7 +79,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
             case R.id.llTrack:
                 getActivity().startActivity(new Intent(getActivity(),RecordTrackActivity.class));
                 break;
-            case R.id.ivJumpToMap:
+            case R.id.rlJumpToMap:
                 Intent intent=new Intent(getActivity(),CityMapActivity.class);
                 getActivity().startActivityForResult(intent,2345);
                 break;

@@ -133,6 +133,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="12dp"
+    android:id="@+id/rlJumpToMap"
     >
     <TextView
         android:layout_width="wrap_content"
@@ -148,7 +149,6 @@
         android:layout_gravity="center"
         android:src="@mipmap/btn_adress2"
         android:layout_alignParentRight="true"
-        android:id="@+id/ivJumpToMap"
         />
 </RelativeLayout>
     <TextView

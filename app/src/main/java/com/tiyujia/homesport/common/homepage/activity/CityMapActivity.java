@@ -48,10 +48,10 @@ public class CityMapActivity extends ImmersiveActivity {
                     amapLocation.getAddress();//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
                     amapLocation.getCountry();//国家信息
                     amapLocation.getProvince();//省信息
-                    amapLocation.getCity();//城市信息
-                    amapLocation.getDistrict();//城区信息
-                    amapLocation.getStreet();//街道信息
-                    amapLocation.getStreetNum();//街道门牌号信息
+                    String city=amapLocation.getCity();//城市信息
+                    String area=amapLocation.getDistrict();//城区信息
+                    String street=amapLocation.getStreet();//街道信息
+                    String number=amapLocation.getStreetNum();//街道门牌号信息
                     amapLocation.getCityCode();//城市编码
                     amapLocation.getAdCode();//地区编码
                     amapLocation.getAoiName();//获取当前定位点的AOI信息
@@ -59,15 +59,16 @@ public class CityMapActivity extends ImmersiveActivity {
                     lon = amapLocation.getLongitude();
                     // 设置当前地图显示为当前位置
                     aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 19));
+                    aMap.setMaxZoomLevel(15);
+                    aMap.setMinZoomLevel(1);
                     aMap.setMapType(AMap.MAP_TYPE_NORMAL);
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(new LatLng(lat, lon));
-                    markerOptions.title("当前位置");
                     markerOptions.visible(true);
-                    BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.location_marker));
+                    markerOptions.snippet("当前位置:"+city+area+street+number);
+                    BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.green_point));
                     markerOptions.icon(bitmapDescriptor);
                     aMap.addMarker(markerOptions);
-
                 } else {
                     //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
                     Log.e("AmapError", "location Error, ErrCode:"
