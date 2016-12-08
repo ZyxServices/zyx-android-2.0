@@ -44,5 +44,6 @@ public class CourseAdapter extends BaseQuickAdapter<CurseModel.Curse> {
                 context.startActivity(i);
             }
         });
+
     }
 }

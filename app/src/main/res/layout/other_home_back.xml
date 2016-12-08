@@ -47,7 +47,7 @@
                 />
         </RelativeLayout>
         <TextView
-            android:id="@+id/tvCcontent"
+            android:id="@+id/tvContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

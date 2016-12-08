@@ -14,4 +14,5 @@ public class API {
     public static final String IMAGE_URLS = "http://119.61.66.55:18100/v2/uploads";
     public static final SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy-MM-dd HH:mm");
     public static final SimpleDateFormat simpleYear =new SimpleDateFormat("yyyy年-MM月-dd日 HH:mm");
+    public static final SimpleDateFormat format =new SimpleDateFormat("yyyy.MM.dd");
 }

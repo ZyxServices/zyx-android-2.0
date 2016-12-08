@@ -1,10 +1,10 @@
-package com.tiyujia.homesport.common.community.fragment;
+package com.tiyujia.homesport.common.personal.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,38 +19,35 @@ import com.lzy.okgo.cache.CacheMode;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.BaseFragment;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.community.adapter.RecommendAdapter;
-import com.tiyujia.homesport.common.community.model.RecommendModel;
+import com.tiyujia.homesport.common.personal.adapter.AttendAdapter;
+import com.tiyujia.homesport.common.personal.adapter.FansAdapter;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.util.RefreshUtil;
-
-import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Response;
 
 /**
- * 作者: Cymbi on 2016/10/20 16:51.1
+ * 作者: Cymbi on 2016/10/20 16:51.
  * 邮箱:928902646@qq.com
  */
 
-public class AttentionFragment extends BaseFragment implements  SwipeRefreshLayout.OnRefreshListener,BaseQuickAdapter.RequestLoadMoreListener{
+public class ActiveFragment extends BaseFragment implements  SwipeRefreshLayout.OnRefreshListener,BaseQuickAdapter.RequestLoadMoreListener{
     private View view;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
-    private RecommendAdapter adapter;
+    private AttendAdapter adapter;
     private String mToken;
     private int mUserId;
     private int page=1;
-    private int pageSize=20;
+    private int pageSize=100;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.recycleview_layout,null);
         return view;
     }
-
     @Override
     protected void initData() {
         setInfo();
@@ -58,43 +55,41 @@ public class AttentionFragment extends BaseFragment implements  SwipeRefreshLayo
         srlRefresh= (SwipeRefreshLayout)view.findViewById(R.id.srlRefresh);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter=new RecommendAdapter(getActivity(),null);
+        adapter=new AttendAdapter(getActivity(),null);
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);
         RefreshUtil.refresh(srlRefresh,getActivity());
         srlRefresh.setOnRefreshListener(this);
-       // adapter.setOnLoadMoreListener(this);
+        //adapter.setOnLoadMoreListener(this);
         onRefresh();
     }
-
     private void setInfo() {
         SharedPreferences share = getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
     }
-
     @Override
     public void onRefresh() {
-        OkGo.get(API.BASE_URL+"/v2/concern/getFollow")
+        OkGo.get(API.BASE_URL+"/v2/my/activity/create/list")
                 .tag(this)
                 .params("token",mToken)
-                .params("loginUserId",mUserId)
+                .params("accountId",mUserId)
                 .params("page",page)
                 .params("pageSize",pageSize)
-                .execute(new LoadCallback<RecommendModel>(getActivity()) {
+                .execute(new LoadCallback<ActiveModel>(getActivity()) {
                     @Override
-                    public void onSuccess(RecommendModel recommendModel, Call call, Response response) {
-                        if (recommendModel.state==200){adapter.setNewData(recommendModel.data);}
+                    public void onSuccess(ActiveModel activeModel, Call call, Response response) {
+                        if(activeModel.state==200){adapter.setNewData(activeModel.data);}
                     }
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接错误在·");
+                        showToast("网络连接错误");
                     }
                     @Override
-                    public void onAfter(@Nullable RecommendModel recommendModel, @Nullable Exception e) {
-                        super.onAfter(recommendModel, e);
+                    public void onAfter(@Nullable ActiveModel activeModel, @Nullable Exception e) {
+                        super.onAfter(activeModel, e);
                         adapter.removeAllFooterView();
                         setRefreshing(false);
                     }
@@ -111,24 +106,27 @@ public class AttentionFragment extends BaseFragment implements  SwipeRefreshLayo
 
     @Override
     public void onLoadMoreRequested() {
-        OkGo.get(API.BASE_URL+"/v2/concern/getFollow")
+        OkGo.get(API.BASE_URL+"/v2/my/activity/create/list")
                 .tag(this)
                 .params("token",mToken)
-                .params("loginUserId",mUserId)
+                .params("accountId",mUserId)
                 .params("page",page+1)
                 .params("pageSize",pageSize)
-                .cacheMode(CacheMode.NO_CACHE)
-                .execute(new LoadCallback<RecommendModel>(getActivity()) {
+                .execute(new LoadCallback<ActiveModel>(getActivity()) {
                     @Override
-                    public void onSuccess(RecommendModel recommendModel, Call call, Response response) {
-                        page=page+1;
-                        if (recommendModel.state==200){adapter.setNewData(recommendModel.data);}
+                    public void onSuccess(ActiveModel activeModel, Call call, Response response) {
+                        if(activeModel.state==200){adapter.setNewData(activeModel.data);}
                     }
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接错误在·");
-                        adapter.showLoadMoreFailedView();
+                        showToast("网络连接错误");
+                    }
+                    @Override
+                    public void onAfter(@Nullable ActiveModel activeModel, @Nullable Exception e) {
+                        super.onAfter(activeModel, e);
+                        adapter.removeAllFooterView();
+                        setRefreshing(false);
                     }
                 });
     }

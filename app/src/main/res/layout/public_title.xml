@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     >
     <RelativeLayout
+        android:id="@+id/re1"
         style="@style/personal_title_background"
         >
         <ImageView

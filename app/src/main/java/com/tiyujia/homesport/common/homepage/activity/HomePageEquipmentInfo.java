@@ -1,5 +1,6 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
 import com.tiyujia.homesport.common.homepage.entity.EquipmentInfoModel;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -41,12 +43,15 @@ public class HomePageEquipmentInfo extends ImmersiveActivity {
     @Bind(R.id.tvTitle)    TextView tvTitle;
     @Bind(R.id.tvContent)    TextView tvContent;
     @Bind(R.id.nineGrid)    NineGridlayout nineGrid;
+    private int UserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.equipment_info);
         SharedPreferences share= getSharedPreferences("UserInfo",MODE_PRIVATE);
         String token= share.getString("Token","");
+        UserId=share.getInt("UserId",0);
         int id=getIntent().getIntExtra("id",0);
         OkGo.get(API.BASE_URL+"/v2/equip/queryOne")
                 .tag(this)
@@ -54,7 +59,7 @@ public class HomePageEquipmentInfo extends ImmersiveActivity {
                 .params("id",id)
                 .execute(new LoadCallback<EquipmentInfoModel>(this) {
                     @Override
-                    public void onSuccess(EquipmentInfoModel Model, Call call, Response response) {
+                    public void onSuccess(final EquipmentInfoModel Model, Call call, Response response) {
                     if(Model.state==200){
                         tvNickname.setText(Model.data.userIconVo.nickName);
                         tvTime.setText(API.simpleYear.format(Model.data.createTime));
@@ -75,6 +80,17 @@ public class HomePageEquipmentInfo extends ImmersiveActivity {
                             nineGrid.setGap(6);
                             nineGrid.setAdapter(adapter);
                         }
+                        if (Model.data.userIconVo.id!=UserId){
+                            ivAvatar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent i= new Intent(HomePageEquipmentInfo.this, PersonalOtherHome.class);
+                                    i.putExtra("id",Model.data.userIconVo.id);
+                                    startActivity(i);
+                                }
+                            });
+                        }
+
                     }
                     }
 
@@ -84,9 +100,12 @@ public class HomePageEquipmentInfo extends ImmersiveActivity {
                         showToast("网络连接错误");
                     }
                 });
-    }
 
-    private void setInfo() {
-
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }

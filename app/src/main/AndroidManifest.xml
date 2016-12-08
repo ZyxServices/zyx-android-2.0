@@ -71,6 +71,7 @@
         <activity android:name=".common.homepage.activity.HomePageEquipmentShowActivity"/>
         <activity android:name=".common.homepage.activity.HomePageArticleActivity"/>
         <activity android:name=".common.homepage.activity.HomePageEquipmentInfo"/>
+        <activity android:name=".common.homepage.activity.HomePageDateInfo"/>
         <activity android:name=".common.record.activity.RecordTopActivity"/>
         <activity android:name=".common.record.activity.RecordTrackActivity"/>
         <activity android:name="com.lzy.imagepicker.ui.ImagePreviewDelActivity"/>

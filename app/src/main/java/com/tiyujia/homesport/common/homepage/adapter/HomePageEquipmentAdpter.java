@@ -2,6 +2,7 @@ package com.tiyujia.homesport.common.homepage.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageEquipmentInfo;
 import com.tiyujia.homesport.common.homepage.entity.EquipmentModel;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
@@ -92,6 +94,19 @@ public class HomePageEquipmentAdpter extends BaseQuickAdapter<EquipmentModel.Equ
                 Intent i=new Intent(mContext,HomePageEquipmentInfo.class);
                 i.putExtra("id",equipment.id);
                 mContext.startActivity(i);
+            }
+        });
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences share=mContext.getSharedPreferences("UserInfo",Context.MODE_PRIVATE);
+                int userid=share.getInt("UserId",0);
+                if (equipment.userIconVo.id!=userid){
+                    Intent i= new Intent(mContext, PersonalOtherHome.class);
+                    i.putExtra("id",equipment.userIconVo.id);
+                    mContext.startActivity(i);
+                }else { }
+
             }
         });
     }

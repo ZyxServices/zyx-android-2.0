@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageSearchRecordAdapter;
@@ -28,7 +27,6 @@ import com.tiyujia.homesport.common.homepage.fragment.AllVenueFragment;
 import com.tiyujia.homesport.common.homepage.fragment.HardVenueFragment;
 import com.tiyujia.homesport.common.homepage.fragment.HotVenueFragment;
 import com.tiyujia.homesport.common.homepage.fragment.NearVenueFragment;
-import com.tiyujia.homesport.common.personal.fragment.AttendFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 import java.util.ArrayList;
 import java.util.List;

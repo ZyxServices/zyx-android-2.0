@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.community.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.model.RecommendModel;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -41,7 +43,7 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
         this.context=context;
     }
     @Override
-    protected void convert(BaseViewHolder baseViewHolder, RecommendModel.Recommend recommend) {
+    protected void convert(BaseViewHolder baseViewHolder, final RecommendModel.Recommend recommend) {
         ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
         NineGridlayout nineGrid=baseViewHolder.getView(R.id.nineGrid);
         baseViewHolder.setText(R.id.tvNickname,recommend.userIconVo.nickName)
@@ -68,5 +70,13 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
             nineGrid.setGap(6);
             nineGrid.setAdapter(adapter);
         }
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i= new Intent(mContext, PersonalOtherHome.class);
+                i.putExtra("id",recommend.userIconVo.id);
+                mContext.startActivity(i);
+            }
+        });
     }
 }

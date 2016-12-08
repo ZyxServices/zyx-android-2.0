@@ -231,7 +231,7 @@
         android:scaleType="fitXY"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"/>
-    <include layout="@layout/activity_home_page_venue_detail_bottom"></include>
+    <include layout="@layout/activity_home_page_venue_detail_bottom"/>
 </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
     <LinearLayout android:layout_width="match_parent"

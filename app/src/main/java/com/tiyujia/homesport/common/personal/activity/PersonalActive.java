@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
-import com.tiyujia.homesport.common.personal.fragment.AttendFragment;
+import com.tiyujia.homesport.common.personal.fragment.ActiveFragment;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.Bind;
@@ -55,8 +55,8 @@ public class PersonalActive extends ImmersiveActivity  {
         tv_title.setText("我的活动");
         mTitle.add("我参加的");
         mTitle.add("我发起的");
-        mFragment.add(new AttendFragment());
-        mFragment.add(new AttendFragment());
+        mFragment.add(new ActiveFragment());
+        mFragment.add(new ActiveFragment());
     }
 
 

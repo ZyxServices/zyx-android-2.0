@@ -1,13 +1,16 @@
 package com.tiyujia.homesport.common.personal.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.activity.HomePageDateInfo;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
@@ -32,7 +35,7 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
     }
 
     @Override
-    protected void convert(BaseViewHolder baseViewHolder, ActiveModel.Active active) {
+    protected void convert(BaseViewHolder baseViewHolder, final ActiveModel.Active active) {
         ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
         ImageView ivLv=baseViewHolder.getView(R.id.ivLv);
         ImageView iv_background=baseViewHolder.getView(R.id.iv_background);
@@ -64,6 +67,14 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
         }else {}
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(active.user.avatar), 320, 320),ivAvatar,320,320);
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullImage(active.imgUrls), 720, 720),iv_background,720,720);
-
+       View view= baseViewHolder.getConvertView();
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i= new Intent(mContext,HomePageDateInfo.class);
+                i.putExtra("id",active.id);
+                mContext.startActivity(i);
+            }
+        });
     }
 }
