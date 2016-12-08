@@ -11,37 +11,36 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.cache.CacheMode;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.BaseFragment;
+import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.personal.adapter.AttendAdapter;
-import com.tiyujia.homesport.common.personal.adapter.FansAdapter;
-import com.tiyujia.homesport.common.personal.model.ActiveModel;
+import com.tiyujia.homesport.common.personal.adapter.DynamicAdapter;
+import com.tiyujia.homesport.common.personal.model.MyDynamicModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.util.RefreshUtil;
 
+import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
 
 /**
- * 作者: Cymbi on 2016/10/20 16:51.
+ * 作者: Cymbi on 2016/11/14 17:25.
  * 邮箱:928902646@qq.com
  */
-
-public class AttendFragment extends BaseFragment implements  SwipeRefreshLayout.OnRefreshListener,BaseQuickAdapter.RequestLoadMoreListener{
-    private View view;
+public class OtherDynamicFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
+    private  SwipeRefreshLayout srlRefresh;
     private RecyclerView recyclerView;
-    private SwipeRefreshLayout srlRefresh;
-    private AttendAdapter adapter;
     private String mToken;
     private int mUserId;
-    private int page=1;
-    private int pageSize=10;
-
+    private DynamicAdapter adapter;
+    private View view;
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.recycleview_layout,null);
@@ -54,7 +53,7 @@ public class AttendFragment extends BaseFragment implements  SwipeRefreshLayout.
         srlRefresh= (SwipeRefreshLayout)view.findViewById(R.id.srlRefresh);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter=new AttendAdapter(getActivity(),null);
+        adapter=new DynamicAdapter(null);
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);
@@ -64,32 +63,30 @@ public class AttendFragment extends BaseFragment implements  SwipeRefreshLayout.
         onRefresh();
     }
     private void setInfo() {
-        SharedPreferences share = getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        SharedPreferences share =getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
-        mUserId=share.getInt("UserId",0);
+        mUserId=getArguments().getInt("account_id",0  );
     }
-
     @Override
     public void onRefresh() {
-        OkGo.get(API.BASE_URL+"/v2/my/activity/create/list")
+        OkGo.get(API.BASE_URL+"/v2/my/concern/list")
                 .tag(this)
                 .params("token",mToken)
                 .params("accountId",mUserId)
-                .params("page",page)
-                .params("pageSize",pageSize)
-                .execute(new LoadCallback<ActiveModel>(getActivity()) {
+                .execute(new LoadCallback<MyDynamicModel>(getActivity()) {
                     @Override
-                    public void onSuccess(ActiveModel activeModel, Call call, Response response) {
-                        if(activeModel.state==200){adapter.setNewData(activeModel.data);}
+                    public void onSuccess(MyDynamicModel model, Call call, Response response) {
+                        if (model.state==200){adapter.setNewData(model.data);}
                     }
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
                         showToast("网络连接错误");
                     }
+
                     @Override
-                    public void onAfter(@Nullable ActiveModel activeModel, @Nullable Exception e) {
-                        super.onAfter(activeModel, e);
+                    public void onAfter(@Nullable MyDynamicModel model, @Nullable Exception e) {
+                        super.onAfter(model, e);
                         adapter.removeAllFooterView();
                         setRefreshing(false);
                     }
@@ -104,30 +101,5 @@ public class AttendFragment extends BaseFragment implements  SwipeRefreshLayout.
         });
     }
 
-    @Override
-    public void onLoadMoreRequested() {
-        OkGo.get(API.BASE_URL+"/v2/my/activity/create/list")
-                .tag(this)
-                .params("token",mToken)
-                .params("accountId",mUserId)
-                .params("page",page+1)
-                .params("pageSize",pageSize)
-                .execute(new LoadCallback<ActiveModel>(getActivity()) {
-                    @Override
-                    public void onSuccess(ActiveModel activeModel, Call call, Response response) {
-                        if(activeModel.state==200){adapter.setNewData(activeModel.data);}
-                    }
-                    @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        showToast("网络连接错误");
-                    }
-                    @Override
-                    public void onAfter(@Nullable ActiveModel activeModel, @Nullable Exception e) {
-                        super.onAfter(activeModel, e);
-                        adapter.removeAllFooterView();
-                        setRefreshing(false);
-                    }
-                });
-    }
+
 }

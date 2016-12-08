@@ -9,206 +9,213 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:background="@mipmap/bg_personal"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
         android:orientation="vertical"
         >
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            >
+            android:layout_height="300dp">
             <ImageView
-                android:id="@+id/iv_msg"
-                android:layout_width="wrap_content"
+                android:id="@+id/ivBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/bg_personal"
+                android:scaleType="fitXY"
+                />
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/nav_mail"
-                />
-            <ImageView
-                android:id="@+id/iv_setting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/nav_set"
-                android:layout_alignParentRight="true"
-                />
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/re_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:layout_marginTop="60dp"
-            >
-            <Button
-                android:id="@+id/btn_login"
-                android:layout_width="110dp"
-                android:layout_height="45dp"
-                android:background="@mipmap/icon_information_box"
-                android:text="点击登录"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:layout_centerHorizontal="true"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn_login"
-                android:text="快来登录查看详情哟~"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:textSize="13sp"
-                android:textColor="@color/text_white"
-                />
-        </RelativeLayout>
-        <LinearLayout
-            android:id="@+id/ll_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            >
-            <com.makeramen.roundedimageview.RoundedImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/ivAvatar"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/avatar"
-                app:riv_oval="true"
-                app:riv_tile_mode="clamp"
-                android:layout_gravity="center"
-                />
-            <LinearLayout
-                android:id="@+id/ll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="19dp"
-                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 >
-                <TextView
-                    android:id="@+id/tvName"
+                <ImageView
+                    android:id="@+id/iv_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="萌妹子"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:layout_gravity="center"
+                    android:src="@mipmap/nav_mail"
                     />
-                <TextView
-                    android:id="@+id/tvLv"
-                    android:layout_width="55dp"
-                    android:layout_height="20dp"
-                    android:text="略有小成"
-                    android:textSize="10sp"
-                    android:gravity="center"
-                    android:layout_marginLeft="4dp"
-                    android:background="@drawable/user_lable"
+                <ImageView
+                    android:id="@+id/iv_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/nav_set"
+                    android:layout_alignParentRight="true"
                     />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv_intro"
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/re_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="12sp"
-                android:textColor="#80ffffff"
-                android:text="个人简介:萌妹子一枚"
+                android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                />
-
-            <LinearLayout
-                android:layout_width="150dp"
-                android:layout_marginTop="20dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal"
                 >
-                <LinearLayout
-                    android:id="@+id/ll_attention"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                <Button
+                    android:id="@+id/btn_login"
+                    android:layout_width="110dp"
+                    android:layout_height="45dp"
+                    android:background="@mipmap/icon_information_box"
+                    android:text="点击登录"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:layout_centerHorizontal="true"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
+                    android:layout_below="@+id/btn_login"
+                    android:text="快来登录查看详情哟~"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_white"
+                    />
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/ll_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                >
+                <com.makeramen.roundedimageview.RoundedImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/ivAvatar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/avatar"
+                    app:riv_oval="true"
+                    app:riv_tile_mode="clamp"
+                    android:layout_gravity="center"
+                    />
+                <LinearLayout
+                    android:id="@+id/ll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="19dp"
+                    android:layout_gravity="center"
                     >
                     <TextView
+                        android:id="@+id/tvName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="#80ffffff"
-                        android:text="关注"
-                        android:paddingBottom="10dp"
+                        android:textStyle="bold"
+                        android:text="萌妹子"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:layout_gravity="center"
                         />
-                    <TextView
-                        android:id="@+id/tvGz"
+                    <ImageView
+                        android:id="@+id/ivLv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="#ffffff"
-                        android:text="20"
+                        android:layout_marginLeft="4dp"
+                        android:src="@mipmap/img_lv1"
                         android:layout_gravity="center"
                         />
                 </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/ll_fans"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+
+                <TextView
+                    android:id="@+id/tv_intro"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="#80ffffff"
-                        android:text="粉丝"
-                        android:paddingBottom="10dp"
-                        />
-                    <TextView
-                        android:id="@+id/tvFs"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="#ffffff"
-                        android:text="20"
-                        android:layout_gravity="center"
-                        />
-                </LinearLayout>
+                    android:layout_marginTop="10dp"
+                    android:textSize="12sp"
+                    android:textColor="#80ffffff"
+                    android:text="个人简介:萌妹子一枚"
+                    android:layout_gravity="center"
+                    />
+
                 <LinearLayout
-                    android:id="@+id/ll_gold"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="150dp"
+                    android:layout_marginTop="20dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
                     >
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/ll_attention"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="#80ffffff"
-                        android:text="攀岩币"
-                        android:paddingBottom="10dp"
-                        />
-                    <TextView
-                        android:id="@+id/tvCoin"
-                        android:layout_width="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="#80ffffff"
+                            android:text="关注"
+                            android:paddingBottom="10dp"
+                            />
+                        <TextView
+                            android:id="@+id/tvGz"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="#ffffff"
+                            android:text="20"
+                            android:layout_gravity="center"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/ll_fans"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="#ffffff"
-                        android:text="20"
-                        android:layout_gravity="center"
-                        />
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="#80ffffff"
+                            android:text="粉丝"
+                            android:paddingBottom="10dp"
+                            />
+                        <TextView
+                            android:id="@+id/tvFs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="#ffffff"
+                            android:text="20"
+                            android:layout_gravity="center"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/ll_gold"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="#80ffffff"
+                            android:text="攀岩币"
+                            android:paddingBottom="10dp"
+                            />
+                        <TextView
+                            android:id="@+id/tvCoin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="#ffffff"
+                            android:text="20"
+                            android:layout_gravity="center"
+                            />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout

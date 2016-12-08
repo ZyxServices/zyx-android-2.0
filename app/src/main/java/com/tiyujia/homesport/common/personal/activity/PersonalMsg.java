@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.personal.fragment.AttendFragment;
 import com.tiyujia.homesport.common.personal.fragment.PersonalMsgFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 

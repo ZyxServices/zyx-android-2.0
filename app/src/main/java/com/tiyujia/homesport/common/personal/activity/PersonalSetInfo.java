@@ -373,6 +373,7 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                             String newUrl = URI.create(data.getString("url")).getPath();
                             HashMap<String, String> params = new HashMap<>();
                             params.put("avatar", newUrl);
+                            
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

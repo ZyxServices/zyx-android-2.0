@@ -25,6 +25,7 @@ public class EquipmentInfoModel implements Serializable {
             public String nickName;
             public String avatar;
             public String authenticate;
+            public int id;
         }
     }
 }

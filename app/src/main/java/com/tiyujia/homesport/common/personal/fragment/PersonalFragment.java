@@ -37,6 +37,7 @@ import com.tiyujia.homesport.common.personal.activity.PersonalSystemSetting;
 import com.tiyujia.homesport.common.personal.model.UserInfoModel;
 import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.StatusBarUtil;
@@ -55,7 +56,8 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     @Bind(R.id.iv_msg) ImageView iv_msg;
     @Bind(R.id.iv_setting) ImageView iv_setting;
     @Bind(R.id.ivAvatar) ImageView ivAvatar;
-    @Bind(R.id.tvLv) TextView tvLv;
+    @Bind(R.id.ivBackground) ImageView ivBackground;
+    @Bind(R.id.ivLv) ImageView ivLv;
     @Bind(R.id.tvGz) TextView tvGz;
     @Bind(R.id.tvFs) TextView tvFs;
     @Bind(R.id.tvCoin) TextView tvCoin;
@@ -103,6 +105,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                     public void onSuccess(UserInfoModel userInfoModel, Call call, Response response) {
                              if(userInfoModel.state==200){
                                  PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(userInfoModel.data.avatar), 320, 320),ivAvatar,320,320);
+                                 PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(userInfoModel.data.avatar), 720, 720),ivBackground,720,720);
                                  String nickname=userInfoModel.data.nickname.toString();
                                  String level =userInfoModel.data.level.pointDesc.toString();
                                  String signature=userInfoModel.data.signature.toString();
@@ -115,10 +118,14 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                                      tv_intro.setText("个人简介："+signature);
                                  }
                                  tvName.setText(nickname);
-                                 tvLv.setText(level);
                                  tvGz.setText(gz-1+"");
                                  tvFs.setText(fs+"");
                                  tvCoin.setText(coin+"");
+                                 if(userInfoModel.data.level!=null){
+                                     LvUtil.setLv(ivLv,userInfoModel.data.level.pointDesc);
+                                 }else {
+                                     LvUtil.setLv(ivLv,"初学乍练");
+                                 }
                              }
                         if (userInfoModel.state==401){
                             showToast("Token失效");
@@ -183,11 +190,10 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         setData();
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();

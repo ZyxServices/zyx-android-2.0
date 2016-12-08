@@ -10,24 +10,6 @@
     <TextView
         style="@style/boldlin" />
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="17.5dp"
-        android:layout_marginBottom="17.5dp"
-        android:text="开发背景"
-        android:textColor="#333333"
-        android:textSize="16sp"
-        android:layout_marginLeft="12dp"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="#999999"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginBottom="10dp"
-        android:text="你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋你好你好吗你好吗笨蛋"/>
-    <TextView
         style="@style/boldlin" />
     <TextView
         android:layout_width="match_parent"

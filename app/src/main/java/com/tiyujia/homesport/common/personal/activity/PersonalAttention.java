@@ -30,7 +30,7 @@ import okhttp3.Response;
  */
 
 public class PersonalAttention extends ImmersiveActivity implements View.OnClickListener,SwipeRefreshLayout.OnRefreshListener{
-    @Bind(R.id.ivBack)ImageView personal_back;
+    @Bind(R.id.ivBack)ImageView ivBack;
     @Bind(R.id.ivSearch) ImageView iv_search;
     @Bind(R.id.srlRefresh)SwipeRefreshLayout swipeRefresh;
     @Bind(R.id.recyclerView)RecyclerView recyclerView;
@@ -44,7 +44,7 @@ public class PersonalAttention extends ImmersiveActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.attention);
         setInfo();
-        personal_back.setOnClickListener(this);
+        ivBack.setOnClickListener(this);
         iv_search.setOnClickListener(this);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -65,7 +65,7 @@ public class PersonalAttention extends ImmersiveActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.personal_back:
+            case R.id.ivBack:
                 finish();
                 break;
             case R.id.ivSearch:

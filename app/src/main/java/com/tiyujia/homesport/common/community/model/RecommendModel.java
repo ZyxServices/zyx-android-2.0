@@ -34,6 +34,7 @@ public class RecommendModel implements Serializable {
             public String nickName;
             public String avatar;
             public int authenticate;
+            public int id;
             public Level level;
             public class Level implements Serializable{
                 public int id;

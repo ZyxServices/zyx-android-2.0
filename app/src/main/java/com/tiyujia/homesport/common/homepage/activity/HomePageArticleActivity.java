@@ -2,6 +2,7 @@ package com.tiyujia.homesport.common.homepage.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -43,6 +44,12 @@ public class HomePageArticleActivity extends ImmersiveActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.article_info);
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         int courseId= getIntent().getIntExtra("id",0);
         OkGo.post(API.BASE_URL+"/v2/city/findCourseById")
                 .tag(this)
