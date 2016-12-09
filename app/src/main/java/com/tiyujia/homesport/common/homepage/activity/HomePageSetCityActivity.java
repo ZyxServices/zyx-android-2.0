@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
+import com.tiyujia.homesport.BootLoaderActivity;
+import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageCityAdapter;
@@ -90,7 +92,7 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
         etSearchCity= (EditText) findViewById(R.id.etSearchCity);
         mCityLit=(ListView) findViewById(R.id.city_list);
         mQuicLocationBar.setTextDialog(overlay);
-        String nowCity=App.nowCity;
+        String nowCity= BootLoaderActivity.nowCity;
         if (nowCity==null){
             tvNowCity.setText("定位中");
             tvNowCity.postInvalidate();

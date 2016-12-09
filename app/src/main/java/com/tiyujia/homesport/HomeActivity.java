@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,37 +18,45 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.tiyujia.homesport.common.homepage.fragment.HomePageFragment;
 import com.tiyujia.homesport.common.community.fragment.CommunityFragment;
 import com.tiyujia.homesport.common.personal.fragment.PersonalFragment;
 import com.tiyujia.homesport.common.record.fragment.RecordFragment;
 import com.tiyujia.homesport.util.StatusBarUtil;
 import com.tiyujia.homesport.widget.CustomViewPager;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends ImmersiveActivity implements View.OnClickListener{
+public class HomeActivity extends ImmersiveActivity implements View.OnClickListener {
     private final static int ACTIVE = 0;
     private final static int COMMUNITY = 1;
     private final static int CONCERN = 2;
     private final static int PERSONAL = 3;
     private int currentTabIndex = 0; // 当前tab下标
     private CustomViewPager pager;
-    private Button tabActivie,tabCommunity,tabConcern,tabPersonal;
+    private Button tabActivie, tabCommunity, tabConcern, tabPersonal;
     List<Fragment> fragmentList;
-    HomePageFragment homePageFragment=null;
-    RecordFragment communityFragment=null;
-    CommunityFragment recordFragment=null;
-    PersonalFragment personalFragment=null;
+    HomePageFragment homePageFragment = null;
+    RecordFragment communityFragment = null;
+    CommunityFragment recordFragment = null;
+    PersonalFragment personalFragment = null;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_home);
         setview();
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             if (fragmentList != null && fragmentList.size() > 0) {
                 boolean showFlag = false;
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -68,24 +77,27 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
         setTabSelection(ACTIVE);// 设置默认选中的tab页
         try {
             SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-            String token = share.getString("Token",null);
-            int UserId = share.getInt("UserId",0);
-            Log.i("token",token);
-            Log.i("UserId",UserId+"");
-        }catch (Exception e){
+            String token = share.getString("Token", null);
+            int UserId = share.getInt("UserId", 0);
+//            Log.i("token", token);
+//            Log.i("UserId", UserId + "");
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
     /**
      * 连按两次返回
+     *
      * @param keyCode
      * @param event
      * @return
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode== KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             Dialog dialog = new AlertDialog.Builder(this)
                     .setTitle("确认退出")
                     .setIcon(R.mipmap.timg)
@@ -105,31 +117,33 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
         }
         return super.onKeyDown(keyCode, event);
     }
+
     @Override
-    public void onConfigurationChanged(Configuration newConfig){
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             //land
-        } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             //port
         }
     }
+
     private void setview() {
-        pager=(CustomViewPager)findViewById(R.id.home_viewpager);
-        tabActivie=(Button)findViewById(R.id.tab_active_btn);
-        tabCommunity=(Button)findViewById(R.id.tab_community_btn);
-        tabConcern=(Button)findViewById(R.id.tab_concern_btn);
-        tabPersonal=(Button)findViewById(R.id.tab_personal_btn);
+        pager = (CustomViewPager) findViewById(R.id.home_viewpager);
+        tabActivie = (Button) findViewById(R.id.tab_active_btn);
+        tabCommunity = (Button) findViewById(R.id.tab_community_btn);
+        tabConcern = (Button) findViewById(R.id.tab_concern_btn);
+        tabPersonal = (Button) findViewById(R.id.tab_personal_btn);
         tabActivie.setOnClickListener(this);
         tabCommunity.setOnClickListener(this);
         tabConcern.setOnClickListener(this);
         tabPersonal.setOnClickListener(this);
         pager.addOnPageChangeListener(new HomeViewPagerListener());
         fragmentList = new ArrayList<Fragment>();
-        homePageFragment=new HomePageFragment();
-        communityFragment=new RecordFragment();
-        recordFragment=new CommunityFragment();
-        personalFragment=new PersonalFragment();
+        homePageFragment = new HomePageFragment();
+        communityFragment = new RecordFragment();
+        recordFragment = new CommunityFragment();
+        personalFragment = new PersonalFragment();
         fragmentList.add(homePageFragment);
         fragmentList.add(communityFragment);
         fragmentList.add(recordFragment);
@@ -140,6 +154,41 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
         pager.setSlide(false);
     }
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Home Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client2.connect();
+        AppIndex.AppIndexApi.start(client2, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client2, getIndexApiAction());
+        client2.disconnect();
+    }
 
     /**
      * note:   Adapter
@@ -148,26 +197,32 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
      */
     private class HomeFragmentPagerAdapter extends FragmentPagerAdapter {
         private List<Fragment> fragmentList;
+
         public HomeFragmentPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
             super(fm);
             this.fragmentList = fragmentList;
         }
+
         @Override
         public Fragment getItem(int position) {
             return fragmentList.get(position);
         }
+
         @Override
         public int getCount() {
             return fragmentList == null ? 0 : fragmentList.size();
         }
     }
+
     private class HomeViewPagerListener implements ViewPager.OnPageChangeListener {
         @Override
         public void onPageScrollStateChanged(int position) {
         }
+
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         }
+
         @Override
         public void onPageSelected(int position) {
             setTabSelection(position);
@@ -205,14 +260,15 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
         pager.setCurrentItem(index, false);
         currentTabIndex = index;
         //判断是否需要将状态栏字体颜色改变
-        if(index==CONCERN||index==COMMUNITY){
-            StatusBarUtil.MIUISetStatusBarLightMode(getWindow(),true);
-            StatusBarUtil.FlymeSetStatusBarLightMode(getWindow(),true);
-        }else {
-            StatusBarUtil.MIUISetStatusBarLightMode(getWindow(),false);
-            StatusBarUtil.FlymeSetStatusBarLightMode(getWindow(),false);
+        if (index == CONCERN || index == COMMUNITY) {
+            StatusBarUtil.MIUISetStatusBarLightMode(getWindow(), true);
+            StatusBarUtil.FlymeSetStatusBarLightMode(getWindow(), true);
+        } else {
+            StatusBarUtil.MIUISetStatusBarLightMode(getWindow(), false);
+            StatusBarUtil.FlymeSetStatusBarLightMode(getWindow(), false);
         }
     }
+
     /**
      * 重置状态
      */
@@ -226,6 +282,7 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
         tabPersonal.setTextColor(this.getResources().getColor(R.color.home_tab_nor_color));
         tabPersonal.setSelected(false);
     }
+
     @Override
     public void onBackPressed() {//back to home
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
@@ -233,6 +290,7 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         startActivity(intent);
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -250,5 +308,4 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
                 break;
         }
     }
-
 }

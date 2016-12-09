@@ -89,7 +89,7 @@ public class CityMapActivity extends ImmersiveActivity {
         mvMap = (MapView) findViewById(R.id.mvMap);
         mvMap.onCreate(savedInstanceState);
         //初始化定位
-        mLocationClient = App.mLocationClient;
+        mLocationClient = new AMapLocationClient(this);
         init();
         //设置定位回调监听
         mLocationClient.setLocationListener(mLocationListener);

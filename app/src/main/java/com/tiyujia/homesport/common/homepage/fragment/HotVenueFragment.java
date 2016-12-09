@@ -15,6 +15,8 @@ import com.amap.api.location.AMapLocationClient;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
 import com.tiyujia.homesport.BaseFragment;
+import com.tiyujia.homesport.BootLoaderActivity;
+import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageVenueSurveyActivity;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageRecentVenueAdapter;
@@ -71,7 +73,7 @@ public class HotVenueFragment extends BaseFragment implements  SwipeRefreshLayou
     }
 
     private void setData() {
-        AMapLocationClient client = App.mLocationClient;
+        AMapLocationClient client = BootLoaderActivity.client;
         AMapLocation location = client.getLastKnownLocation();
         final double latitude= location.getLatitude();//纬度
         final double longitude=location.getLongitude();//经度
