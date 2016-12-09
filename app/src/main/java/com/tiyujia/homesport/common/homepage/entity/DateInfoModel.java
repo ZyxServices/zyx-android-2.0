@@ -12,6 +12,7 @@ public class DateInfoModel implements Serializable {
     public Info data;
     public class  Info{
         public User user;
+        public int id;
         public class User{
             public int id;
             public String nickname;

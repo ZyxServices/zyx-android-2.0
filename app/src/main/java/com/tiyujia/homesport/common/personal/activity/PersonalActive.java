@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.personal.fragment.IssueFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 import com.tiyujia.homesport.common.personal.fragment.ActiveFragment;
 import java.util.ArrayList;
@@ -44,7 +45,6 @@ public class PersonalActive extends ImmersiveActivity  {
         tab.setTabGravity(TabLayout.GRAVITY_FILL);
         tab.setTabMode(TabLayout.MODE_FIXED);
     }
-
     private void setview() {
         personal_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,9 +55,7 @@ public class PersonalActive extends ImmersiveActivity  {
         tv_title.setText("我的活动");
         mTitle.add("我参加的");
         mTitle.add("我发起的");
-        mFragment.add(new ActiveFragment());
+        mFragment.add(new IssueFragment());
         mFragment.add(new ActiveFragment());
     }
-
-
 }

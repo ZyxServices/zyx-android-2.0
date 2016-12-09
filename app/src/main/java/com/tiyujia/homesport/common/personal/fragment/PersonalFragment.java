@@ -3,6 +3,7 @@ package com.tiyujia.homesport.common.personal.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -37,6 +38,7 @@ import com.tiyujia.homesport.common.personal.activity.PersonalSystemSetting;
 import com.tiyujia.homesport.common.personal.model.UserInfoModel;
 import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.FastBlurUtil;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -75,6 +77,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     private SharedPreferences mShare;
     private String mToken;
     private int mUserId;
+    private String pattern="8";//虚化度，越大越虚化
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,7 +105,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                 .params("account_id",mUserId)
                 .execute(new JsonCallback<UserInfoModel>() {
                     @Override
-                    public void onSuccess(UserInfoModel userInfoModel, Call call, Response response) {
+                    public void onSuccess(final UserInfoModel userInfoModel, Call call, Response response) {
                              if(userInfoModel.state==200){
                                  PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(userInfoModel.data.avatar), 320, 320),ivAvatar,320,320);
                                  PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(userInfoModel.data.avatar), 720, 720),ivBackground,720,720);
