@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tiyujia.homesport.common.homepage.activity.CityMapActivity">
+    tools:context="com.tiyujia.homesport.common.homepage.activity.CityMapActivity"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/re1"
+        style="@style/personal_title_background"
+        >
+        <ImageView
+            android:id="@+id/ivBack"
+            style="@style/personal_back"
+            />
+        <TextView
+            android:text="选择场馆"
+            android:id="@+id/tv_title"
+            style="@style/personal_title"
+            />
+    </RelativeLayout>
 <com.amap.api.maps.MapView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/mvMap"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    ></com.amap.api.maps.MapView>
-</RelativeLayout>
+    />
+</LinearLayout>

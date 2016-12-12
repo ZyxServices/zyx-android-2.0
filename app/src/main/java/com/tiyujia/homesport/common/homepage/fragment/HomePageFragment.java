@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -76,7 +77,6 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     private Toolbar tb;
     private AppBarLayout appbar;
     private State state;
-    private HomePageFragmentReceiver mReceiver;
     String selectCity;
     private List<HomePageBannerEntity> banners = new ArrayList<>();
     int [] picAddress=new int[]{R.drawable.demo_05,R.drawable.demo_06,R.drawable.demo_09,R.drawable.demo_10};
@@ -129,6 +129,9 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     }
     @Override
     protected void initData() {
+        SharedPreferences share=getActivity().getSharedPreferences("UserInfo",Context.MODE_PRIVATE);
+        String City=share.getString("City","");
+        tvSearchCity.setText("成都市");
         banners.add(new HomePageBannerEntity(picAddress[0]));
         banners.add(new HomePageBannerEntity(picAddress[1]));
         banners.add(new HomePageBannerEntity(picAddress[2]));
@@ -201,28 +204,10 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     @Override public void onResume() {
         super.onResume();
         cbHomePage.startTurning(2500);
-        mReceiver=new HomePageFragmentReceiver();
-        IntentFilter filter=new IntentFilter();
-        filter.addAction("GET_LOCATION");
-        getActivity().registerReceiver(mReceiver,filter);
     }
     @Override public void onPause() {
         super.onPause();
         cbHomePage.stopTurning();
-        getActivity().unregisterReceiver(mReceiver);
-    }
-    private boolean isFirstReceive=true;
-    private class HomePageFragmentReceiver extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (isFirstReceive) {
-                String city = intent.getStringExtra("CITY");
-                Log.i("tag","now------fragment----"+city);
-                tvSearchCity.setText(city);
-                tvSearchCity.postInvalidate();
-                isFirstReceive=false;
-            }
-        }
     }
     @Override
     public void onClick(View v) {

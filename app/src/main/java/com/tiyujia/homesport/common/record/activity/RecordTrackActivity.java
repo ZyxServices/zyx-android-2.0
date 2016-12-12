@@ -2,6 +2,8 @@ package com.tiyujia.homesport.common.record.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,15 +16,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.lzy.okgo.OkGo;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.record.adapter.RecordTrackAdapter;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
+import com.tiyujia.homesport.common.record.model.OverViewModel;
+import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.entity.LzyResponse;
 
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * 作者: Cymbi on 2016/11/22 09:44.
@@ -34,37 +43,38 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
     @Bind(R.id.ivShare)   ImageView ivShare;
     @Bind(R.id.llTrack)   LinearLayout llTrack;
     @Bind(R.id.recyclerView)    RecyclerView recyclerView;
-    private ArrayList<ActiveModel> mDatas;
-    private RecordTrackAdapter adapter;
+    @Bind(R.id.tvSportTimes)    TextView tvSportTimes;
+    @Bind(R.id.tvTotalScore)    TextView tvTotalScore;
     private AlertDialog builder;
+    private String mToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_track);
-        ButterKnife.bind(this);
         initView();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        adapter=new RecordTrackAdapter(this,mDatas);
-        recyclerView.setAdapter(adapter);
     }
-
     private void initView() {
+        SharedPreferences share=getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        mToken=share.getString("Token","");
         ivBack.setOnClickListener(this);
         ivShare.setOnClickListener(this);
         llTrack.setOnClickListener(this);
-        setData();
+        OkGo.post(API.BASE_URL+"/v2/record/overview")
+                .tag(this)
+                .params("token",mToken)
+                .execute(new LoadCallback<LzyResponse<OverViewModel>>(this) {
+                    @Override
+                    public void onSuccess(LzyResponse<OverViewModel> model, Call call, Response response) {
+                        if(model.state==200){
+                            tvSportTimes.setText(model.data.sportTimes+"");
+                            tvTotalScore.setText(model.data.totalScore+"");
+                        }
+                    }
+                });
     }
-    private void setData() {
-        mDatas = new ArrayList<>();
-        for (int i = 0; i < 10; i++)
-        {
-            ActiveModel activeModel=  new ActiveModel();
-            mDatas.add(activeModel);
-        }
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){

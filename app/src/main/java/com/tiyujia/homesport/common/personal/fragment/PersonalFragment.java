@@ -90,6 +90,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
         SharedPreferences share = getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
+        Log.e("token",mToken);
         if(!TextUtils.isEmpty(mToken)){
             re_login.setVisibility(View.GONE);
             setData();
