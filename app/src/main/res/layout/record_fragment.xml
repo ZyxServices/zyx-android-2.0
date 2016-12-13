@@ -137,12 +137,11 @@
     android:padding="12dp"
     >
     <TextView
+        android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/orange"
         android:textSize="15sp"
-        android:text="绵阳鹰嘴攀岩岩场"
-
         />
     <ImageView
         android:layout_width="wrap_content"
@@ -181,6 +180,7 @@
 
         />
     <ImageView
+        android:id="@+id/ivSelect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

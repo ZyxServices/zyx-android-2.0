@@ -308,4 +308,12 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+       SharedPreferences  share=getSharedPreferences("City",MODE_PRIVATE);
+        share.edit().clear().apply();
+
+    }
 }
