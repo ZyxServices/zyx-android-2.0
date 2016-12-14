@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="match_parent"
+<RelativeLayout
+    android:id="@+id/mRootView"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -35,9 +37,11 @@
             android:layout_alignParentRight="true"
             />
     </RelativeLayout>
-<android.support.v4.widget.NestedScrollView android:layout_width="match_parent"
+<android.support.v4.widget.NestedScrollView
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@+id/rlTop"
+    android:id="@+id/nsvMain"
     >
 <LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
@@ -167,10 +171,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="成都市体育馆二号馆三楼篮球中心场地"
+            android:text="成都市体育馆二号馆三楼"
             android:textSize="12sp"
             android:id="@+id/tvVenueDetailAddress"
             android:textColor="#333333"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxEms="15"
             android:layout_marginLeft="10dp"
             android:layout_gravity="center_vertical"/>
         <TextView
@@ -237,10 +244,11 @@
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="49dp"
         android:layout_alignParentBottom="true"
+        android:id="@+id/llToTalk"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:background="@color/orange">
-        <EditText
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="憋说话，敲字"

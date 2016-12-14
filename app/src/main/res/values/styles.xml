@@ -179,4 +179,8 @@
         <!-- 灰度值 -->
         <item name="android:backgroundDimAmount">0.6</item>
     </style>
+    <style name="Dialog_FS">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
 </resources>

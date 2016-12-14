@@ -1,25 +1,32 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.tiyujia.homesport.API;
-import com.tiyujia.homesport.ImmersiveActivity;
+import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageDiscussAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageVenueUserAdapter;
@@ -28,20 +35,20 @@ import com.tiyujia.homesport.common.homepage.entity.CallBackDetailEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageDiscussEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageVenueWhomGoneEntity;
 import com.tiyujia.homesport.common.homepage.entity.VenueWholeBean;
-import com.tiyujia.homesport.common.homepage.fragment.NearVenueFragment;
 import com.tiyujia.homesport.util.CacheUtils;
 import com.tiyujia.homesport.util.DegreeUtil;
 import com.tiyujia.homesport.util.JSONParseUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.w4lle.library.NineGridlayout;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import butterknife.Bind;
 //1
-public class HomePageSearchResultActivity extends ImmersiveActivity implements View.OnClickListener{
+public class HomePageSearchResultActivity extends NewBaseActivity implements View.OnClickListener{
     @Bind(R.id.rvHomePageVenueDetailWhomGone) RecyclerView rvHomePageVenueDetailWhomGone;
     @Bind(R.id.rvHomePageVenueDetailSay) RecyclerView rvHomePageVenueDetailSay;
     @Bind(R.id.ivVenueDetailBack)       ImageView ivVenueDetailBack;//左上角返回按钮
@@ -59,11 +66,18 @@ public class HomePageSearchResultActivity extends ImmersiveActivity implements V
     @Bind(R.id.tvMeGone)                TextView tvMeGone;//我去过标签
     @Bind(R.id.tvVenuePhone)            TextView tvVenuePhone;//联系电话
     @Bind(R.id.wvVenueDetail)           WebView wvVenueDetail;//场馆基本介绍
+    @Bind(R.id.llToTalk)                LinearLayout llToTalk;//橙色布局
+    @Bind(R.id.nsvMain)                 NestedScrollView nsvMain;//主布局
+    LinearLayout llCancelAndSend;//输入框布局
+    EditText etToComment;
+    TextView tvSend,tvCancel;
     List<HomePageVenueWhomGoneEntity> list;
     HomePageVenueUserAdapter userAdapter;
     List<HomePageDiscussEntity> mValue;
     HomePageDiscussAdapter discussAdapter;
     VenueWholeBean data;
+    int venueId;//场馆ID
+    int nowUserId;//当前用户ID
     public static final int HANDLE_BASE_DATA=1;
     public static final int HANDLE_BASE_VENUE_DATA=2;
     Handler handler=new Handler(){
@@ -139,9 +153,10 @@ public class HomePageSearchResultActivity extends ImmersiveActivity implements V
         ivVenueDetailBack.setOnClickListener(this);
         ivVenueDetailMore.setOnClickListener(this);
         tvVenuePhone.setOnClickListener(this);
+        llToTalk.setOnClickListener(this);
     }
     private void setVenueData() {
-        final int venueId=getIntent().getIntExtra("venueId",0);
+        venueId=getIntent().getIntExtra("venueId",0);
         ArrayList<String> cacheData= (ArrayList<String>) CacheUtils.readJson(HomePageSearchResultActivity.this, HomePageSearchResultActivity.this.getClass().getName() + "_1.json");
         if (cacheData==null||cacheData.size()==0) {
             new Thread() {
@@ -174,7 +189,6 @@ public class HomePageSearchResultActivity extends ImmersiveActivity implements V
         }
         HomePageVenueWhomGoneEntity empty=new HomePageVenueWhomGoneEntity();
         list.add(empty);
-
         String [] contents={"今天天气真好，我们一起去打篮球吧","今天天气真好，我们一起去球场上打篮球吧，来pk一下撒！大家说，怎么样呢！。。。。","明天天气很好，我们到时一起去打篮球吧"};
         mValue=new ArrayList<>();
         for (int i=0;i<3;i++){
@@ -213,6 +227,9 @@ public class HomePageSearchResultActivity extends ImmersiveActivity implements V
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.llToTalk:
+                showCommentView();
+                break;
             case R.id.ivVenueDetailBack:
                 finish();
                 break;
@@ -246,5 +263,50 @@ public class HomePageSearchResultActivity extends ImmersiveActivity implements V
                 });
                 break;
         }
+    }
+
+    private void showCommentView() {
+        Dialog dialog=new Dialog(this,R.style.Dialog_FS);
+        dialog.setContentView(R.layout.comment_view);
+        dialog.show();
+        llToTalk.setVisibility(View.GONE);
+        llCancelAndSend= (LinearLayout) dialog.findViewById(R.id.llCancelAndSend);
+        etToComment= (EditText) llCancelAndSend.findViewById(R.id.etToComment);
+        Window dialogWindow = this.getWindow();
+        dialogWindow.getDecorView().setPadding(0, 0, 0, 0);
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        dialogWindow.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        dialogWindow.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL);
+        lp.x = 0;
+        Rect r = new Rect();
+        //获取当前界面可视部分
+        dialogWindow.getDecorView().getWindowVisibleDisplayFrame(r);
+        //获取屏幕的高度
+        lp.y = r.bottom;
+        lp.width= WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialogWindow.setAttributes(lp);
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask(){
+            @Override
+            public void run(){
+                InputMethodManager m = (InputMethodManager)etToComment.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                m.showSoftInput(etToComment,InputMethodManager.SHOW_FORCED);
+            }
+        }, 200);
+
+    }
+
+    private void writeToCallBack(){
+//        SharedPreferences share=getSharedPreferences("UserInfo",MODE_PRIVATE);
+//        nowUserId=share.getInt("UserId",0);
+//        HashMap<String,String> params=new HashMap<>();
+//        params.put("comment_type","4");
+//        params.put("comment_id",venueId+"");
+//        params.put("model_create_id","-1");
+//        params.put("comment_account",nowUserId+"");
+//        String commentText=etVenueCallBack.getText().toString();
+//        params.put("comment_content",commentText);
+
     }
 }

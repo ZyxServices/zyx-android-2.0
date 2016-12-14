@@ -11,11 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.cache.CacheMode;
-import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;

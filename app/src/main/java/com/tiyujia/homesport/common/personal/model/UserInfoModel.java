@@ -1,9 +1,6 @@
 package com.tiyujia.homesport.common.personal.model;
 
-import com.tiyujia.homesport.entity.User;
-
 import java.io.Serializable;
-import java.util.logging.Level;
 
 /**
  * 作者: Cymbi on 2016/11/24 16:21.
