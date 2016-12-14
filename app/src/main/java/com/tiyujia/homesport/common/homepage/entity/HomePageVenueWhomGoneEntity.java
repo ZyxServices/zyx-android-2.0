@@ -7,9 +7,45 @@ import java.io.Serializable;
  */
 
 public class HomePageVenueWhomGoneEntity implements Serializable {
-    String userPhotoUrl;
-    String userName;
-    String userLevelUrl;
+    String userPhotoUrl;//头像图片地址
+    String userName;//用户名
+    String userLevelUrl;//用户等级---levelName
+    int userId;
+    String authenticate;
+    String step;
+    String level;
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String getAuthenticate() {
+        return authenticate;
+    }
+
+    public void setAuthenticate(String authenticate) {
+        this.authenticate = authenticate;
+    }
+
+    public String getStep() {
+        return step;
+    }
+
+    public void setStep(String step) {
+        this.step = step;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
 
     public String getUserPhotoUrl() {
         return userPhotoUrl;
