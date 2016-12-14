@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -40,6 +41,9 @@ import com.tiyujia.homesport.util.DegreeUtil;
 import com.tiyujia.homesport.util.JSONParseUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.w4lle.library.NineGridlayout;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +71,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     @Bind(R.id.tvVenuePhone)            TextView tvVenuePhone;//联系电话
     @Bind(R.id.wvVenueDetail)           WebView wvVenueDetail;//场馆基本介绍
     @Bind(R.id.llToTalk)                LinearLayout llToTalk;//橙色布局
-    @Bind(R.id.nsvMain)                 NestedScrollView nsvMain;//主布局
     LinearLayout llCancelAndSend;//输入框布局
     EditText etToComment;
     TextView tvSend,tvCancel;
@@ -145,6 +148,10 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page_search_result);
+        llCancelAndSend= (LinearLayout) View.inflate(this,R.layout.comment_view,null);
+        etToComment= (EditText) llCancelAndSend.findViewById(R.id.etToComment);
+        tvCancel= (TextView) llCancelAndSend.findViewById(R.id.tvCancel);
+        tvSend= (TextView) llCancelAndSend.findViewById(R.id.tvSend);
         setVenueData();
         setData();
         setListeners();
@@ -154,6 +161,8 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
         ivVenueDetailMore.setOnClickListener(this);
         tvVenuePhone.setOnClickListener(this);
         llToTalk.setOnClickListener(this);
+        tvSend.setOnClickListener(this);
+        tvCancel.setOnClickListener(this);
     }
     private void setVenueData() {
         venueId=getIntent().getIntExtra("venueId",0);
@@ -227,6 +236,14 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.tvCancel:
+                etToComment.setText("");
+                llToTalk.setVisibility(View.VISIBLE);
+                dialog.dismiss();
+                break;
+            case R.id.tvSend:
+                writeToCallBack();
+                break;
             case R.id.llToTalk:
                 showCommentView();
                 break;
@@ -264,14 +281,14 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                 break;
         }
     }
-
+    Dialog dialog;
     private void showCommentView() {
-        Dialog dialog=new Dialog(this,R.style.Dialog_FS);
-        dialog.setContentView(R.layout.comment_view);
+        if (dialog==null) {
+            dialog = new Dialog(this, R.style.Dialog_FS);
+            dialog.setContentView(llCancelAndSend);
+        }
         dialog.show();
         llToTalk.setVisibility(View.GONE);
-        llCancelAndSend= (LinearLayout) dialog.findViewById(R.id.llCancelAndSend);
-        etToComment= (EditText) llCancelAndSend.findViewById(R.id.etToComment);
         Window dialogWindow = this.getWindow();
         dialogWindow.getDecorView().setPadding(0, 0, 0, 0);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
@@ -298,15 +315,39 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     }
 
     private void writeToCallBack(){
-//        SharedPreferences share=getSharedPreferences("UserInfo",MODE_PRIVATE);
-//        nowUserId=share.getInt("UserId",0);
-//        HashMap<String,String> params=new HashMap<>();
-//        params.put("comment_type","4");
-//        params.put("comment_id",venueId+"");
-//        params.put("model_create_id","-1");
-//        params.put("comment_account",nowUserId+"");
-//        String commentText=etVenueCallBack.getText().toString();
-//        params.put("comment_content",commentText);
+        final String uri = API.BASE_URL + "/v2/comment/insert";
+        final SharedPreferences share = getSharedPreferences("UserInfo", MODE_PRIVATE);
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    nowUserId = share.getInt("UserId", 0);
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("comment_type", "4");
+                    params.put("comment_id", venueId + "");
+                    params.put("model_create_id", "-1");
+                    params.put("comment_account", nowUserId + "");
+                    String commentText = etToComment.getText().toString().trim();
+                    params.put("comment_content", commentText);
+                    String result = PostUtil.sendPostMessage(uri, params);
+                    JSONObject obj = new JSONObject(result);
+                    int state=obj.getInt("state");
+                    if (state==200){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                               Toast.makeText(HomePageSearchResultActivity.this,"评论成功！",Toast.LENGTH_LONG).show();
+                                etToComment.setText("");
+                                llToTalk.setVisibility(View.VISIBLE);
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }.start();
 
     }
 }
