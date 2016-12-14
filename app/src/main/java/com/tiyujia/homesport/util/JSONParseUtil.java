@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.tiyujia.homesport.API;
+import com.tiyujia.homesport.common.homepage.entity.HomePageBannerEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageRecentVenueEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchActiveEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchCourseEntity;
@@ -549,5 +550,42 @@ public class JSONParseUtil {
         List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
         String result=cacheData.get(0);
         handleSearchAll(result,data,handler,state);
+    }
+    public static void parseNetDataHomeBanner(Context context, String result, String name, List<HomePageBannerEntity> data, Handler handler, int state){
+        CacheUtils.writeJson(context, result, name, false);
+        handleHomeBanner(result,data,handler,state);
+    }
+    private static void handleHomeBanner(String result,  List<HomePageBannerEntity> list, Handler handler, int stateFinal){
+        try {
+            if (list.size() != 0) {
+                list.clear();
+            }
+            JSONObject object=new JSONObject(result);
+            int state = object.getInt("state");
+            if (state!=200) {
+                handler.sendEmptyMessage(stateFinal);
+                return;
+            }else {
+                JSONArray array=object.getJSONArray("data");
+                for (int i=0;i<array.length();i++){
+                    JSONObject data=array.getJSONObject(i);
+                    HomePageBannerEntity entity=new HomePageBannerEntity();
+                    entity.setId(data.getInt("id"));
+                    entity.setModel(data.getInt("model"));
+                    entity.setModelId(data.getInt("modelId"));
+                    entity.setCreateTime(data.getLong("createTime"));
+                    entity.setImageUrl(API.PICTURE_URL+data.getString("imageUrl"));
+                    list.add(entity);
+                }
+                handler.sendEmptyMessage(stateFinal);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void parseLocalDataHomeBanner(Context context, String name, List<HomePageBannerEntity> data, Handler handler, int state){
+        List<String> cacheData= (ArrayList<String>) CacheUtils.readJson(context,name);
+        String result=cacheData.get(0);
+        handleHomeBanner(result,data,handler,state);
     }
 }
