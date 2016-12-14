@@ -17,6 +17,7 @@
             android:src="@mipmap/nav_share"
             android:paddingTop="20dp"
             android:layout_alignParentRight="true"
+            android:visibility="gone"
             />
         <ImageView
             android:id="@+id/ivBack"
