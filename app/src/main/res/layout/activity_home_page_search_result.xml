@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -36,6 +37,9 @@
             android:layout_alignParentRight="true"
             />
     </RelativeLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 <android.support.v4.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -245,6 +249,7 @@
         android:id="@+id/llToTalk"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:layout_gravity="bottom"
         android:background="@color/orange">
         <TextView
             android:layout_width="wrap_content"
@@ -260,4 +265,58 @@
             android:drawablePadding="10dp"
             />
     </LinearLayout>
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:id="@+id/llCancelAndSend"
+            android:orientation="vertical"
+            android:background="#ffffff"
+            android:layout_gravity="bottom"
+            android:visibility="gone"
+            xmlns:android="http://schemas.android.com/apk/res/android">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="15dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="取消"
+                    android:id="@+id/tvCancel"
+                    android:textSize="15sp"
+                    android:textColor="#666666"/>
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="发送"
+                    android:id="@+id/tvSend"
+                    android:textSize="15sp"
+                    android:textColor="#ff702a"/>
+            </LinearLayout>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:id="@+id/etToComment"
+                android:hint="你想说点什么？"
+                android:background="@null"
+                android:textColorHint="#b3b3b3"
+                android:textSize="14sp"
+                android:gravity="left"
+                android:textColor="#333333"
+                android:layout_marginTop="11dp"
+                />
+            <TextView
+                style="@style/boldlin" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>
