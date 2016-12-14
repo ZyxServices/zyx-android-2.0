@@ -16,7 +16,6 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.tiyujia.homesport.util.CityUtils;
-import com.tiyujia.homesport.util.PermissionUtil;
 
 /**
  * 作者: Cymbi on 2016/11/22 14:53.
