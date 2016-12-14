@@ -3,15 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="115dp"
     android:id="@+id/llCancelAndSend"
-    android:paddingLeft="15dp"
-    android:paddingRight="15dp"
     android:orientation="vertical"
     android:background="#ffffff"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:paddingTop="15dp">
         <TextView
             android:layout_width="wrap_content"
@@ -35,11 +36,16 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:id="@+id/etToComment"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:hint="你想说点什么？"
         android:background="@null"
         android:textColorHint="#b3b3b3"
         android:textSize="14sp"
+        android:gravity="left"
         android:textColor="#333333"
         android:layout_marginTop="11dp"/>
+
 </LinearLayout>

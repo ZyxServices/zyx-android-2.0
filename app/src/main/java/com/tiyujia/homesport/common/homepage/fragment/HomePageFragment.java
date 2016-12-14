@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -133,6 +134,9 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     @Override
     protected void initData() {
         setDatas();
+        SharedPreferences share=getActivity().getSharedPreferences("UserInfo",Context.MODE_PRIVATE);
+        String s=share.getString("City","");
+        tvSearchCity.setText(s);
         swipeContainer.setOnRefreshListener(this);
         RefreshUtil.refresh(swipeContainer,getActivity());
         ivHomePageAllVenue.setOnClickListener(this);
