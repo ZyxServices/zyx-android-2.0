@@ -14,6 +14,7 @@ public class ArticleModel implements Serializable {
         public int id;//教程id
         public int labelId;
         public int commentNumber;
+        public int userId;
         public String title;
         public String content;
         public String courseType;

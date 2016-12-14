@@ -15,7 +15,9 @@ import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.entity.ArticleModel;
 import com.tiyujia.homesport.common.homepage.entity.CurseModel;
+import com.tiyujia.homesport.common.personal.model.UserInfoModel;
 import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.StringUtil;
@@ -40,6 +42,8 @@ public class HomePageArticleActivity extends ImmersiveActivity {
     @Bind(R.id.tv_yes)    TextView tv_yes;
     @Bind(R.id.tvTitle)    TextView tvTitle;
     @Bind(R.id.webview)    WebView webview;
+    private String token="tiyujia2016";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,14 +79,41 @@ public class HomePageArticleActivity extends ImmersiveActivity {
                         webview.getSettings().setAppCacheEnabled(true);
                         webview.setWebChromeClient(new WebChromeClient());
                         webview.getSettings().setJavaScriptEnabled(true);
+                        int userId=articleModel.data.userId;
+                        final long createTime=articleModel.data.createTime;
+                        OkGo.get(API.BASE_URL+"/v2/user/center_info")
+                                .tag(this)
+                                .params("token",token)
+                                .params("account_id",userId)
+                                .execute(new LoadCallback<UserInfoModel>(HomePageArticleActivity.this) {
+                                    @Override
+                                    public void onSuccess(UserInfoModel userInfoModel, Call call, Response response) {
+                                        if(userInfoModel.state==200){
+                                            tvNickname.setText(userInfoModel.data.nickname);
+                                            tvTime.setText(API.simpleYear.format(createTime));
+                                            PicassoUtil.handlePic(HomePageArticleActivity.this, PicUtil.getImageUrlDetail(HomePageArticleActivity.this, StringUtil.isNullAvatar(userInfoModel.data.avatar), 320, 320), ivAvatar, 320, 320);
+                                            if (userInfoModel.data.level!=null&&userInfoModel.data.level.equals("")){
+                                                LvUtil.setLv(ivLv,userInfoModel.data.level.pointDesc);
+                                            }else {
+                                                LvUtil.setLv(ivLv,"初学乍练");
+                                            }
+                                        }
+                                    }
+                                    @Override
+                                    public void onError(Call call, Response response, Exception e) {
+                                        super.onError(call, response, e);
+                                        showToast("用户信息查询失败");
+                                    }
+                                });
                     }
-
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
                         showToast("网络连接失败");
                     }
                 });
+
+
 
     }
 }
