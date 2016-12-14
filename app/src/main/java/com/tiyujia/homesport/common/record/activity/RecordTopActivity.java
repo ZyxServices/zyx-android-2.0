@@ -1,16 +1,30 @@
 package com.tiyujia.homesport.common.record.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.android.gms.common.api.Api;
+import com.lzy.okgo.OkGo;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.record.adapter.RecordTopAdapter;
+import com.tiyujia.homesport.common.record.model.TopModel;
+import com.tiyujia.homesport.entity.LoadCallback;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * 作者: Cymbi on 2016/11/21 14:36.
@@ -20,13 +34,21 @@ import butterknife.ButterKnife;
 public class RecordTopActivity extends ImmersiveActivity implements View.OnClickListener{
     @Bind(R.id.ivBack)    ImageView ivBack;
     @Bind(R.id.ivShare)    ImageView ivShare;
+    @Bind(R.id.recyclerView)    RecyclerView recyclerView;
+    private RecordTopAdapter adapter;
+    private String mToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_top);
-        ButterKnife.bind(this);
         setView();
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter=new RecordTopAdapter(null);
+        adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        adapter.isFirstOnly(false);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -42,7 +64,28 @@ public class RecordTopActivity extends ImmersiveActivity implements View.OnClick
     }
 
     private void setView() {
+        SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        mToken=share.getString("Token","");
         ivBack.setOnClickListener(this);
         ivShare.setOnClickListener(this);
+        OkGo.post(API.BASE_URL+"/v2/record/rank/list")
+                .tag(this)
+                .params("token",mToken)
+                .params("pageSize",100)
+                .params("pageNum",1)
+                .execute(new LoadCallback<TopModel>(this) {
+                    @Override
+                    public void onSuccess(TopModel topModel, Call call, Response response) {
+                        if(topModel.state==200){
+                            adapter.setNewData(topModel.data);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, Response response, Exception e) {
+                        super.onError(call, response, e);
+                        showToast("网络连接错误");
+                    }
+                });
     }
 }

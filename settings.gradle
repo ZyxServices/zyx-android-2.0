@@ -1,1 +1,1 @@
-include ':app', ':okgo', ':imagepicker', ':Addresslibrary'
+include ':app', ':okgo', ':imagepicker', ':Addresslibrary', ':picker'

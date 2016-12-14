@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
@@ -92,7 +93,8 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
         etSearchCity= (EditText) findViewById(R.id.etSearchCity);
         mCityLit=(ListView) findViewById(R.id.city_list);
         mQuicLocationBar.setTextDialog(overlay);
-        String nowCity= BootLoaderActivity.nowCity;
+        SharedPreferences share = getSharedPreferences("UserInfo", MODE_PRIVATE);
+        String nowCity=share.getString("City","");
         if (nowCity==null){
             tvNowCity.setText("定位中");
             tvNowCity.postInvalidate();

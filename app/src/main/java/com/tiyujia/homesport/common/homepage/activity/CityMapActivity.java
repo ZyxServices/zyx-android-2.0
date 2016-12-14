@@ -1,12 +1,16 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -14,92 +18,120 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
-import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.Poi;
+import com.amap.api.maps.AMap.OnPOIClickListener;
+import com.amap.api.maps.AMap.OnMarkerClickListener;
+import com.lzy.okgo.OkGo;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
+import com.tiyujia.homesport.BootLoaderActivity;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.tiyujia.homesport.common.homepage.entity.CityMapModel;
+import com.tiyujia.homesport.common.record.fragment.RecordFragment;
+import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.util.CityUtils;
 
-public class CityMapActivity extends ImmersiveActivity {
+import java.util.zip.Inflater;
+
+import okhttp3.Call;
+import okhttp3.Response;
+
+public class CityMapActivity extends ImmersiveActivity implements OnMarkerClickListener {
+    ImageView ivBack;
     private MapView mvMap;
     private AMap aMap;
     //声明AMapLocationClient类对象
-    public AMapLocationClient mLocationClient = null;
-    /**
-     * 声明定位回调监听器
-     */
-    public AMapLocationListener mLocationListener = new AMapLocationListener() {
-        @Override
-        public void onLocationChanged(AMapLocation amapLocation) {
-            if (amapLocation != null) {
-                if (amapLocation.getErrorCode() == 0) {
-                    //定位成功回调信息，设置相关消息
-                    amapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                    amapLocation.getLatitude();//获取纬度
-                    amapLocation.getLongitude();//获取经度
-                    amapLocation.getAccuracy();//获取精度信息
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = new Date(amapLocation.getTime());
-                    df.format(date);//定位时间
-                    amapLocation.getAddress();//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
-                    amapLocation.getCountry();//国家信息
-                    amapLocation.getProvince();//省信息
-                    String city=amapLocation.getCity();//城市信息
-                    String area=amapLocation.getDistrict();//城区信息
-                    String street=amapLocation.getStreet();//街道信息
-                    String number=amapLocation.getStreetNum();//街道门牌号信息
-                    amapLocation.getCityCode();//城市编码
-                    amapLocation.getAdCode();//地区编码
-                    amapLocation.getAoiName();//获取当前定位点的AOI信息
-                    lat = amapLocation.getLatitude();
-                    lon = amapLocation.getLongitude();
-                    // 设置当前地图显示为当前位置
-                    aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 19));
-                    aMap.setMaxZoomLevel(15);
-                    aMap.setMinZoomLevel(1);
-                    aMap.setMapType(AMap.MAP_TYPE_NORMAL);
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(new LatLng(lat, lon));
-                    markerOptions.visible(true);
-                    markerOptions.snippet("当前位置:"+city+area+street+number);
-                    BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.green_point));
-                    markerOptions.icon(bitmapDescriptor);
-                    aMap.addMarker(markerOptions);
-                } else {
-                    //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
-                    Log.e("AmapError", "location Error, ErrCode:"
-                            + amapLocation.getErrorCode() + ", errInfo:"
-                            + amapLocation.getErrorInfo());
-                }
-            }
-        }
-    };
-    //声明mLocationOption对象
-    public AMapLocationClientOption mLocationOption = null;
-    private double lat;
-    private double lon;
+    public AMapLocationClient client;
+    private int type=1;//1、全部，2、距离当前经纬度最近，3、最热门， 4、最大难度
+    private Integer number=100;
+    private Integer pageNumber=1;
+    private TextView tvCity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city_map);
         mvMap = (MapView) findViewById(R.id.mvMap);
         mvMap.onCreate(savedInstanceState);
-        //初始化定位
-        mLocationClient = new AMapLocationClient(this);
-        init();
-        //设置定位回调监听
-        mLocationClient.setLocationListener(mLocationListener);
-    }
-    private void init() {
         if (aMap == null) {
             aMap = mvMap.getMap();
         }
-        setUpMap();
+        getLocation();
+        aMap.setOnMarkerClickListener(this);
+        ivBack=(ImageView) findViewById(R.id.ivBack);
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
+    private void getLocation() {
+        client =new AMapLocationClient(App.getContext());
+        AMapLocationListener aMapLocationListener = new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                if(aMapLocation!=null){
+                        AMapLocation Location =  client.getLastKnownLocation();
+                        final double Latitude=Location.getLatitude();//获取纬度
+                        final double Longitude=Location.getLongitude();//获取经度
+                        OkGo.post(API.BASE_URL+"/v2/venue/findVenue")
+                                .tag(this)
+                                .params("type",type)
+                                .params("lng",Longitude)//经度
+                                .params("lat",Latitude)//纬度
+                                .params("number",number)
+                                .params("pageNumber",pageNumber)
+                                .execute(new LoadCallback<CityMapModel>(CityMapActivity.this) {
+                                    @Override
+                                    public void onSuccess(CityMapModel city, Call call, Response response) {
+                                        for (int i=0;i<city.data.size();i++){
+                                            CityMapModel.City jk = city.data.get(i);
+                                            LatLng mlatlng = new LatLng(jk.latitude,jk.longitude);
+                                            MarkerOptions markerOptions=new MarkerOptions();
+                                            markerOptions.position(mlatlng);
+                                            markerOptions.title(jk.name).snippet(jk.id+"");
+                                            markerOptions.draggable(true);
+                                            View view=getLayoutInflater().inflate(R.layout.city_info_bubble,null);
+                                            tvCity=(TextView)view.findViewById(R.id.tvCity);
+                                            TextView  tvNumber=(TextView)view.findViewById(R.id.tvNumber);
+                                            tvNumber.setText(i+"");
+                                            tvCity.setText(jk.name);
+                                            markerOptions.icon(BitmapDescriptorFactory.fromView(view));
+                                            markerOptions.setFlat(true);
+                                            aMap.addMarker(markerOptions);
+                                            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Latitude,Longitude), 10));
+                                        }
+
+                                    }
+                                    @Override
+                                    public void onError(Call call, Response response, Exception e) {
+                                        super.onError(call, response, e);
+                                        showToast("网络连接失败");
+                                    }
+                                });
+                }
+            }
+        };
+        client.setLocationListener(aMapLocationListener);
+        AMapLocationClientOption option=  new AMapLocationClientOption();
+        //设置模式为高精度
+        option.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //获取一次定位结果，该方法默认为false
+        option.setOnceLocation(true);
+        //获取最近3S内精度最高的一次定位结果
+        //设置setOnceLocationLatest(boolean b)接口为true。启动定位是SKD会返回最近3秒最高的一次定位结果，如果设置为true，setOnceLocation(boolean b)也会为true，反之不会，默认为false。
+        option.setOnceLocationLatest(true);
+        //给定位客户端对象设置定位参数
+        client.setLocationOption(option);
+        client.startLocation();
+    }
+
     /**
      * 方法必须重写
      */
@@ -108,36 +140,7 @@ public class CityMapActivity extends ImmersiveActivity {
         super.onResume();
         mvMap.onResume();
     }
-    /**
-     * 配置定位参数
-     */
-    private void setUpMap() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            //申请WRITE_EXTERNAL_STORAGE权限
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE},
-                    1);//自定义的code
-        }
-        //初始化定位参数
-        mLocationOption = new AMapLocationClientOption();
-        //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        //设置是否返回地址信息（默认返回地址信息）
-        mLocationOption.setNeedAddress(true);
-        //设置是否只定位一次,默认为false
-        mLocationOption.setOnceLocation(false);
-        //设置是否强制刷新WIFI，默认为强制刷新
-        mLocationOption.setWifiActiveScan(true);
-        //设置是否允许模拟位置,默认为false，不允许模拟位置
-        mLocationOption.setMockEnable(false);
-        //设置定位间隔,单位毫秒,默认为2000ms
-        mLocationOption.setInterval(2000);
-        //给定位客户端对象设置定位参数
-        mLocationClient.setLocationOption(mLocationOption);
-        //启动定位
-        mLocationClient.startLocation();
-    }
+
     /**
      * 方法必须重写
      */
@@ -149,7 +152,7 @@ public class CityMapActivity extends ImmersiveActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mLocationClient.stopLocation();//停止定位
+        client.stopLocation();//停止定位
     }
     /**
      * 方法必须重写
@@ -166,7 +169,19 @@ public class CityMapActivity extends ImmersiveActivity {
     protected void onDestroy() {
         super.onDestroy();
         mvMap.onDestroy();
-        mLocationClient.onDestroy();//销毁定位客户端。
+        client.onDestroy();//销毁定位客户端。
+    }
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        String name=marker.getTitle();
+        int id=Integer.parseInt(marker.getSnippet());
+        SharedPreferences share = getSharedPreferences("City",MODE_PRIVATE);
+        SharedPreferences.Editor etr = share.edit();
+        etr.putString("name",name);
+        etr.putInt("id",id);
+        etr.apply();
+        finish();
+        return true;
     }
 
 }
