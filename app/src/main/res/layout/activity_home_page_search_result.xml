@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/mRootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
@@ -41,7 +40,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@+id/rlTop"
-    android:id="@+id/nsvMain"
     >
 <LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
