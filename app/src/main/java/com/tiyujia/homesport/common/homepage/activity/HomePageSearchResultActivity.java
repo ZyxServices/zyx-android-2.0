@@ -14,6 +14,7 @@ import android.os.Message;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -40,8 +41,10 @@ import com.tiyujia.homesport.util.CacheUtils;
 import com.tiyujia.homesport.util.DegreeUtil;
 import com.tiyujia.homesport.util.JSONParseUtil;
 import com.tiyujia.homesport.util.PostUtil;
+import com.tiyujia.homesport.util.StringUtil;
 import com.w4lle.library.NineGridlayout;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -81,6 +84,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     VenueWholeBean data;
     int venueId;//场馆ID
     int nowUserId;//当前用户ID
+    Dialog dialog;
     public static final int HANDLE_BASE_DATA=1;
     public static final int HANDLE_BASE_VENUE_DATA=2;
     Handler handler=new Handler(){
@@ -189,13 +193,46 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
         int [] levels={R.mipmap.img_lv1,R.mipmap.img_lv2,R.mipmap.img_lv3,R.mipmap.img_lv4,
                 R.mipmap.img_lv5,R.mipmap.img_lv6,R.mipmap.img_lv7,R.mipmap.img_lv8,R.mipmap.img_lv9,
                 R.mipmap.img_lv10,R.mipmap.img_lv11,R.mipmap.img_lv12,R.mipmap.img_lv13};
-        for (int i=0;i<4;i++){
-            HomePageVenueWhomGoneEntity entity=new HomePageVenueWhomGoneEntity();
-            entity.setUserPhotoUrl(pictures[i]+"");
-            entity.setUserName(userName[i]);
-            entity.setUserLevelUrl(levels[new Random().nextInt(13)]+"");
-            list.add(entity);
-        }
+//        for (int i=0;i<4;i++){
+//            HomePageVenueWhomGoneEntity entity=new HomePageVenueWhomGoneEntity();
+//            entity.setUserPhotoUrl(pictures[i]+"");
+//            entity.setUserName(userName[i]);
+//            entity.setUserLevelUrl(levels[new Random().nextInt(13)]+"");
+//            list.add(entity);
+//        }
+        final String url=API.BASE_URL+"/v2/record/users";
+        new Thread(){
+            @Override
+            public void run() {
+                try{
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("venueId", ""+venueId);
+                    params.put("pageSize", "4");
+                    params.put("pageNum", "1");
+                    String result = PostUtil.sendPostMessage(url, params);
+                    JSONObject obj = new JSONObject(result);
+                    int state=obj.getInt("state");
+                    if (state==200){
+                        JSONArray array=obj.getJSONArray("data");
+                        for (int i=0;i<array.length();i++){
+                            JSONObject jsonObj=array.getJSONObject(i);
+                            HomePageVenueWhomGoneEntity entity=new HomePageVenueWhomGoneEntity();
+                            entity.setUserId(jsonObj.getInt("id"));
+                            entity.setUserName(jsonObj.getString("nickName"));
+                            entity.setUserPhotoUrl(StringUtil.isNullAvatar(jsonObj.getString("avatar")));
+                            entity.setUserLevelUrl(jsonObj.getString("levelName")==null?"初学乍练":jsonObj.getString("levelName"));
+                            entity.setAuthenticate(jsonObj.getString("authenticate")==null?"":jsonObj.getString("authenticate"));
+                            entity.setStep(jsonObj.getString("step")==null?"":jsonObj.getString("step"));
+                            entity.setLevel(jsonObj.getString("level")==null?"":jsonObj.getString("level"));
+                            list.add(entity);
+                        }
+                    }
+                    handler.sendEmptyMessage(HANDLE_BASE_DATA);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }.start();
         HomePageVenueWhomGoneEntity empty=new HomePageVenueWhomGoneEntity();
         list.add(empty);
         String [] contents={"今天天气真好，我们一起去打篮球吧","今天天气真好，我们一起去球场上打篮球吧，来pk一下撒！大家说，怎么样呢！。。。。","明天天气很好，我们到时一起去打篮球吧"};
@@ -281,7 +318,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                 break;
         }
     }
-    Dialog dialog;
     private void showCommentView() {
         if (dialog==null) {
             dialog = new Dialog(this, R.style.Dialog_FS);
@@ -313,7 +349,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
         }, 200);
 
     }
-
     private void writeToCallBack(){
         final String uri = API.BASE_URL + "/v2/comment/insert";
         final SharedPreferences share = getSharedPreferences("UserInfo", MODE_PRIVATE);
