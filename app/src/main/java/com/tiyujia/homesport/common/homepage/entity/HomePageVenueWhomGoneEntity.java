@@ -14,6 +14,15 @@ public class HomePageVenueWhomGoneEntity implements Serializable {
     String authenticate;
     String step;
     String level;
+    int venueId;
+
+    public int getVenueId() {
+        return venueId;
+    }
+
+    public void setVenueId(int venueId) {
+        this.venueId = venueId;
+    }
 
     public int getUserId() {
         return userId;

@@ -111,7 +111,6 @@ public class JSONParseUtil {
             }else {
                 JSONObject entity=object.getJSONObject("data");
                 data.setVenueType(entity.getInt("type"));
-//              data.setDevelopBackground(entity.getString("developBackground"));
                 data.setDevelopBackground("");
                 data.setVenueAddress(entity.getString("address"));
                 data.setVenueDegree(entity.getInt("level"));

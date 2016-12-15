@@ -40,4 +40,13 @@ public class LvUtil  {
             iv.setImageResource(R.mipmap.img_lv13);
         }
     }
+    public static String setLevelTXT(String levelName){
+        String result="";
+        if (levelName.equals("")||levelName.equals("null")||levelName==null){
+            result="初学乍练";
+        }else {
+            result=levelName;
+        }
+        return result;
+    }
 }

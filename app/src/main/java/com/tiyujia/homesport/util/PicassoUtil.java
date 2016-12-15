@@ -23,5 +23,12 @@ public class PicassoUtil {
                     .into(view);
         }
     }
+    public static void showImage(Context context, int localUrl,String netUrl, ImageView view){
+        if (netUrl.equals("")||netUrl.equals("null")||netUrl==null){
+            Picasso.with(context).load(localUrl).into(view);
+        }else {
+            Picasso.with(context).load(netUrl).into(view);
+        }
+    }
 }
 

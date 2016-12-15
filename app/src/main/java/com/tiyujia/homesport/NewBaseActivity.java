@@ -13,7 +13,7 @@ import android.widget.EditText;
  * Created by zzqybyb19860112 on 2016/11/15.
  */
 
-public abstract class NewBaseActivity extends ImmersiveActivity {
+public abstract class NewBaseActivity extends Immersive {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.entity.CallBackDetailEntity;
+import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.List;
 /**
  * Created by zzqybyb19860112 on 2016/9/17.1
  */
-public class CallBackDetailAdapter extends RecyclerView.Adapter {
+public class CommentListAdapter extends RecyclerView.Adapter {
     Context context;
-    List<CallBackDetailEntity> list;
+    List<HomePageCommentEntity.HomePage.ReplyData> list;
     public static int TYPE_COMMENT=1;
-    public CallBackDetailAdapter(Context context, List<CallBackDetailEntity> list) {
+    public CommentListAdapter(Context context, List<HomePageCommentEntity.HomePage.ReplyData> list) {
         this.context = context;
         if (list.size()==0){
             this.list=new ArrayList<>();
@@ -44,8 +45,8 @@ public class CallBackDetailAdapter extends RecyclerView.Adapter {
     }
     @Override
     public int getItemViewType(int position) {
-        CallBackDetailEntity entity= list.get(position);
-        if (entity.getCallTo()==null||entity.getCallTo().equals("")) {
+        HomePageCommentEntity.HomePage.ReplyData entity= list.get(position);
+        if (entity.toUserVo==null||entity.toUserVo.equals("")) {
             return TYPE_COMMENT;
         }
         return super.getItemViewType(position);
@@ -59,12 +60,12 @@ public class CallBackDetailAdapter extends RecyclerView.Adapter {
     }
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
-        final CallBackDetailEntity entity=list.get(position);
+        final HomePageCommentEntity.HomePage.ReplyData entity=list.get(position);
         if (viewHolder instanceof CallBackDetailViewHolder){
            final CallBackDetailViewHolder holder=(CallBackDetailViewHolder)viewHolder;
-            holder.tvFrom.setText(entity.getCallFrom());
-            holder.tvTo.setText(entity.getCallTo());
-            holder.tvContent.setText(entity.getCallDetail());
+            holder.tvFrom.setText(entity.fromUserVo.nickName);
+            holder.tvTo.setText(entity.toUserVo.nickName);
+            holder.tvContent.setText(entity.replyContent);
 //            if(onNameClickListener!=null){
 //                holder.tvFrom.setOnClickListener(new View.OnClickListener() {
 //                    @Override
@@ -83,8 +84,8 @@ public class CallBackDetailAdapter extends RecyclerView.Adapter {
 //            }
         }else if (viewHolder instanceof CommentViewHolder){
             final CommentViewHolder holder= (CommentViewHolder) viewHolder;
-            holder.tvCommenter.setText(entity.getCallFrom()+"：");
-            holder.tvCommentText.setText(entity.getCallDetail());
+            holder.tvCommenter.setText(entity.fromUserVo.nickName+"：");
+            holder.tvCommentText.setText(entity.replyContent);
 //            if(onNameClickListener!=null){
 //                holder.tvCommenter.setOnClickListener(new View.OnClickListener() {
 //                    @Override

@@ -1,23 +1,21 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.widget.NestedScrollView;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Gravity;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebChromeClient;
@@ -27,35 +25,39 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.homepage.adapter.HomePageDiscussAdapter;
+import com.tiyujia.homesport.common.homepage.adapter.HomePageCommentAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageVenueUserAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
-import com.tiyujia.homesport.common.homepage.entity.CallBackDetailEntity;
-import com.tiyujia.homesport.common.homepage.entity.HomePageDiscussEntity;
+import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageVenueWhomGoneEntity;
 import com.tiyujia.homesport.common.homepage.entity.VenueWholeBean;
+import com.tiyujia.homesport.common.personal.activity.PersonalLogin;
+import com.tiyujia.homesport.common.personal.model.MyDynamicModel;
+import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.util.CacheUtils;
 import com.tiyujia.homesport.util.DegreeUtil;
 import com.tiyujia.homesport.util.JSONParseUtil;
+import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.PostUtil;
+import com.tiyujia.homesport.util.RefreshUtil;
 import com.tiyujia.homesport.util.StringUtil;
 import com.w4lle.library.NineGridlayout;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 import butterknife.Bind;
+import okhttp3.Call;
+import okhttp3.Response;
+
 //1
-public class HomePageSearchResultActivity extends NewBaseActivity implements View.OnClickListener{
+public class HomePageSearchResultActivity extends NewBaseActivity implements View.OnClickListener,KeyboardWatcher.OnKeyboardToggleListener,SwipeRefreshLayout.OnRefreshListener{
     @Bind(R.id.rvHomePageVenueDetailWhomGone) RecyclerView rvHomePageVenueDetailWhomGone;
     @Bind(R.id.rvHomePageVenueDetailSay) RecyclerView rvHomePageVenueDetailSay;
     @Bind(R.id.ivVenueDetailBack)       ImageView ivVenueDetailBack;//左上角返回按钮
@@ -74,17 +76,17 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     @Bind(R.id.tvVenuePhone)            TextView tvVenuePhone;//联系电话
     @Bind(R.id.wvVenueDetail)           WebView wvVenueDetail;//场馆基本介绍
     @Bind(R.id.llToTalk)                LinearLayout llToTalk;//橙色布局
-    LinearLayout llCancelAndSend;//输入框布局
+    @Bind(R.id.llCancelAndSend)         LinearLayout llCancelAndSend;//输入框布局
+    @Bind(R.id.srlRefresh)              SwipeRefreshLayout srlRefresh;//下拉刷新
     EditText etToComment;
     TextView tvSend,tvCancel;
     List<HomePageVenueWhomGoneEntity> list;
     HomePageVenueUserAdapter userAdapter;
-    List<HomePageDiscussEntity> mValue;
-    HomePageDiscussAdapter discussAdapter;
+    HomePageCommentAdapter commentAdapter;
+    private KeyboardWatcher keyboardWatcher;
     VenueWholeBean data;
     int venueId;//场馆ID
     int nowUserId;//当前用户ID
-    Dialog dialog;
     public static final int HANDLE_BASE_DATA=1;
     public static final int HANDLE_BASE_VENUE_DATA=2;
     Handler handler=new Handler(){
@@ -96,10 +98,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                     LinearLayoutManager manager1 = new LinearLayoutManager(HomePageSearchResultActivity.this, LinearLayoutManager.HORIZONTAL, false);
                     rvHomePageVenueDetailWhomGone.setLayoutManager(manager1);
                     rvHomePageVenueDetailWhomGone.setAdapter(userAdapter);
-                    discussAdapter=new HomePageDiscussAdapter(HomePageSearchResultActivity.this,mValue);
-                    LinearLayoutManager manager2 = new LinearLayoutManager(HomePageSearchResultActivity.this, LinearLayoutManager.VERTICAL, false);
-                    rvHomePageVenueDetailSay.setLayoutManager(manager2);
-                    rvHomePageVenueDetailSay.setAdapter(discussAdapter);
                     break;
                 case HANDLE_BASE_VENUE_DATA:
                     VenueWholeBean bean= (VenueWholeBean) msg.obj;
@@ -152,13 +150,22 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page_search_result);
-        llCancelAndSend= (LinearLayout) View.inflate(this,R.layout.comment_view,null);
         etToComment= (EditText) llCancelAndSend.findViewById(R.id.etToComment);
         tvCancel= (TextView) llCancelAndSend.findViewById(R.id.tvCancel);
         tvSend= (TextView) llCancelAndSend.findViewById(R.id.tvSend);
+        commentAdapter=new HomePageCommentAdapter(null);
+        commentAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        commentAdapter.isFirstOnly(false);
+        rvHomePageVenueDetailSay.setItemAnimator(new DefaultItemAnimator());
+        rvHomePageVenueDetailSay.setLayoutManager(new LinearLayoutManager(this));
+        rvHomePageVenueDetailSay.setAdapter(commentAdapter);
+        RefreshUtil.refresh(srlRefresh,this);
+        srlRefresh.setOnRefreshListener(this);
         setVenueData();
-        setData();
+        onRefresh();
         setListeners();
+        keyboardWatcher = new KeyboardWatcher(this);
+        keyboardWatcher.setListener(this);
     }
     private void setListeners() {
         ivVenueDetailBack.setOnClickListener(this);
@@ -186,20 +193,19 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
             JSONParseUtil.parseLocalDataVenueDetail(HomePageSearchResultActivity.this, HomePageSearchResultActivity.this.getClass().getName()+"_1.json",data, handler, HANDLE_BASE_VENUE_DATA);
         }
     }
-    private void setData() {
+    public void setRefreshing(final boolean refreshing) {
+        srlRefresh.post(new Runnable() {
+            @Override
+            public void run() {
+                srlRefresh.setRefreshing(refreshing);
+            }
+        });
+    }
+    @Override
+    public void onRefresh()  {
         list=new ArrayList<>();
-        int [] pictures={R.drawable.demo_05,R.drawable.demo_06,R.drawable.demo_10,R.drawable.demo_10};
-        String []userName={"土拨鼠","萌小妹","小美爱赵伟","萌小美美"};
-        int [] levels={R.mipmap.img_lv1,R.mipmap.img_lv2,R.mipmap.img_lv3,R.mipmap.img_lv4,
-                R.mipmap.img_lv5,R.mipmap.img_lv6,R.mipmap.img_lv7,R.mipmap.img_lv8,R.mipmap.img_lv9,
-                R.mipmap.img_lv10,R.mipmap.img_lv11,R.mipmap.img_lv12,R.mipmap.img_lv13};
-//        for (int i=0;i<4;i++){
-//            HomePageVenueWhomGoneEntity entity=new HomePageVenueWhomGoneEntity();
-//            entity.setUserPhotoUrl(pictures[i]+"");
-//            entity.setUserName(userName[i]);
-//            entity.setUserLevelUrl(levels[new Random().nextInt(13)]+"");
-//            list.add(entity);
-//        }
+        final int [] pictures={R.drawable.demo_05,R.drawable.demo_06,R.drawable.demo_10,R.drawable.demo_10};
+        final String []userName={"土拨鼠","萌小妹","小美爱赵伟","萌小美美"};
         final String url=API.BASE_URL+"/v2/record/users";
         new Thread(){
             @Override
@@ -214,75 +220,77 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                     int state=obj.getInt("state");
                     if (state==200){
                         JSONArray array=obj.getJSONArray("data");
-                        for (int i=0;i<array.length();i++){
-                            JSONObject jsonObj=array.getJSONObject(i);
-                            HomePageVenueWhomGoneEntity entity=new HomePageVenueWhomGoneEntity();
-                            entity.setUserId(jsonObj.getInt("id"));
-                            entity.setUserName(jsonObj.getString("nickName"));
-                            entity.setUserPhotoUrl(StringUtil.isNullAvatar(jsonObj.getString("avatar")));
-                            entity.setUserLevelUrl(jsonObj.getString("levelName")==null?"初学乍练":jsonObj.getString("levelName"));
-                            entity.setAuthenticate(jsonObj.getString("authenticate")==null?"":jsonObj.getString("authenticate"));
-                            entity.setStep(jsonObj.getString("step")==null?"":jsonObj.getString("step"));
-                            entity.setLevel(jsonObj.getString("level")==null?"":jsonObj.getString("level"));
-                            list.add(entity);
+                        if (array.length()!=0){
+                            for (int i=0;i<array.length();i++){
+                                JSONObject jsonObj=array.getJSONObject(i);
+                                HomePageVenueWhomGoneEntity entity=new HomePageVenueWhomGoneEntity();
+                                entity.setVenueId(venueId);
+                                entity.setUserId(jsonObj.getInt("id"));
+                                entity.setUserName(jsonObj.getString("nickName"));
+                                entity.setUserPhotoUrl(StringUtil.isNullAvatar(jsonObj.getString("avatar")));
+                                entity.setUserLevelUrl(jsonObj.getString("levelName")==null?"初学乍练":jsonObj.getString("levelName"));
+                                entity.setAuthenticate(jsonObj.getString("authenticate")==null?"":jsonObj.getString("authenticate"));
+                                entity.setStep(jsonObj.getString("step")==null?"":jsonObj.getString("step"));
+                                entity.setLevel(jsonObj.getString("level")==null?"":jsonObj.getString("level"));
+                                list.add(entity);
+                            }
+                        }else {
+                            for (int i=0;i<4;i++){
+                                HomePageVenueWhomGoneEntity entity=new HomePageVenueWhomGoneEntity();
+                                entity.setUserPhotoUrl(pictures[i]+"");
+                                entity.setUserName(userName[i]);
+                                entity.setUserLevelUrl("初学乍练");
+                                list.add(entity);
+                            }
                         }
                     }
+                    HomePageVenueWhomGoneEntity empty=new HomePageVenueWhomGoneEntity();
+                    list.add(empty);
                     handler.sendEmptyMessage(HANDLE_BASE_DATA);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
             }
         }.start();
-        HomePageVenueWhomGoneEntity empty=new HomePageVenueWhomGoneEntity();
-        list.add(empty);
-        String [] contents={"今天天气真好，我们一起去打篮球吧","今天天气真好，我们一起去球场上打篮球吧，来pk一下撒！大家说，怎么样呢！。。。。","明天天气很好，我们到时一起去打篮球吧"};
-        mValue=new ArrayList<>();
-        for (int i=0;i<3;i++){
-            HomePageDiscussEntity entity=new HomePageDiscussEntity();
-            entity.setMainUserName(userName[i]);
-            entity.setMainUserLevelUrl(levels[new Random().nextInt(13)]+"");
-            entity.setMainUserPhotoUrl(pictures[3-i]+"");
-            entity.setMainUserSendContent(contents[i]);
-            entity.setMainUserSendTime("3分钟前");
-            List<String> urls=new ArrayList<>();
-            for (int j=0;j<=i;j++){
-                urls.add(pictures[j]+"");
-            }
-            entity.setMainUserSendPicUrlList(urls);
-            String [] discussTexts={"说走咱就走啊，一路看天不回头啊，水里火里一碗酒啊，路见不平一声吼啊，该出手时就出手啊！","走撒，那个SB不去！","打毛线，要下雨哈！"};
-            List<CallBackDetailEntity> entityList=new ArrayList<>();
-            if (i!=0){
-                for (int k=0;k<3;k++){
-                    CallBackDetailEntity entityDetail=new CallBackDetailEntity();
-                    entityDetail.setCallFrom(userName[i%2==0?k:3-k]);
-                    entityDetail.setCallTo(userName[i%2==1?k:3-k]);
-                    entityDetail.setCallDetail(discussTexts[new Random().nextInt(3)]);
-                    entityList.add(entityDetail);
-                }
-            }else {
-                CallBackDetailEntity entityDetail=new CallBackDetailEntity();
-                entityDetail.setCallFrom(userName[i]);
-                entityDetail.setCallDetail(discussTexts[new Random().nextInt(3)]);
-                entityList.add(entityDetail);
-            }
-            entity.setDiscussList(entityList);
-            mValue.add(entity);
-        }
-        handler.sendEmptyMessage(HANDLE_BASE_DATA);
+        OkGo.get(API.BASE_URL+"/v2/comment/query/"+4+"/"+venueId)
+                .tag(this)
+                .execute(new LoadCallback<HomePageCommentEntity>(this) {
+                    @Override
+                    public void onSuccess(HomePageCommentEntity homePage, Call call, Response response) {
+                        if (homePage.state==200){
+                            commentAdapter.setNewData(homePage.data);
+                        }
+                    }
+                    @Override
+                    public void onAfter(@Nullable HomePageCommentEntity homePageCommentEntity, @Nullable Exception e) {
+                        super.onAfter(homePageCommentEntity, e);
+                        commentAdapter.removeAllFooterView();
+                        setRefreshing(false);
+                    }
+                });
     }
     @Override
     public void onClick(View v) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         switch (v.getId()){
             case R.id.tvCancel:
                 etToComment.setText("");
                 llToTalk.setVisibility(View.VISIBLE);
-                dialog.dismiss();
+                llCancelAndSend.setVisibility(View.GONE);
+                imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
                 break;
             case R.id.tvSend:
-                writeToCallBack();
+                if (TextUtils.isEmpty(etToComment.getText().toString())){
+                    Toast.makeText(this,"请输入评论或回复内容！",Toast.LENGTH_LONG).show();
+                }else {
+                    writeToCallBack();
+                }
                 break;
             case R.id.llToTalk:
-                showCommentView();
+                llToTalk.setVisibility(View.GONE);
+                etToComment.requestFocus();
+                llCancelAndSend.setVisibility(View.VISIBLE);
+                imm.showSoftInput(etToComment,InputMethodManager.SHOW_FORCED);
                 break;
             case R.id.ivVenueDetailBack:
                 finish();
@@ -318,71 +326,63 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                 break;
         }
     }
-    private void showCommentView() {
-        if (dialog==null) {
-            dialog = new Dialog(this, R.style.Dialog_FS);
-            dialog.setContentView(llCancelAndSend);
-        }
-        dialog.show();
-        llToTalk.setVisibility(View.GONE);
-        Window dialogWindow = this.getWindow();
-        dialogWindow.getDecorView().setPadding(0, 0, 0, 0);
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        dialogWindow.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        dialogWindow.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL);
-        lp.x = 0;
-        Rect r = new Rect();
-        //获取当前界面可视部分
-        dialogWindow.getDecorView().getWindowVisibleDisplayFrame(r);
-        //获取屏幕的高度
-        lp.y = r.bottom;
-        lp.width= WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        dialogWindow.setAttributes(lp);
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask(){
-            @Override
-            public void run(){
-                InputMethodManager m = (InputMethodManager)etToComment.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                m.showSoftInput(etToComment,InputMethodManager.SHOW_FORCED);
-            }
-        }, 200);
-
-    }
     private void writeToCallBack(){
         final String uri = API.BASE_URL + "/v2/comment/insert";
         final SharedPreferences share = getSharedPreferences("UserInfo", MODE_PRIVATE);
-        new Thread(){
-            @Override
-            public void run() {
-                try {
-                    nowUserId = share.getInt("UserId", 0);
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("comment_type", "4");
-                    params.put("comment_id", venueId + "");
-                    params.put("model_create_id", "-1");
-                    params.put("comment_account", nowUserId + "");
-                    String commentText = etToComment.getText().toString().trim();
-                    params.put("comment_content", commentText);
-                    String result = PostUtil.sendPostMessage(uri, params);
-                    JSONObject obj = new JSONObject(result);
-                    int state=obj.getInt("state");
-                    if (state==200){
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                               Toast.makeText(HomePageSearchResultActivity.this,"评论成功！",Toast.LENGTH_LONG).show();
-                                etToComment.setText("");
-                                llToTalk.setVisibility(View.VISIBLE);
-                                dialog.dismiss();
-                            }
-                        });
+        nowUserId = share.getInt("UserId", 0);
+        if (nowUserId==0){
+            Toast.makeText(this,"您还没有登录呢，亲！请登录！",Toast.LENGTH_LONG).show();
+            Intent intent=new Intent(this, PersonalLogin.class);
+            startActivity(intent);
+        }else {
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("comment_type", "4");
+                        params.put("comment_id", venueId + "");
+                        params.put("model_create_id", "-1");
+                        params.put("comment_account", nowUserId + "");
+                        String commentText = etToComment.getText().toString().trim();
+                        params.put("comment_content", commentText);
+                        String result = PostUtil.sendPostMessage(uri, params);
+                        JSONObject obj = new JSONObject(result);
+                        int state = obj.getInt("state");
+                        if (state == 200) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(HomePageSearchResultActivity.this, "评论成功！", Toast.LENGTH_LONG).show();
+                                    etToComment.setText("");
+                                    llToTalk.setVisibility(View.VISIBLE);
+                                    llCancelAndSend.setVisibility(View.GONE);
+                                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+                                    onRefresh();
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                }catch (Exception e){
-                    e.printStackTrace();
                 }
-            }
-        }.start();
-
+            }.start();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        keyboardWatcher.destroy();
+        super.onDestroy();
+    }
+    @Override
+    public void onKeyboardShown(int keyboardSize) {
+        llCancelAndSend.setVisibility(View.VISIBLE);
+        llToTalk.setVisibility(View.GONE);
+    }
+    @Override
+    public void onKeyboardClosed() {
+        llCancelAndSend.setVisibility(View.GONE);
+        llToTalk.setVisibility(View.VISIBLE);
     }
 }

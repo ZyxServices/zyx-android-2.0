@@ -1,5 +1,8 @@
 package com.tiyujia.homesport.util;
 
+import com.tiyujia.homesport.API;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,5 +60,15 @@ public class StringUtil {
             result.append(string);
         }
         return result.toString();
+    }
+    public static List<String> stringToList(String strTemp){
+        List<String> result=new ArrayList<>();
+        if(!strTemp.equals("")&&!strTemp.equals("null")&&strTemp!=null){
+            String [] strList=strTemp.split(",");
+            for (String s:strList){
+                result.add(API.PICTURE_URL+s);
+            }
+        }
+        return result;
     }
 }

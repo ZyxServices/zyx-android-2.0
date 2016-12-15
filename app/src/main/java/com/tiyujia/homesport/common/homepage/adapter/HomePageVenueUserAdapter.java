@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.activity.MorePeopleGoneActivity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageVenueWhomGoneEntity;
-
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
+import com.tiyujia.homesport.util.LvUtil;
+import com.tiyujia.homesport.util.PicassoUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,15 +55,27 @@ public class HomePageVenueUserAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof VenueUserHolder) {
             VenueUserHolder holder = (VenueUserHolder) viewHolder;
-            HomePageVenueWhomGoneEntity data=mValues.get(position);
-            Picasso.with(context).load(data.getUserPhotoUrl()).into(holder.rivHomePageUserPhoto);
+            final HomePageVenueWhomGoneEntity data=mValues.get(position);
+            String url=data.getUserPhotoUrl();
+            if (url.contains("http")){
+                PicassoUtil.showImage(context,0,url,holder.rivHomePageUserPhoto);
+            }else {
+               int localUrl=Integer.valueOf(url);
+                PicassoUtil.showImage(context,localUrl,"",holder.rivHomePageUserPhoto);
+            }
             holder.tvHomePageUserName.setText(data.getUserName());
-            //Picasso.with(context).load(data.getUserLevelUrl()).into(holder.ivHomePageUserLevel);//Picasso不能加载？？？？
-            holder.ivHomePageUserLevel.setImageResource(Integer.valueOf(data.getUserLevelUrl()));
+            LvUtil.setLv(holder.ivHomePageUserLevel,data.getUserLevelUrl());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Intent intent=new Intent(context, PersonalOtherHome.class);
+                    int userId=data.getUserId();
+                    if (userId==0){
+                        Toast.makeText(context,"没有用户信息",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    intent.putExtra("id",userId);
+                    context.startActivity(intent);
                 }
             });
         }else if (viewHolder instanceof VenueUserLastHolder){
@@ -67,7 +83,13 @@ public class HomePageVenueUserAdapter extends RecyclerView.Adapter {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Intent intent=new Intent(context, MorePeopleGoneActivity.class);
+                    if (mValues.get(0).getVenueId()==0){
+                        Toast.makeText(context,"没有更多用户信息",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    intent.putExtra("venueId",mValues.get(0).getVenueId());
+                    context.startActivity(intent);
                 }
             });
         }

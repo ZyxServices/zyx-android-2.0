@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="@style/personal_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        style="@style/personal_title_background"
+        >
+        <TextView
+            style="@style/personal_title"
+            android:text="他们都去了"
+            />
+        <ImageView
+            android:id="@+id/ivBack"
+            style="@style/personal_back"
+            />
+    </RelativeLayout>
+
+    <TextView
+        style="@style/finelin"
+        />
+    <TextView
+        style="@style/boldlin"/>
+    <include layout="@layout/recycleview_layout"/>
+</LinearLayout>
