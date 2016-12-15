@@ -4,12 +4,14 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -32,13 +34,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Api;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.personal.model.AvatarModel;
 import com.tiyujia.homesport.common.personal.model.UserInfoModel;
 import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.DialogUtil;
 import com.tiyujia.homesport.util.GetUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -91,7 +97,7 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
     private String fileName;
     private final int PIC_FROM_CAMERA = 1;
     private Bitmap bitmap;
-    private String picAddress=null;
+    private String pickaddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -361,24 +367,42 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
             new StorePhotosUtil(bitmap, fileName);
             ivAvatar.setImageBitmap(bitmap);
             if (bitmap!=null) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String uri= API.BASE_URL+"/v2/upload";
-                            String result=UploadUtil.uploadFile2(uri, fileName);
-                            JSONObject object= null;
-                            object = new JSONObject(result);
-                            JSONObject data=object.getJSONObject("data");
-                            String newUrl = URI.create(data.getString("url")).getPath();
-                            HashMap<String, String> params = new HashMap<>();
-                            params.put("avatar", newUrl);
-                            
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                OkGo.post(API.IMAGE_URL)
+                        .tag(this)
+                        .params("avatar",new File(fileName))
+                        .execute(new LoadCallback<LzyResponse<AvatarModel>>(PersonalSetInfo.this) {
+                            @Override
+                            public void onSuccess(LzyResponse<AvatarModel> avatar, Call call, Response response) {
+                                if(avatar.state==200){
+                                    String newUrl = avatar.data.url;
+                                    OkGo.post(API.BASE_URL+"/v2/user/info")
+                                            .tag(this)
+                                            .params("token",mToken)
+                                            .params("account_id",mUserId)
+                                            .params("avatar",newUrl)
+                                            .execute(new LoadCallback<LzyResponse>(PersonalSetInfo.this) {
+                                                @Override
+                                                public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                                    if (lzyResponse.state==200){
+                                                        showToast("头像修改成功");
+                                                    }
+                                                }
+                                                @Override
+                                                public void onError(Call call, Response response, Exception e) {
+                                                    super.onError(call, response, e);
+                                                    showToast("网络故障");
+                                                }
+                                            });
+                                }else {
+                                    showToast("服务器异常");
+                                }
+                            }
+                            @Override
+                            public void onError(Call call, Response response, Exception e) {
+                                super.onError(call, response, e);
+                                showToast("网络连接错误");
+                            }
+                        });
             }
         }
         if (requestCode == 1000  &&  data != null){
@@ -392,29 +416,32 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
             }catch (Exception e){
                 e.printStackTrace();
             }
-            Thread thread1=new Thread(){
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     String path= UploadUtil.getImageAbsolutePath(PersonalSetInfo.this,originalUri);
-                    picAddress=UploadUtil.getNetWorkImageAddress(path, PersonalSetInfo.this);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (picAddress!=null){
-                                cameradialog.dismiss();
-                            }
+                    pickaddress=UploadUtil.getNetWorkImageAddress(path, PersonalSetInfo.this);
+                    if(pickaddress!=null){
+                        String url=API.BASE_URL+"/v2/user/info";
+                        HashMap<String,String> map=new HashMap<>();
+                        map.put("token",mToken);
+                        map.put("account_id",mUserId+"");
+                        map.put("avatar",pickaddress);
+                        String result=PostUtil.sendPostMessage(url,map);
+                        try {
+                            final JSONObject   obj = new JSONObject(result);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    });
+                    }
                 }
-            };
-            thread1.setPriority(8);
-            thread1.start();
+            }) .start();
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         OkGo.getInstance().cancelTag(this);
     }
+
 }

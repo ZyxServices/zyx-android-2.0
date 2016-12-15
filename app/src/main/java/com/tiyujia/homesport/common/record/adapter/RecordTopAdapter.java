@@ -30,10 +30,10 @@ public class RecordTopAdapter extends BaseQuickAdapter<TopModel.Top> {
         baseViewHolder.setText(R.id.tvNickname,top.userIconVo.nickName)
         .setText(R.id.tvRankNum,top.rankNum+"");
         TextView tvTotalScore=baseViewHolder.getView(R.id.tvTotalScore);
-        if (top.totalScore!=null&&top.totalScore.equals("")){
-            tvTotalScore.setText(top.totalScore+"");
-        }else {
+        if (top.totalScore==null||top.totalScore.equals("")){
             tvTotalScore.setText("0");
+        }else {
+            tvTotalScore.setText(top.totalScore+"");
         }
         ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
         ImageView ivLv=baseViewHolder.getView(R.id.ivLv);
