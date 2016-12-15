@@ -50,6 +50,8 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
     private View ivSelect;
     private RelativeLayout.LayoutParams layoutParams;
     private Integer levelid;
+    private Integer sportInfoId;
+    private long spendTime;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,7 +79,12 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
         rlJumpToMap.setOnClickListener(this);
         ivSelect.setOnClickListener(this);
         tvRecordEnd.setOnClickListener(this);
-        setData();
+        if(!TextUtils.isEmpty(mToken)){
+            setData();
+        }else {
+            showToast("还未登录无法使用这里的功能哟");
+        }
+
     }
 
     private void setData() {
@@ -105,7 +112,8 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                 String b=tvDifficulty.getText().toString();
                 if(!TextUtils.isEmpty(s)&&!TextUtils.isEmpty(b)){
                     tvTimer.setBase(SystemClock.elapsedRealtime());//计时器清零
-                    int hour = (int) ((SystemClock.elapsedRealtime() - tvTimer.getBase()) / 1000 / 60);
+                    spendTime=tvTimer.getBase();
+                    int hour = (int) ((SystemClock.elapsedRealtime() -spendTime ) / 1000 / 60);
                     tvTimer.setFormat("0"+String.valueOf(hour)+":%s");
                     tvTimer.start();
                     tvRecord.setVisibility(View.GONE);
@@ -114,27 +122,48 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                     showToast("请选择场馆和线路难度");
                 }
                 break;
+            //上传用户运动记录
             case R.id.tvRecordEnd:
-                tvRecord.setVisibility(View.VISIBLE);
-                tvRecordEnd.setVisibility(View.GONE);
-                tvTimer.stop();
-                builder = new AlertDialog.Builder(getActivity()).create();
-                builder.setView(getActivity().getLayoutInflater().inflate(R.layout.record_succeed_dialog, null));
-                builder.show();
-                //去掉dialog四边的黑角
-                builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
-                builder.getWindow().findViewById(R.id.tvLookRecord).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                OkGo.post(API.BASE_URL+"/v2/record/upload")
+                        .tag(this)
+                        .params("token",mToken)
+                        .params("venueId",levelid)
+                        .params("sportInfoId",sportInfoId)
+                        .params("spendTime",spendTime)
+                        .execute(new LoadCallback<LzyResponse>(getActivity()) {
+                            @Override
+                            public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                if(lzyResponse.state==200){
+                                    tvRecord.setVisibility(View.VISIBLE);
+                                    tvRecordEnd.setVisibility(View.GONE);
+                                    tvTimer.stop();
+                                    builder = new AlertDialog.Builder(getActivity()).create();
+                                    builder.setView(getActivity().getLayoutInflater().inflate(R.layout.record_succeed_dialog, null));
+                                    builder.show();
+                                    //去掉dialog四边的黑角
+                                    builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
+                                    builder.getWindow().findViewById(R.id.tvLookRecord).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
 
-                    }
-                });
-                builder.getWindow().findViewById(R.id.tvShow).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(getActivity(),CommunityDynamicPublish.class));
-                    }
-                });
+                                        }
+                                    });
+                                    builder.getWindow().findViewById(R.id.tvShow).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            startActivity(new Intent(getActivity(),CommunityDynamicPublish.class));
+                                        }
+                                    });
+                                }else {
+                                    showToast("网络异常，请重试");
+                                }
+                            }
+                            @Override
+                            public void onError(Call call, Response response, Exception e) {
+                                super.onError(call, response, e);
+                                showToast("网络连接失败");
+                            }
+                        });
                 break;
             case R.id.llTrack:
                 getActivity().startActivity(new Intent(getActivity(),RecordTrackActivity.class));
@@ -149,7 +178,6 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                     showToast("先选择场馆");
                 }else {
                     if(levelid!=null){
-
                         OkGo.post(API.BASE_URL+"/v2/record/sportinfo/level")
                                 .tag(this)
                                 .params("venueId",levelid)
@@ -158,10 +186,12 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                                     public void onSuccess(LevelModel levelModel, Call call, Response response) {
                                         if (levelModel.state==200){
                                             final ArrayList<String> list = new ArrayList<>();
+                                            final ArrayList<Integer> listid = new ArrayList<>();
                                             if(levelModel.data.size()>0){
                                                 for (int i=0;i<levelModel.data.size();i++){
                                                     LevelModel.Level jk = levelModel.data.get(i);
                                                     list.add(jk.level);
+                                                    listid.add(jk.id);
                                                 }
                                             }else {}
                                             if(list.size()>0){
@@ -169,6 +199,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                                                     @Override
                                                     public void onClick(View view, int postion) {
                                                         tvDifficulty.setText(list.get(postion));
+                                                        sportInfoId=listid.get(postion);
                                                     }
                                                 });
                                             }else {}
@@ -180,7 +211,6 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                 break;
         }
     }
-
     @Override
     public void onResume() {
         super.onResume();

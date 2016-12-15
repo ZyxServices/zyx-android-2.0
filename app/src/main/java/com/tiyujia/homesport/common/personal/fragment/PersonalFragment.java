@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,6 +48,12 @@ import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.StatusBarUtil;
 import com.tiyujia.homesport.util.StringUtil;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import okhttp3.Call;
@@ -78,7 +87,19 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     private String mToken;
     private int mUserId;
     private String pattern="8";//虚化度，越大越虚化
-
+    private static final int HANDLE_IMAGE=1;
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case HANDLE_IMAGE:
+                    Bitmap bitmap= (Bitmap) msg.obj;
+                    Bitmap blur = FastBlurUtil.blurBitmap(bitmap);
+                    ivBackground.setImageBitmap(blur);
+                    break;
+            }
+        }
+    };
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.personal_home_fragment,null);
@@ -107,43 +128,52 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                 .execute(new JsonCallback<UserInfoModel>() {
                     @Override
                     public void onSuccess(final UserInfoModel userInfoModel, Call call, Response response) {
-                             if(userInfoModel.state==200){
-                                 PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(userInfoModel.data.avatar), 320, 320),ivAvatar,320,320);
-                                 PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(userInfoModel.data.avatar), 720, 720),ivBackground,720,720);
-                                 String nickname=userInfoModel.data.nickname.toString();
-                                 String level =userInfoModel.data.level.pointDesc.toString();
-                                 String signature=userInfoModel.data.signature.toString();
-                                 int fs=userInfoModel.data.fs;
-                                 int gz=userInfoModel.data.gz;
-                                 int coin=userInfoModel.data.coin;
-                                 if(TextUtils.isEmpty(signature)){
-                                     tv_intro.setText("个人简介: 这个人很懒，什么也没有留下");
-                                 }else {
-                                     tv_intro.setText("个人简介："+signature);
-                                 }
-                                 tvName.setText(nickname);
-                                 tvGz.setText(gz-1+"");
-                                 tvFs.setText(fs+"");
-                                 tvCoin.setText(coin+"");
-                                 if(userInfoModel.data.level!=null){
-                                     LvUtil.setLv(ivLv,userInfoModel.data.level.pointDesc);
-                                 }else {
-                                     LvUtil.setLv(ivLv,"初学乍练");
-                                 }
-                             }
+                        if(userInfoModel.state==200){
+                            PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(userInfoModel.data.avatar), 320, 320),ivAvatar,320,320);
+                            String nickname=userInfoModel.data.nickname.toString();
+                            String level =userInfoModel.data.level.pointDesc.toString();
+                            String signature=userInfoModel.data.signature.toString();
+                            int fs=userInfoModel.data.fs;
+                            int gz=userInfoModel.data.gz;
+                            int coin=userInfoModel.data.coin;
+                            if(TextUtils.isEmpty(signature)){
+                                tv_intro.setText("个人简介: 这个人很懒，什么也没有留下");
+                            }else {
+                                tv_intro.setText("个人简介："+signature);
+                            }
+                            tvName.setText(nickname);
+                            tvGz.setText(gz-1+"");
+                            tvFs.setText(fs+"");
+                            tvCoin.setText(coin+"");
+                            if(userInfoModel.data.level!=null){
+                                LvUtil.setLv(ivLv,userInfoModel.data.level.pointDesc);
+                            }else {
+                                LvUtil.setLv(ivLv,"初学乍练");
+                            }
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    final Bitmap blur = getBitmap(API.PICTURE_URL+userInfoModel.data.avatar);
+                                    Message message=new Message();
+                                    message.what=HANDLE_IMAGE;
+                                    message.obj=blur;
+                                    handler.sendMessage(message);
+                                }
+                            }).start();
+                        }
                         if (userInfoModel.state==401){
                             showToast("Token失效");
                         }
-                    }
 
+                    }
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
 
                     }
                 });
-
     }
+
     @Override
     protected void initData() {
         iv_msg.setOnClickListener(this);
@@ -202,5 +232,27 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     public void onDestroy() {
         super.onDestroy();
         OkGo.getInstance().cancelTag(this);
+    }
+    public Bitmap getBitmap(String url) {
+        Bitmap bm = null;
+        try {
+            URL iconUrl = new URL(url);
+            URLConnection conn = iconUrl.openConnection();
+            HttpURLConnection http = (HttpURLConnection) conn;
+
+            int length = http.getContentLength();
+
+            conn.connect();
+            // 获得图像的字符流
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is, length);
+            bm = BitmapFactory.decodeStream(bis);
+            bis.close();
+            is.close();// 关闭流
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bm;
     }
 }

@@ -56,6 +56,7 @@
             android:drawablePadding="10dp"
             android:background="@null"
             android:paddingBottom="5dp"
+            android:inputType="number"
             android:textCursorDrawable="@null"
             android:textColor="@color/day_edit_color"
             />
@@ -93,6 +94,7 @@
         android:layout_marginTop="30dp"
         android:background="@null"
         android:paddingBottom="5dp"
+        android:inputType="textPassword"
         android:textCursorDrawable="@null"
         android:textColor="@color/day_edit_color"
         />

@@ -13,5 +13,6 @@ public class LevelModel implements Serializable {
     public List<Level> data;
     public class Level implements Serializable{
         public String level;
+        public int id;
     }
 }

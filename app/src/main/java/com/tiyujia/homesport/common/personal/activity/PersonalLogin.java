@@ -32,6 +32,7 @@ import okhttp3.Response;
 public class PersonalLogin extends ImmersiveActivity implements View.OnClickListener{
     @Bind(R.id.tvRegister)    TextView tvRegister;
     @Bind(R.id.tvLogin)    TextView tvLogin;
+    @Bind(R.id.tvForget)    TextView tvForget;
     @Bind(R.id.ivBack)    ImageView ivBack;
     @Bind(R.id.etPhone)    EditText etPhone;
     @Bind(R.id.etPassword)    EditText etPassword;
@@ -47,6 +48,7 @@ public class PersonalLogin extends ImmersiveActivity implements View.OnClickList
         ivBack.setOnClickListener(this);
         tvRegister.setOnClickListener(this);
         tvLogin.setOnClickListener(this);
+        tvForget.setOnClickListener(this);
     }
     @Override
     public void onClick(View v) {
@@ -56,6 +58,9 @@ public class PersonalLogin extends ImmersiveActivity implements View.OnClickList
                 break;
             case R.id.ivBack:
                 finish();
+                break;
+            case R.id.tvForget:
+                startActivity(new Intent(this,PersonalForgetRegister.class));
                 break;
             case R.id.tvLogin:
                 final String phone=etPhone.getText().toString();
@@ -94,6 +99,8 @@ public class PersonalLogin extends ImmersiveActivity implements View.OnClickList
                                             showToast("密码错误") ;
                                         } else if(Response.state==40003){
                                             showToast("用户名错误") ;
+                                        }else {
+                                            showToast("登录信息错误") ;
                                         }
                                     }
 
@@ -105,9 +112,6 @@ public class PersonalLogin extends ImmersiveActivity implements View.OnClickList
                                 });
                     }else {showToast("密码不能为空");}
                 }else { showToast("账号不能为空");}
-
-
-
                 break;
         }
     }

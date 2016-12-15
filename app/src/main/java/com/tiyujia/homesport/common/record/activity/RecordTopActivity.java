@@ -19,7 +19,13 @@ import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.record.adapter.RecordTopAdapter;
 import com.tiyujia.homesport.common.record.model.TopModel;
+import com.tiyujia.homesport.common.record.model.UserTopModel;
 import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.LvUtil;
+import com.tiyujia.homesport.util.PicUtil;
+import com.tiyujia.homesport.util.PicassoUtil;
+import com.tiyujia.homesport.util.StringUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,7 +39,11 @@ import okhttp3.Response;
 
 public class RecordTopActivity extends ImmersiveActivity implements View.OnClickListener{
     @Bind(R.id.ivBack)    ImageView ivBack;
-    @Bind(R.id.ivShare)    ImageView ivShare;
+    @Bind(R.id.ivAvatar)    ImageView ivAvatar;
+    @Bind(R.id.ivLv)    ImageView ivLv;
+    @Bind(R.id.tvUserNumber)    TextView tvUserNumber;
+    @Bind(R.id.tvNickname)    TextView tvNickname;
+    @Bind(R.id.tvTotalScore)    TextView tvTotalScore;
     @Bind(R.id.recyclerView)    RecyclerView recyclerView;
     private RecordTopAdapter adapter;
     private String mToken;
@@ -50,24 +60,18 @@ public class RecordTopActivity extends ImmersiveActivity implements View.OnClick
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.ivBack:
                 finish();
                 break;
-            case R.id.ivShare:
-
-                break;
         }
     }
-
     private void setView() {
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
         ivBack.setOnClickListener(this);
-        ivShare.setOnClickListener(this);
         OkGo.post(API.BASE_URL+"/v2/record/rank/list")
                 .tag(this)
                 .params("token",mToken)
@@ -80,7 +84,30 @@ public class RecordTopActivity extends ImmersiveActivity implements View.OnClick
                             adapter.setNewData(topModel.data);
                         }
                     }
-
+                    @Override
+                    public void onError(Call call, Response response, Exception e) {
+                        super.onError(call, response, e);
+                        showToast("网络连接错误");
+                    }
+                });
+        OkGo.post(API.BASE_URL+"/v2/record/rank/self")
+                .tag(this)
+                .params("token",mToken)
+                .execute(new LoadCallback<LzyResponse<UserTopModel>>(this) {
+                    @Override
+                    public void onSuccess(LzyResponse<UserTopModel> user, Call call, Response response) {
+                        if(user.state==200){
+                            tvNickname.setText(user.data.userIconVo.nickName);
+                            tvUserNumber.setText(user.data.rankNum+"");
+                            tvTotalScore.setText(user.data.totalScore+"");
+                            if (user.data.userIconVo.levelName!=null&&user.data.userIconVo.levelName.equals("")){
+                                LvUtil.setLv(ivLv,user.data.userIconVo.levelName);
+                            }else {
+                                LvUtil.setLv(ivLv,"初学乍练");
+                            }
+                            PicassoUtil.handlePic(RecordTopActivity.this, PicUtil.getImageUrlDetail(RecordTopActivity.this, StringUtil.isNullAvatar(user.data.userIconVo.avatar), 320, 320),ivAvatar,320,320);
+                        }
+                    }
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);

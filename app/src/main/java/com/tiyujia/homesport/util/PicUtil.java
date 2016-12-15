@@ -6,9 +6,13 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.view.WindowManager;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by Administrator on 2016/8/3.
@@ -78,4 +82,33 @@ public class PicUtil {
         }
         return resultUrl;
     }
+    public static Bitmap returnBitMap(String url) {
+        URL myFileUrl = null;
+        Bitmap bitmap = null;
+        InputStream is=null;
+        try{
+            myFileUrl = new URL(url);
+        }catch(MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try{
+            HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
+            conn.setDoInput(true);
+            conn.connect();
+            is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        }catch(IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(is!=null)
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        return bitmap;
+    }
+
 }
