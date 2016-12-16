@@ -92,7 +92,8 @@ public class PersonalFans extends ImmersiveActivity implements View.OnClickListe
                     @Override
                     public void onSuccess(AttentionModel attentionModel, Call call, Response response) {
                         if(attentionModel.state==200){
-                            adapter.setNewData(attentionModel.data);
+                            if (attentionModel.data.size()==0){
+                            adapter.setNewData(attentionModel.data);}
                         }
                     }
                     @Override

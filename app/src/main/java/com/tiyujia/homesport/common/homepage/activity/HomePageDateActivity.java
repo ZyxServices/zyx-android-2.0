@@ -30,7 +30,6 @@ import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.personal.adapter.AttendAdapter;
-import com.tiyujia.homesport.common.personal.adapter.TestAdapter;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.util.RefreshUtil;

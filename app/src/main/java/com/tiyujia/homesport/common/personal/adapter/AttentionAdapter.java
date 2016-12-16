@@ -49,6 +49,9 @@ public class AttentionAdapter extends  BaseQuickAdapter<AttentionModel.Attention
     @Override
     protected void convert(final BaseViewHolder baseViewHolder, final AttentionModel.AttentionList attention) {
         final Activity activity=(Activity) context;
+        if(attention==null){
+            Toast.makeText(activity,"取消关注成功",Toast.LENGTH_SHORT).show();
+        }else {
         SharedPreferences share = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         final String mToken=share.getString("Token","");
         final int mUserId=share.getInt("UserId",0);
@@ -92,5 +95,5 @@ public class AttentionAdapter extends  BaseQuickAdapter<AttentionModel.Attention
 
             }
         });
-    }
+    }}
 }

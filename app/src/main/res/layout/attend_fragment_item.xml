@@ -147,18 +147,15 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:textColor="@color/day_edit_hit_color"
-            android:text="成都"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/tv_msg"
             style="@style/pack_msg"
-            android:text="111"
             android:gravity="center"
             />
         <TextView
             android:id="@+id/tv_zan"
             style="@style/pack_zan"
-            android:text="111"
             />
     </LinearLayout>
     <TextView

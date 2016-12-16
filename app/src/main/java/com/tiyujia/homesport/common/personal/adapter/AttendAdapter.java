@@ -1,17 +1,24 @@
 package com.tiyujia.homesport.common.personal.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.lzy.okgo.OkGo;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageDateInfo;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
+import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -20,6 +27,9 @@ import com.tiyujia.homesport.util.StringUtil;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * 作者: Cymbi on 2016/11/14 11:10.
@@ -36,8 +46,13 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
 
     @Override
     protected void convert(BaseViewHolder baseViewHolder, final ActiveModel.Active active) {
+        final Activity activity=(Activity) context;
+        SharedPreferences share=mContext.getSharedPreferences("UserInfo",Context.MODE_PRIVATE);
+        final int accountId=share.getInt("UserId",0);
+        final String token=share.getString("Token","");
         ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
         ImageView ivLv=baseViewHolder.getView(R.id.ivLv);
+        final TextView tv_zan=baseViewHolder.getView(R.id.tv_zan);
         ImageView iv_background=baseViewHolder.getView(R.id.iv_background);
         TextView tv_active_lable=baseViewHolder.getView(R.id.tv_active_lable);
         String createTime= sdf.format(active.createTime);
@@ -74,6 +89,28 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
                 Intent i= new Intent(mContext,HomePageDateInfo.class);
                 i.putExtra("id",active.id);
                 mContext.startActivity(i);
+            }
+        });
+        tv_zan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OkGo.post(API.BASE_URL+"/v2/zan/add")
+                        .tag(this)
+                        .params("token",token)
+                        .params("bodyId",active.id)
+                        .params("bodyType",4)
+                        .params("bodyUserId",active.user.id)
+                        .params("accountId",accountId)
+                        .execute(new LoadCallback<LzyResponse>(activity) {
+                            @Override
+                            public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                            if (lzyResponse.state==200){
+                                                Toast.makeText(activity,"赞",Toast.LENGTH_SHORT).show();
+                                                notify();
+                                            }
+                            }
+                        });
+
             }
         });
     }
