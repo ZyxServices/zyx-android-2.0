@@ -142,7 +142,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                                 tv_intro.setText("个人简介："+signature);
                             }
                             tvName.setText(nickname);
-                            tvGz.setText(gz-1+"");
+                            tvGz.setText(gz+"");
                             tvFs.setText(fs+"");
                             tvCoin.setText(coin+"");
                             if(userInfoModel.data.level!=null){

@@ -27,7 +27,6 @@ Context context;
         super(R.layout.personal_attention_item, data);
         this.context=context;
     }
-
     @Override
     protected void convert(BaseViewHolder baseViewHolder, AttentionModel.AttentionList attentionList) {
         baseViewHolder.setText(R.id.tvNickname,attentionList.nickname)

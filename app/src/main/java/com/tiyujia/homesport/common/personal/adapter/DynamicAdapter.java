@@ -62,10 +62,14 @@ public class DynamicAdapter extends BaseQuickAdapter<MyDynamicModel.Dynamic>{
                 for (String s1 : s) {
                     imgUrls.add(API.PICTURE_URL + s1);
                 }
+            }else {
+                imgUrls.add(API.PICTURE_URL +str);
             }
             NGLAdapter adapter = new NGLAdapter(mContext, imgUrls);
             nineGrid.setVisibility(View.VISIBLE);
             nineGrid.setGap(6);
             nineGrid.setAdapter(adapter);
+        }else {
+            nineGrid.setVisibility(View.GONE);
         }
     }}
