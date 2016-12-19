@@ -102,6 +102,8 @@ public class HomePageCommentAdapter extends BaseQuickAdapter<HomePageCommentEnti
                     HomePageSearchResultActivity.entity=entity;
                     HomePageSearchResultActivity.etToComment.requestFocus();
                     HomePageSearchResultActivity.etToComment.setHint("回复："+backTo);
+                    HomePageSearchResultActivity.rvAddPicture.setVisibility(View.GONE);
+
                 }
             });
         }else {
