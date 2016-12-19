@@ -154,44 +154,49 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         }, 500);
     }
     private void setDatas() {
-        AMapLocationClient client = BootLoaderActivity.client;
-        AMapLocation location = client.getLastKnownLocation();
-        final double latitude= location.getLatitude();//纬度
-        final double longitude=location.getLongitude();//经度
-        ArrayList<String> cacheData1= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".1.json");
-        if (cacheData1==null||cacheData1.size()==0) {
-            new Thread() {
-                @Override
-                public void run() {
-                    String uri = API.BASE_URL + "/v2/venue/findVenue";
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("type", "2");
-                    params.put("lng", longitude + "");
-                    params.put("lat", latitude + "");
-                    params.put("number", "10");
-                    params.put("pageNumber", "1");
-                    String result = PostUtil.sendPostMessage(uri, params);
-                    JSONParseUtil.parseNetDataVenue(getActivity(),result,HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
-                }
-            }.start();
-        }else {
-            JSONParseUtil.parseLocalDataVenue(getActivity(),HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
+        try {
+            AMapLocationClient client = BootLoaderActivity.client;
+            AMapLocation location = client.getLastKnownLocation();
+            final double latitude= location.getLatitude();//纬度
+            final double longitude=location.getLongitude();//经度
+            ArrayList<String> cacheData1= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".1.json");
+            if (cacheData1==null||cacheData1.size()==0) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        String uri = API.BASE_URL + "/v2/venue/findVenue";
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("type", "2");
+                        params.put("lng", longitude + "");
+                        params.put("lat", latitude + "");
+                        params.put("number", "10");
+                        params.put("pageNumber", "1");
+                        String result = PostUtil.sendPostMessage(uri, params);
+                        JSONParseUtil.parseNetDataVenue(getActivity(),result,HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
+                    }
+                }.start();
+            }else {
+                JSONParseUtil.parseLocalDataVenue(getActivity(),HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
+            }
+            ArrayList<String> cacheData2= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".2.json");
+            if (cacheData2==null||cacheData2.size()==0) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        String uri = API.BASE_URL + "/v2/search/deva";
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("model", "1");
+                        String result = PostUtil.sendPostMessage(uri, params);
+                        JSONParseUtil.parseNetDataHomeBanner(getActivity(),result,HomePageFragment.this.getClass().getName()+"2.json",banners, handler, HANDLE_BANNER_DATA);
+                    }
+                }.start();
+            }else {
+                JSONParseUtil.parseLocalDataHomeBanner(getActivity(),HomePageFragment.this.getClass().getName()+".2.json",banners, handler, HANDLE_BANNER_DATA);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        ArrayList<String> cacheData2= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".2.json");
-        if (cacheData2==null||cacheData2.size()==0) {
-            new Thread() {
-                @Override
-                public void run() {
-                    String uri = API.BASE_URL + "/v2/search/deva";
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("model", "1");
-                    String result = PostUtil.sendPostMessage(uri, params);
-                    JSONParseUtil.parseNetDataHomeBanner(getActivity(),result,HomePageFragment.this.getClass().getName()+"2.json",banners, handler, HANDLE_BANNER_DATA);
-                }
-            }.start();
-        }else {
-            JSONParseUtil.parseLocalDataHomeBanner(getActivity(),HomePageFragment.this.getClass().getName()+".2.json",banners, handler, HANDLE_BANNER_DATA);
-        }
+
 
     }
     @Override public void onResume() {

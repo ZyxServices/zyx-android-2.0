@@ -22,7 +22,7 @@ import com.tiyujia.homesport.util.CityUtils;
  * 邮箱:928902646@qq.com
  */
 
-public class BootLoaderActivity extends ImmersiveActivity {
+public class BootLoaderActivity extends CheckPermissionsActivity {
     public   static final int HANDLER =1;
     public static AMapLocationClient client = null;
     Handler handler=new Handler(){

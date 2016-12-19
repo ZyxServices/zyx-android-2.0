@@ -88,7 +88,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     private int mUserId;
     private String pattern="8";//虚化度，越大越虚化
     private static final int HANDLE_IMAGE=1;
-    Handler handler=new Handler(){
+   /* Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
@@ -99,7 +99,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                     break;
             }
         }
-    };
+    };*/
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.personal_home_fragment,null);
@@ -150,7 +150,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                             }else {
                                 LvUtil.setLv(ivLv,"初学乍练");
                             }
-                            new Thread(new Runnable() {
+                           /* new Thread(new Runnable() {
                                 @Override
                                 public void run() {
                                     final Bitmap blur = getBitmap(API.PICTURE_URL+userInfoModel.data.avatar);
@@ -159,7 +159,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                                     message.obj=blur;
                                     handler.sendMessage(message);
                                 }
-                            }).start();
+                            }).start();*/
                         }
                         if (userInfoModel.state==401){
                             showToast("Token失效");

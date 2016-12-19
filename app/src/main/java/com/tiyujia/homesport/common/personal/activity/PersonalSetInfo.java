@@ -25,10 +25,12 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -52,6 +54,8 @@ import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.StorePhotosUtil;
 import com.tiyujia.homesport.util.StringUtil;
 import com.tiyujia.homesport.util.UploadUtil;
+import com.tiyujia.homesport.widget.TimePicker.WheelView;
+import com.tiyujia.homesport.widget.TimePicker.wheeladapter.NumericWheelAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,6 +64,7 @@ import java.io.File;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -98,6 +103,7 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
     private final int PIC_FROM_CAMERA = 1;
     private Bitmap bitmap;
     private String pickaddress;
+    private WheelView day,year,month;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,11 +120,11 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
         personal_back.setOnClickListener(this) ;
         ivAvatar.setOnClickListener(this);
         tvAddress.setOnClickListener(this);
+        tvBirthday.setOnClickListener(this);
         tvSex.setOnClickListener(this);
         AddressSelector selector = new AddressSelector(this);
         selector.setOnAddressSelectedListener(this);
         assert tvAddress != null;
-
     }
     private void setData() {
         OkGo.get(API.BASE_URL+"/v2/user/center_info")
@@ -209,7 +215,22 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.personal_back:
-                finish();
+                String nickname=etNickName.getText().toString();
+                String signtrue=etSignature.getText().toString();
+                OkGo.post(API.BASE_URL+"/v2/user/info")
+                        .tag(this)
+                        .params("token",mToken)
+                        .params("account_id",mUserId)
+                        .params("nickname",nickname)
+                        .params("signature",signtrue)
+                        .execute(new LoadCallback<LzyResponse>(this) {
+                            @Override
+                            public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                if(lzyResponse.state==200){
+                                    finish();
+                                }
+                            }
+                        });
                 break;
             case R.id.tvAddress:
                 dialog = new BottomDialog(PersonalSetInfo.this);
@@ -218,6 +239,9 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                 break;
             case R.id.ivAvatar:
                 showDialogs();
+                break;
+            case R.id.tvBirthday:
+                showDateDialog();
                 break;
             case R.id.tvSex:
                 AlertDialog.Builder builder = new AlertDialog.Builder(PersonalSetInfo.this);
@@ -265,6 +289,29 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                 break;
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK){
+            String nickname=etNickName.getText().toString();
+            String signtrue=etSignature.getText().toString();
+            OkGo.post(API.BASE_URL+"/v2/user/info")
+                    .tag(this)
+                    .params("token",mToken)
+                    .params("account_id",mUserId)
+                    .params("nickname",nickname)
+                    .params("signature",signtrue)
+                    .execute(new LoadCallback<LzyResponse>(this) {
+                        @Override
+                        public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                            if(lzyResponse.state==200){
+                                finish();
+                            }
+                        }
+                    });
+        }
+        return super.onKeyDown(keyCode, event);
+    }
     private void showDialogs() {
         View view = getLayoutInflater().inflate(R.layout.dialog_photo, null);
         cameradialog = new Dialog(this,R.style.Dialog_Fullscreen);
@@ -309,7 +356,8 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                         startActivityForResult(intent,PIC_FROM_CAMERA);
                         cameradialog.dismiss();
                     }
-                } else {
+                }
+                /*else {
                     fileName = getPhotopath();
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
@@ -319,7 +367,7 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                     startActivityForResult(intent,PIC_FROM_CAMERA);
                     cameradialog.dismiss();
-                }
+                }*/
             }
         });
         cameradialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -438,6 +486,152 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
             }) .start();
         }
     }
+
+    /**
+     * @param year
+     * @param month
+     * @return
+     */
+    private int getDay(int year, int month) {
+        int day = 30;
+        boolean flag = false;
+        switch (year % 4) {
+            case 0:
+                flag = true;
+                break;
+            default:
+                flag = false;
+                break;
+        }
+        switch (month) {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                day = 31;
+                break;
+            case 2:
+                day = flag ? 29 : 28;
+                break;
+            default:
+                day = 30;
+                break;
+        }
+        return day;
+    }
+    /**
+     * 初始化年
+     */
+    private void initYear(int curYear) {
+        NumericWheelAdapter numericWheelAdapter = new NumericWheelAdapter(this,1950, curYear);
+        numericWheelAdapter.setLabel(" 年");
+        //		numericWheelAdapter.setTextSize(15);  设置字体大小
+        year.setViewAdapter(numericWheelAdapter);
+        year.setCyclic(true);
+    }
+    /**
+     * 初始化月
+     */
+    private void initMonth() {
+        NumericWheelAdapter numericWheelAdapter = new NumericWheelAdapter(this,1, 12, "%02d");
+        numericWheelAdapter.setLabel(" 月");
+        //		numericWheelAdapter.setTextSize(15);  设置字体大小
+        month.setViewAdapter(numericWheelAdapter);
+        month.setCyclic(true);
+    }
+    /**
+     * 初始化天
+     */
+    private void initDay(int arg1, int arg2) {
+        NumericWheelAdapter numericWheelAdapter=new NumericWheelAdapter(this,1, getDay(arg1, arg2), "%02d");
+        numericWheelAdapter.setLabel(" 日");
+        //		numericWheelAdapter.setTextSize(15);  设置字体大小
+        day.setViewAdapter(numericWheelAdapter);
+        day.setCyclic(true);
+    }
+    /**
+     * 显示日期
+     */
+    private void showDateDialog() {
+        final AlertDialog dialog = new AlertDialog.Builder(PersonalSetInfo.this)
+                .create();
+        dialog.show();
+        Window window = dialog.getWindow();
+        // 设置布局
+        window.setContentView(R.layout.datapick);
+        // 设置宽高
+        //   window.setLayout(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        // 设置弹出的动画效果
+        window.setWindowAnimations(R.style.log_out_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+        Calendar c = Calendar.getInstance();
+        int curYear = c.get(Calendar.YEAR);
+        int curMonth = c.get(Calendar.MONTH) + 1;//通过Calendar算出的月数要+1
+        int curDate = c.get(Calendar.DATE);
+            year = (WheelView) window.findViewById(R.id.year);
+        initYear(curYear);
+             month = (WheelView) window.findViewById(R.id.month);
+        initMonth();
+             day = (WheelView) window.findViewById(R.id.day);
+        initDay(curYear,curMonth);
+        year.setCurrentItem(curYear - 1950);
+        month.setCurrentItem(curMonth - 1);
+        day.setCurrentItem(curDate - 1);
+        year.setVisibleItems(7);
+        month.setVisibleItems(7);
+        day.setVisibleItems(7);
+        // 设置监听
+        Button ok = (Button) window.findViewById(R.id.set);
+        Button cancel = (Button) window.findViewById(R.id.cancel);
+        ok.setOnClickListener(new View.OnClickListener() {
+            public String str;
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            str = (year.getCurrentItem()+1950) + "-"+ (month.getCurrentItem()+1)+"-"+(day.getCurrentItem()+1);
+                            Log.e("str",str);
+                            String uri= API.BASE_URL+"/v2/user/info";
+                            Map<String, String> params=new HashMap<>();
+                            SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy-MM-dd");
+                            Date date=simpleDateFormat.parse(str);
+                            Long birthday_time= date.getTime();
+                            Log.e("birthday_time",birthday_time+"");
+                            params.put("token",mToken);
+                            params.put("account_id",mUserId+"");
+                            params.put("birthday",birthday_time+"");
+                            String result= PostUtil.sendPostMessage(uri,params);
+                            JSONObject json =  new JSONObject(result);
+                            if(json.getInt("state")==200){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tvBirthday.setText(str);
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+                dialog.cancel();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
