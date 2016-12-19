@@ -57,6 +57,7 @@
         style="@style/boldlin"
         />
     <LinearLayout
+        android:id="@+id/llUserinfo"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:gravity="center_vertical"

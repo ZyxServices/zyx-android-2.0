@@ -181,8 +181,7 @@
                 android:text="奖励"
                 android:button="@drawable/radiobutton"
                 android:textColor="@color/day_edit_color"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:visibility="gone"
                 />
 
             <RadioButton
@@ -195,6 +194,8 @@
                 android:button="@drawable/radiobutton"
                 android:textColor="@color/day_edit_color"
                 android:paddingLeft="4dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 />
         </RadioGroup>
     </LinearLayout>

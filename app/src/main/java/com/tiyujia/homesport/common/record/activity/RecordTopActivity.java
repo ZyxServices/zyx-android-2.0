@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -45,6 +46,7 @@ public class RecordTopActivity extends ImmersiveActivity implements View.OnClick
     @Bind(R.id.tvNickname)    TextView tvNickname;
     @Bind(R.id.tvTotalScore)    TextView tvTotalScore;
     @Bind(R.id.recyclerView)    RecyclerView recyclerView;
+    @Bind(R.id.llUserinfo)    LinearLayout llUserinfo;
     private RecordTopAdapter adapter;
     private String mToken;
 
@@ -97,15 +99,20 @@ public class RecordTopActivity extends ImmersiveActivity implements View.OnClick
                     @Override
                     public void onSuccess(LzyResponse<UserTopModel> user, Call call, Response response) {
                         if(user.state==200){
-                            tvNickname.setText(user.data.userIconVo.nickName);
-                            tvUserNumber.setText(user.data.rankNum+"");
-                            tvTotalScore.setText(user.data.totalScore+"");
-                            if (user.data.userIconVo.levelName!=null&&user.data.userIconVo.levelName.equals("")){
-                                LvUtil.setLv(ivLv,user.data.userIconVo.levelName);
+                            if(user.data!=null){
+                                tvNickname.setText(user.data.userIconVo.nickName);
+                                tvUserNumber.setText(user.data.rankNum+"");
+                                tvTotalScore.setText(user.data.totalScore+"");
+                                if (user.data.userIconVo.levelName!=null&&user.data.userIconVo.levelName.equals("")){
+                                    LvUtil.setLv(ivLv,user.data.userIconVo.levelName);
+                                }else {
+                                    LvUtil.setLv(ivLv,"初学乍练");
+                                }
+                                PicassoUtil.handlePic(RecordTopActivity.this, PicUtil.getImageUrlDetail(RecordTopActivity.this, StringUtil.isNullAvatar(user.data.userIconVo.avatar), 320, 320),ivAvatar,320,320);
                             }else {
-                                LvUtil.setLv(ivLv,"初学乍练");
+                                llUserinfo.setVisibility(View.GONE);
                             }
-                            PicassoUtil.handlePic(RecordTopActivity.this, PicUtil.getImageUrlDetail(RecordTopActivity.this, StringUtil.isNullAvatar(user.data.userIconVo.avatar), 320, 320),ivAvatar,320,320);
+
                         }
                     }
                     @Override
