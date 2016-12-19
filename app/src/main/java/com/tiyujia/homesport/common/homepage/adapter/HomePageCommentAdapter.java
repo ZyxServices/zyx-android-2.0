@@ -1,21 +1,30 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
 import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.StringUtil;
 import com.tiyujia.homesport.util.TimeUtil;
 import com.w4lle.library.NineGridlayout;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 /**
@@ -38,12 +47,14 @@ public class HomePageCommentAdapter extends BaseQuickAdapter<HomePageCommentEnti
             }
         });
         ImageView ivMainUserLevel=baseViewHolder.getView(R.id.ivMainUserLevel);
+        TextView tvTalkContent=baseViewHolder.getView(R.id.tvTalkContent);
+        final TextView tvMainUserName=baseViewHolder.getView(R.id.tvMainUserName);
         NineGridlayout nglMainUserImage=baseViewHolder.getView(R.id.nglMainUserImage);
-        RecyclerView rvDiscussCallBack=baseViewHolder.getView(R.id.rvDiscussCallBack);
+        final RecyclerView rvDiscussCallBack=baseViewHolder.getView(R.id.rvDiscussCallBack);
         Picasso.with(mContext).load(StringUtil.isNullAvatar(entity.userVo.avatar)).into(rivMainUserPhoto);
-        baseViewHolder.setText(R.id.tvMainUserName,entity.userVo.nickName)
-                .setText(R.id.tvTalkTime, TimeUtil.formatFriendly(new Date(entity.createTime)))
-                .setText(R.id.tvTalkContent,entity.commentContent);
+        baseViewHolder.setText(R.id.tvTalkTime, TimeUtil.formatFriendly(new Date(entity.createTime)));
+        tvMainUserName.setText(entity.userVo.nickName);
+        tvTalkContent.setText(entity.commentContent);
         String text1=entity.userVo.levelName;
         if (text1==null){
             text1="";
@@ -62,16 +73,53 @@ public class HomePageCommentAdapter extends BaseQuickAdapter<HomePageCommentEnti
         }else {
             nglMainUserImage.setVisibility(View.GONE);
         }
-        List<HomePageCommentEntity.HomePage.ReplyData> replyDatas = entity.replyVos;
+        final List<HomePageCommentEntity.HomePage.ReplyData> replyDatas = entity.replyVos;
+        CommentListAdapter commentListAdapter = new CommentListAdapter(mContext, replyDatas);
         if (replyDatas!=null&&replyDatas.size()!=0){
             rvDiscussCallBack.setVisibility(View.VISIBLE);
             rvDiscussCallBack.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL,false));
-            CommentListAdapter commentListAdapter=new CommentListAdapter(mContext,replyDatas);
             rvDiscussCallBack.setAdapter(commentListAdapter);
+            rvDiscussCallBack.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+                    super.onDraw(c, parent, state);
+                }
+
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    super.getItemOffsets(outRect, view, parent, state);
+                    outRect.bottom =10;
+                    outRect.top = 10;
+                }
+            });
+            commentListAdapter.setOnItemClickListener(new CommentListAdapter.OnCommentItemClickListener() {
+                @Override
+                public void onCommentItem(int toID,String backTo) {
+                    InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                    HomePageSearchResultActivity.replyToId=toID;
+                    HomePageSearchResultActivity.isComment=false;
+                    HomePageSearchResultActivity.entity=entity;
+                    HomePageSearchResultActivity.etToComment.requestFocus();
+                    HomePageSearchResultActivity.etToComment.setHint("回复："+backTo);
+                }
+            });
         }else {
             rvDiscussCallBack.setVisibility(View.GONE);
         }
+        tvTalkContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            onItemClickListener.OnItemClick(entity,tvMainUserName.getText().toString());
+            }
+        });
     }
-
+    private OnItemClickListener onItemClickListener;
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+    public interface OnItemClickListener {
+        void OnItemClick(HomePageCommentEntity.HomePage entity,String backTo);
+    }
 
 }

@@ -30,6 +30,7 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.adapter.CommentListAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageCommentAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageVenueUserAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
@@ -78,7 +79,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     @Bind(R.id.llToTalk)                LinearLayout llToTalk;//橙色布局
     @Bind(R.id.llCancelAndSend)         LinearLayout llCancelAndSend;//输入框布局
     @Bind(R.id.srlRefresh)              SwipeRefreshLayout srlRefresh;//下拉刷新
-    EditText etToComment;
+    public static EditText etToComment;
     TextView tvSend,tvCancel;
     List<HomePageVenueWhomGoneEntity> list;
     HomePageVenueUserAdapter userAdapter;
@@ -89,6 +90,12 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     int nowUserId;//当前用户ID
     public static final int HANDLE_BASE_DATA=1;
     public static final int HANDLE_BASE_VENUE_DATA=2;
+    public static final  int REPLY_TYPE_ONE=3;
+    public static final  int REPLY_TYPE_TWO=4;
+    public static HomePageCommentEntity.HomePage entity;
+    public static boolean isComment=true;
+    public static int replyToId=0;
+     SharedPreferences share;
     Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -259,6 +266,19 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                     public void onSuccess(HomePageCommentEntity homePage, Call call, Response response) {
                         if (homePage.state==200){
                             commentAdapter.setNewData(homePage.data);
+                            commentAdapter.setOnItemClickListener(new HomePageCommentAdapter.OnItemClickListener() {
+                                @Override
+                                public void OnItemClick(HomePageCommentEntity.HomePage data,String backTo) {
+                                    isComment=false;
+                                    entity=data;
+                                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    llToTalk.setVisibility(View.GONE);
+                                    etToComment.requestFocus();
+                                    etToComment.setHint("回复："+backTo);
+                                    llCancelAndSend.setVisibility(View.VISIBLE);
+                                    imm.showSoftInput(etToComment,InputMethodManager.SHOW_FORCED);
+                                }
+                            });
                         }
                     }
                     @Override
@@ -328,47 +348,92 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     }
     private void writeToCallBack(){
         final String uri = API.BASE_URL + "/v2/comment/insert";
-        final SharedPreferences share = getSharedPreferences("UserInfo", MODE_PRIVATE);
+        share= getSharedPreferences("UserInfo", MODE_PRIVATE);
         nowUserId = share.getInt("UserId", 0);
         if (nowUserId==0){
             Toast.makeText(this,"您还没有登录呢，亲！请登录！",Toast.LENGTH_LONG).show();
             Intent intent=new Intent(this, PersonalLogin.class);
             startActivity(intent);
         }else {
-            new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        HashMap<String, String> params = new HashMap<>();
-                        params.put("comment_type", "4");
-                        params.put("comment_id", venueId + "");
-                        params.put("model_create_id", "-1");
-                        params.put("comment_account", nowUserId + "");
-                        String commentText = etToComment.getText().toString().trim();
-                        params.put("comment_content", commentText);
-                        String result = PostUtil.sendPostMessage(uri, params);
-                        JSONObject obj = new JSONObject(result);
-                        int state = obj.getInt("state");
-                        if (state == 200) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(HomePageSearchResultActivity.this, "评论成功！", Toast.LENGTH_LONG).show();
-                                    etToComment.setText("");
-                                    llToTalk.setVisibility(View.VISIBLE);
-                                    llCancelAndSend.setVisibility(View.GONE);
-                                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
-                                    onRefresh();
-                                }
-                            });
+            if (isComment) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            HashMap<String, String> params = new HashMap<>();
+                            params.put("comment_type", "4");
+                            params.put("comment_id", venueId + "");
+                            params.put("model_create_id", "-1");
+                            params.put("comment_account", nowUserId + "");
+                            String commentText = etToComment.getText().toString().trim();
+                            params.put("comment_content", commentText);
+                            String result = PostUtil.sendPostMessage(uri, params);
+                            JSONObject obj = new JSONObject(result);
+                            int state = obj.getInt("state");
+                            if (state == 200) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(HomePageSearchResultActivity.this, "评论成功！", Toast.LENGTH_LONG).show();
+                                        etToComment.setText("");
+                                        llToTalk.setVisibility(View.VISIBLE);
+                                        llCancelAndSend.setVisibility(View.GONE);
+                                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                        imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+                                        onRefresh();
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                }
-            }.start();
+                }.start();
+            }else {
+                handleReply(replyToId);
+            }
         }
+    }
+    private void handleReply(final int replyToId){
+        new Thread(){
+            @Override
+            public void run() {
+                try{
+                    String url=API.BASE_URL+"/v2/reply/addReply";
+                    String token=share.getString("Token","");
+                    int replyParentId=entity.id;
+                    int replyFromUser=nowUserId;
+                    int replyToUser=(replyToId==0)?entity.userVo.id:replyToId;
+                    String replyContent=etToComment.getText().toString().trim();
+                    HashMap<String,String> params=new HashMap<String, String>();
+                    params.put("token",""+token);
+                    params.put("reply_parent_id",""+replyParentId);
+                    params.put("reply_from_user",""+replyFromUser);
+                    params.put("reply_to_user",""+replyToUser);
+                    params.put("reply_content",""+replyContent);
+                    params.put("reply_img_path","");
+                    String result=PostUtil.sendPostMessage(url,params);
+                    JSONObject object=new JSONObject(result);
+                    if (object.getInt("state")==200){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(HomePageSearchResultActivity.this, "回复成功！", Toast.LENGTH_LONG).show();
+                                etToComment.setText("");
+                                llToTalk.setVisibility(View.VISIBLE);
+                                llCancelAndSend.setVisibility(View.GONE);
+                                isComment=true;
+                                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+                                onRefresh();
+                            }
+                        });
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
     @Override
     protected void onDestroy() {

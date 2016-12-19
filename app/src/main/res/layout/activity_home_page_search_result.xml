@@ -277,10 +277,9 @@
             android:orientation="vertical"
             android:background="#ffffff"
             android:layout_gravity="bottom"
-            android:visibility="gone"
             xmlns:android="http://schemas.android.com/apk/res/android">
             <TextView
-                style="@style/finelin" />
+                style="@style/boldlin" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -291,6 +290,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="5dp"
                     android:text="取消"
                     android:id="@+id/tvCancel"
                     android:textSize="15sp"
@@ -303,7 +303,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="发送"
+                    android:gravity="right"
                     android:id="@+id/tvSend"
+                    android:padding="5dp"
                     android:textSize="15sp"
                     android:textColor="#ff702a"/>
             </LinearLayout>

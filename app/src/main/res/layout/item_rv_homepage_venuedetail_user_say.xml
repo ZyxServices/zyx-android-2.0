@@ -86,6 +86,7 @@
       android:background="#faf9f5"
       app:layoutManager="LinearLayoutManager"
       android:visibility="gone"
+
       />
   <TextView
       style="@style/finelin"

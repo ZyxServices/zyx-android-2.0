@@ -12,6 +12,7 @@ import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.entity.CallBackDetailEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,12 +52,12 @@ public class CommentListAdapter extends RecyclerView.Adapter {
         }
         return super.getItemViewType(position);
     }
-    private OnNameClickListener onNameClickListener;
-    public void setOnNameClickListener(OnNameClickListener onNameClickListener) {
-        this.onNameClickListener = onNameClickListener;
+    private OnCommentItemClickListener onCommentItemClickListener;
+    public void setOnItemClickListener(OnCommentItemClickListener onCommentItemClickListener) {
+        this.onCommentItemClickListener = onCommentItemClickListener;
     }
-    public interface OnNameClickListener {
-        void OnNameClick(View view, int position, ArrayList<CallBackDetailEntity> detailMSGs, int toID, String toNickName);
+    public interface OnCommentItemClickListener {
+        void onCommentItem(int toID,String backTo);
     }
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
@@ -66,34 +67,26 @@ public class CommentListAdapter extends RecyclerView.Adapter {
             holder.tvFrom.setText(entity.fromUserVo.nickName);
             holder.tvTo.setText(entity.toUserVo.nickName);
             holder.tvContent.setText(entity.replyContent);
-//            if(onNameClickListener!=null){
-//                holder.tvFrom.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        //注意，这里的position不要用上面参数中的position，会出现位置错乱\
-//                        onNameClickListener.OnNameClick(holder.tvFrom, position, (ArrayList<CallBackDetailEntity>) list,list.get(position).getFromID(),holder.tvFrom.getText().toString());
-//                    }
-//                });
-//                holder.tvTo.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        //注意，这里的position不要用上面参数中的position，会出现位置错乱\
-//                        onNameClickListener.OnNameClick(holder.tvTo, position, (ArrayList<CallBackDetailEntity>) list,list.get(position).getToID(),holder.tvTo.getText().toString());
-//                    }
-//                });
-//            }
+            if(onCommentItemClickListener!=null){
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onCommentItemClickListener.onCommentItem(entity.fromUserVo.id,holder.tvFrom.getText().toString());
+                    }
+                });
+            }
         }else if (viewHolder instanceof CommentViewHolder){
             final CommentViewHolder holder= (CommentViewHolder) viewHolder;
             holder.tvCommenter.setText(entity.fromUserVo.nickName+"：");
             holder.tvCommentText.setText(entity.replyContent);
-//            if(onNameClickListener!=null){
-//                holder.tvCommenter.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        onNameClickListener.OnNameClick(holder.tvCommenter,position,(ArrayList<CallBackDetailEntity>) list,list.get(position).getFromID(),holder.tvCommenter.getText().toString());
-//                    }
-//                });
-//            }
+            if(onCommentItemClickListener!=null){
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onCommentItemClickListener.onCommentItem(entity.fromUserVo.id,holder.tvCommenter.getText().toString());
+                    }
+                });
+            }
         }
 
     }
