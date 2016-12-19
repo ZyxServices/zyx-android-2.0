@@ -26,7 +26,6 @@ import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
 import com.tiyujia.homesport.common.homepage.activity.CityMapActivity;
 import com.tiyujia.homesport.common.record.activity.RecordTopActivity;
 import com.tiyujia.homesport.common.record.activity.RecordTrackActivity;
-import com.tiyujia.homesport.common.record.model.LevelModel;
 import com.tiyujia.homesport.common.record.model.OverViewModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -52,6 +51,9 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
     private Integer levelid;
     private Integer sportInfoId;
     private long spendTime;
+    private String[] level={"5.1","5.2","5.3","5.4","5.5","5.6","5.7","5.8","5.9","5.10a","5.10b","5.10c","5.10d","5.11a","5.11b","5.11c","5.11d","5.12a","5.12b","5.12c","5.12d",
+            "5.13a","5.13b","5.13c","5.13d","5.14a","5.14b","5.14c","5.14d","5.15a","5.15b"};
+    private ArrayList<String> list;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -128,7 +130,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                         .tag(this)
                         .params("token",mToken)
                         .params("venueId",levelid)
-                        .params("sportInfoId",sportInfoId)
+                        .params("level",tvDifficulty.getText().toString())
                         .params("spendTime",spendTime)
                         .execute(new LoadCallback<LzyResponse>(getActivity()) {
                             @Override
@@ -178,14 +180,25 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                     showToast("先选择场馆");
                 }else {
                     if(levelid!=null){
-                        OkGo.post(API.BASE_URL+"/v2/record/sportinfo/level")
+                        list = new ArrayList<String>();
+                        for(int i=0;i<level.length;i++){
+                            list.add(level[i]);
+                        }
+                        PickerViewUtil.alertBottomWheelOption(getActivity(), list, new PickerViewUtil.OnWheelViewClick() {
+                            @Override
+                            public void onClick(View view, int postion) {
+                                tvDifficulty.setText(list.get(postion));
+                            }
+                        });
+
+                        /*  OkGo.post(API.BASE_URL+"/v2/record/sportinfo/level")
                                 .tag(this)
                                 .params("venueId",levelid)
                                 .execute(new LoadCallback<LevelModel>(getActivity()) {
                                     @Override
                                     public void onSuccess(LevelModel levelModel, Call call, Response response) {
                                         if (levelModel.state==200){
-                                            final ArrayList<String> list = new ArrayList<>();
+
                                             final ArrayList<Integer> listid = new ArrayList<>();
                                             if(levelModel.data.size()>0){
                                                 for (int i=0;i<levelModel.data.size();i++){
@@ -195,17 +208,11 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                                                 }
                                             }else {}
                                             if(list.size()>0){
-                                                PickerViewUtil.alertBottomWheelOption(getActivity(), list, new PickerViewUtil.OnWheelViewClick() {
-                                                    @Override
-                                                    public void onClick(View view, int postion) {
-                                                        tvDifficulty.setText(list.get(postion));
-                                                        sportInfoId=listid.get(postion);
-                                                    }
-                                                });
+
                                             }else {}
                                         }
                                     }
-                                });
+                                });*/
                     }else {}
                 }
                 break;
