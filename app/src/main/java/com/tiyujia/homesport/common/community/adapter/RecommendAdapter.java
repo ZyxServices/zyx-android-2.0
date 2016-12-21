@@ -69,24 +69,22 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
             baseViewHolder.setText(R.id.tvAddress,"先写一个成都好了");
         }
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(recommend.userIconVo.avatar), 320, 320),ivAvatar,320,320);
-        ArrayList<String> imgUrls=null;
-        if(recommend.imgUrl!=null){
-            String str= recommend.imgUrl;
-            imgUrls=(ArrayList<String>) StringUtil.stringToList(str);;
+        String str= recommend.imgUrl;
+        if(str!=null){
+        final ArrayList<String>  imgUrls=(ArrayList<String>) StringUtil.stringToList(str);;
             NGLAdapter adapter = new NGLAdapter(context, imgUrls);
             nineGrid.setVisibility(View.VISIBLE);
             nineGrid.setGap(6);
             nineGrid.setAdapter(adapter);
+            nineGrid.setOnItemClickListerner(new NineGridlayout.OnItemClickListerner() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    mContext.startActivity(ImageDetailActivity.getMyStartIntent(mContext, imgUrls,position, ImageDetailActivity.url_path));
+                }
+            });
+        }else {
+            nineGrid.setVisibility(View.GONE);
         }
-
-        final ArrayList<String> finalImgUrls = imgUrls;
-        nineGrid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mContext.startActivity(ImageDetailActivity.getMyStartIntent(mContext, finalImgUrls,0, ImageDetailActivity.local_file_path));
-                Toast.makeText(mContext,"dianjile",Toast.LENGTH_SHORT).show();
-            }
-        });
         ivAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

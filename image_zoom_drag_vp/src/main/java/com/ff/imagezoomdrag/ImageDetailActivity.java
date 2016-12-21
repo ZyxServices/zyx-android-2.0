@@ -10,6 +10,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -17,7 +18,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -141,9 +149,26 @@ public class ImageDetailActivity extends Activity implements OnClickListener,
 					Bitmap tempBitmap = null;
 					if (bigBitmapsCache.get(vh.pos) == null) {
 						if(pathType == url_path){
-//							tempBitmap = AsyncListIconLoader.getInstance().loadImageFromInternet(
-//									AsyncListIconLoader.getPicPrefix(screenshot_samples.get(vh.pos)),
-//									AsyncListIconLoader.FULLWIDTH,AsyncListIconLoader.FULLWIDTH, false);// 获取网络图片
+							try {
+								String url=screenshot_samples.get(vh.pos);
+								if( url.contains("__160x160")){
+									url=url.replace("__160x160","");
+								}
+								URL iconUrl = new URL(url);
+								URLConnection conn = iconUrl.openConnection();
+								HttpURLConnection http = (HttpURLConnection) conn;
+								int length = http.getContentLength();
+								conn.connect();
+								// 获得图像的字符流
+								InputStream is = conn.getInputStream();
+								BufferedInputStream bis = new BufferedInputStream(is, length);
+								tempBitmap = BitmapFactory.decodeStream(bis);
+								bis.close();
+								is.close();// 关闭流
+							}
+							catch (Exception e) {
+								e.printStackTrace();
+							}
 						}else if(pathType == local_file_path){
 							tempBitmap = BitmapFactory.decodeResource(getResources(),Integer.parseInt(screenshot_samples.get(vh.pos)));
 						}

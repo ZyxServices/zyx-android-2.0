@@ -6,10 +6,12 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
@@ -57,6 +59,7 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
     private List<Fragment> mFragment = new ArrayList<Fragment>();
     private String token="tiyujia2016";
     private int account_id;
+    private String avatarUrl="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +115,8 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
                     @Override
                     public void onSuccess(UserInfoModel userInfoModel, Call call, Response response) {
                         if(userInfoModel.state==200){
-                            PicassoUtil.handlePic(PersonalOtherHome.this, PicUtil.getImageUrlDetail(PersonalOtherHome.this, StringUtil.isNullAvatar(userInfoModel.data.avatar), 320, 320),ivAvatar,320,320);
+                            avatarUrl=userInfoModel.data.avatar;
+                            PicassoUtil.handlePic(PersonalOtherHome.this, PicUtil.getImageUrlDetail(PersonalOtherHome.this, StringUtil.isNullAvatar(avatarUrl), 320, 320),ivAvatar,320,320);
                             tvNickname.setText(userInfoModel.data.nickname);
                             tvContent.setText("个人简介:"+userInfoModel.data.signature);
                             if (userInfoModel.data.level!=null&&userInfoModel.data.level.equals("")){
@@ -134,6 +138,7 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
     private void setView() {
         ivBack.setOnClickListener(this);
         tvAddAttention.setOnClickListener(this);
+        ivAvatar.setOnClickListener(this);
         mTitle.add("他的动态");
         mTitle.add("他的活动");
         mTitle.add("他的装备");
@@ -165,6 +170,16 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
         switch (v.getId()){
             case R.id.ivBack:
                 finish();
+                break;
+            case R.id.ivAvatar:
+                if(!TextUtils.isEmpty(avatarUrl)){
+                    ArrayList<String> str=new ArrayList<>();
+                    str.add(API.PICTURE_URL+avatarUrl);
+                    startActivity(ImageDetailActivity.getMyStartIntent(this, str,0, ImageDetailActivity.url_path));
+                }else {
+                    ivAvatar.setClickable(false);
+                }
+
                 break;
             case R.id.tvAddAttention:
                SharedPreferences share= getSharedPreferences("UserInfo",MODE_PRIVATE);

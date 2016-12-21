@@ -44,7 +44,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     private String mToken;
     private int mUserId;
     private int page=1;
-    private int pageSize=10;
+    private int pageSize=100;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

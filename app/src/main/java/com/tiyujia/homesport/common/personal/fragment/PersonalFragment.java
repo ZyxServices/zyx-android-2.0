@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.tiyujia.homesport.API;
@@ -53,6 +54,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -88,18 +90,20 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     private int mUserId;
     private String pattern="8";//虚化度，越大越虚化
     private static final int HANDLE_IMAGE=1;
-   /* Handler handler=new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case HANDLE_IMAGE:
-                    Bitmap bitmap= (Bitmap) msg.obj;
-                    Bitmap blur = FastBlurUtil.blurBitmap(bitmap);
-                    ivBackground.setImageBitmap(blur);
-                    break;
-            }
-        }
-    };*/
+    private String avatarUrl="";
+
+    /* Handler handler=new Handler(){
+         @Override
+         public void handleMessage(Message msg) {
+             switch (msg.what){
+                 case HANDLE_IMAGE:
+                     Bitmap bitmap= (Bitmap) msg.obj;
+                     Bitmap blur = FastBlurUtil.blurBitmap(bitmap);
+                     ivBackground.setImageBitmap(blur);
+                     break;
+             }
+         }
+     };*/
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.personal_home_fragment,null);
@@ -129,9 +133,9 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                     @Override
                     public void onSuccess(final UserInfoModel userInfoModel, Call call, Response response) {
                         if(userInfoModel.state==200){
-                            PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(userInfoModel.data.avatar), 320, 320),ivAvatar,320,320);
+                            avatarUrl=userInfoModel.data.avatar;
+                            PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(avatarUrl), 320, 320),ivAvatar,320,320);
                             String nickname=userInfoModel.data.nickname.toString();
-//                            String level =userInfoModel.data.level.pointDesc.toString();
                             String signature=userInfoModel.data.signature.toString();
                             int fs=userInfoModel.data.fs;
                             int gz=userInfoModel.data.gz;
@@ -197,7 +201,9 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                 getActivity().startActivity(new Intent(getActivity(), PersonalSystemSetting.class));
                 break;
             case R.id.ivAvatar:
-                Toast.makeText(getActivity(),"hdksajhdksja",Toast.LENGTH_SHORT).show();
+                    ArrayList<String> str=new ArrayList<>();
+                    str.add(API.PICTURE_URL+avatarUrl);
+                    getActivity().startActivity(ImageDetailActivity.getMyStartIntent(getActivity(), str,0, ImageDetailActivity.url_path));
                 break;
             case R.id.ll_attention:
                 getActivity().startActivity(new Intent(getActivity(), PersonalAttention.class));
