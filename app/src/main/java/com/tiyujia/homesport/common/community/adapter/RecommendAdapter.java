@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.ninegrid.NineGridView;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
@@ -68,9 +69,9 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
             baseViewHolder.setText(R.id.tvAddress,"先写一个成都好了");
         }
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(recommend.userIconVo.avatar), 320, 320),ivAvatar,320,320);
+        final ArrayList<String> imgUrls=new ArrayList<>();
         if(recommend.imgUrl!=null){
             String str= recommend.imgUrl;
-            ArrayList<String> imgUrls=new ArrayList<>();
             if(str.contains(",")){
                 String[] s=str.split(",");
                 for(String s1:s){
@@ -84,6 +85,13 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
             nineGrid.setGap(6);
             nineGrid.setAdapter(adapter);
         }
+        nineGrid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContext.startActivity(ImageDetailActivity.getMyStartIntent(mContext,imgUrls,0, ImageDetailActivity.local_file_path));
+                Toast.makeText(mContext,"dianjile",Toast.LENGTH_SHORT).show();
+            }
+        });
         ivAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

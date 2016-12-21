@@ -471,7 +471,7 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
             final   Uri originalUri = data.getData(); // 获得图片的uri
             try {
                 Bitmap bitmap1 = MediaStore.Images.Media.getBitmap(resolver, originalUri);
-                bitmap= PicUtil.compress(bitmap1, 720, 480);
+                bitmap= PicUtil.compress(bitmap1, 320, 320);
                 ivAvatar.setImageBitmap(bitmap);
             }catch (Exception e){
                 e.printStackTrace();

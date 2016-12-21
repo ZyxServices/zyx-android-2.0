@@ -69,6 +69,8 @@ public class EquipmentShoesFragment extends BaseFragment implements SwipeRefresh
                 .tag(this)
                 .params("token",mToken)
                 .params("label_id",1)
+                .params("page",1)
+                .params("pageSize",100)
                 .execute(new LoadCallback<EquipmentModel>(getActivity()) {
                     @Override
                     public void onSuccess(EquipmentModel equipmentModel, Call call, Response response) {

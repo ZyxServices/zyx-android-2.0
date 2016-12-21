@@ -104,7 +104,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     @Bind(R.id.revImage)    RecyclerView revImage;
     @Bind(R.id.Chckbox)    CheckBox Chckbox;
     private SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    private int type;//活动类型(1、求约 2、求带)
+    private int type=2;//活动类型(1、求约 2、求带)
     private Dialog cameradialog;
     private String fileName;
     private final int PIC_FROM_CAMERA = 1;
@@ -125,6 +125,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     private String mToken;
     private int mUserId;
     private Date Apply,End,Start;
+    private String city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,8 +139,9 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     }
     private void setInfo() {
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-        mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
+        mToken=share.getString("Token","");
+        city=share.getString("City","");
     }
     private void initWidget() {
         selImageList = new ArrayList<>();
@@ -279,7 +281,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                                     .params("address",Address)
                                     .params("maxPeople",maxPeople)
                                     .params("price",price)
-                                    .params("city","成都")
+                                    .params("city",city)
                                     .params("paymentType",paymentType)
                                     .execute(new LoadCallback<LzyResponse>(this) {
                                         @Override
@@ -508,23 +510,13 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
             }catch (Exception e){
                 e.printStackTrace();
             }
-            Thread thread1=new Thread(){
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     String path= UploadUtil.getImageAbsolutePath(HomePageActivePublishActivity.this,originalUri);
                     imageUrl=UploadUtil.getNetWorkImageAddress(path, HomePageActivePublishActivity.this);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (imageUrl!=null){
-                                cameradialog.dismiss();
-                            }
-                        }
-                    });
                 }
-            };
-            thread1.setPriority(8);
-            thread1.start();
+            }).start();
         }
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             //添加图片返回

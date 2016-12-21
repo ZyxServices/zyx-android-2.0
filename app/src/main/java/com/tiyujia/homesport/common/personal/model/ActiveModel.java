@@ -12,7 +12,7 @@ import java.util.List;
 public class ActiveModel implements Serializable {
     public int state;
     public List<Active> data;
-    public static class Active implements Serializable{
+    public   class Active implements Serializable{
         public int id;//活动id
         public Userinfo user;
         public String title;
@@ -29,11 +29,14 @@ public class ActiveModel implements Serializable {
         public int zan;//赞
         public int commentNumber;//评论数
         public String city;//城市
-        public static class Userinfo{
+        public   class Userinfo{
             public int id;
             public String nickname;
             public String avatar;
             public Level level;
+            public String phone;
+            public String signature;
+            public int isFollow;//0未关注，1已关注
             public class Level{
                 public int id;//不知道是啥id
                 public int userId;//用户id

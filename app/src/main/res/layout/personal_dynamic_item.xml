@@ -85,11 +85,13 @@
         tools:text="描述描述描述描述描述描述描述描述"/>
 
     <com.w4lle.library.NineGridlayout
-    android:id="@+id/nineGrid"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    />
+        android:id="@+id/nineGrid"
+        android:layout_marginLeft="@dimen/dip12"
+        android:layout_marginRight="@dimen/dip12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        />
     <LinearLayout
         android:id="@+id/re1"
         style="@style/pack_re1"

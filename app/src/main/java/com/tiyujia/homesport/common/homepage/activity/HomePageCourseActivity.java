@@ -37,7 +37,7 @@ public class HomePageCourseActivity extends ImmersiveActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.homepage_equipment);
+        setContentView(R.layout.homepage_course);
         ButterKnife.bind(this);
         setview();
         TablayoutVPAdapter adapter=new TablayoutVPAdapter(getSupportFragmentManager(),mFragment,mTitle);

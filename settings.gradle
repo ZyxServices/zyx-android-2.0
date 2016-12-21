@@ -1,1 +1,1 @@
-include ':app', ':okgo', ':imagepicker', ':Addresslibrary', ':picker', ':YunWangVideoSDK'
+include ':app', ':okgo', ':imagepicker', ':Addresslibrary', ':picker', ':YunWangVideoSDK', ':image_zoom_drag_vp'
