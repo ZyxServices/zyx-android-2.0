@@ -33,6 +33,7 @@
             android:background="@drawable/background_search"
             />
         <TextView
+            android:id="@+id/tvSetCityCancel"
             android:layout_width="0dp"
             android:layout_weight="0.09"
             android:layout_height="29dp"

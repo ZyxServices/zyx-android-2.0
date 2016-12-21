@@ -51,6 +51,31 @@
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
         app:spanCount="4"
         tools:listitem="@layout/list_item_image"/>
+    <RelativeLayout
+        android:id="@+id/rlVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:visibility="gone"
+        android:layout_marginLeft="@dimen/dip12"
+        >
+        <FrameLayout
+            android:id="@+id/framelayoutvideo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#00ffffff"/>
+        <ImageView
+            android:id="@+id/imageviewvideo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
+
+        <ImageView
+            android:id="@+id/videoplayimg"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="center"
+            android:src="@drawable/jc_play_normal" />
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -88,6 +113,7 @@
             android:textSize="15sp"
             />
         <TextView
+            android:id="@+id/tvCity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@mipmap/btn_adress2"

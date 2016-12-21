@@ -2,13 +2,24 @@ package com.tiyujia.homesport.common.record.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
+import com.tiyujia.homesport.common.record.model.CityHistoryModel;
+import com.tiyujia.homesport.util.PicUtil;
+import com.tiyujia.homesport.util.PicassoUtil;
+import com.tiyujia.homesport.util.StringUtil;
+import com.tiyujia.homesport.util.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,40 +31,24 @@ import butterknife.ButterKnife;
  * 邮箱:928902646@qq.com
  */
 
-public class RecordTrackAdapter extends RecyclerView.Adapter {
-    Context context;
-    List<ActiveModel> mDatas;
+public class RecordTrackAdapter extends BaseQuickAdapter<CityHistoryModel.History> {
 
-    public RecordTrackAdapter(Context context, List<ActiveModel> mDatas) {
-        if(mDatas.size()!=0){
-            this.mDatas = mDatas;
-        }else {
-            this.mDatas=new ArrayList<>();
-        }
-        this.context = context;
+    public RecordTrackAdapter(List<CityHistoryModel.History> data) {
+        super(R.layout.record_track_item,data);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.record_track_item, null);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        view.setLayoutParams(lp);
-        return new myholder(view);
-    }
+    protected void convert(BaseViewHolder baseViewHolder, CityHistoryModel.History history) {
+        baseViewHolder.setText(R.id.tvTitle,history.venueName)
+                .setText(R.id.tvTime, TimeUtil.formatLongToTimeStr(history.spendTime))
+                .setText(R.id.tvDate,API.format.format(history.createTime)+"");
+        ImageView ivBackground=baseViewHolder.getView(R.id.ivBackground);
+        TextView tvLevel=baseViewHolder.getView(R.id.tvLevel);
+        if(TextUtils.isEmpty(history.level)){
+            tvLevel.setText("难度: "+"5.0");
+        }else {tvLevel.setText("难度: "+history.level);}
 
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        PicassoUtil.handlePic(mContext, PicUtil.getImageUrlDetail(mContext, StringUtil.isNullAvatar(history.imgUrls), 720, 720),ivBackground,720,720);
 
-    }
-
-    @Override
-    public int getItemCount() {
-        return mDatas.size();
-    }
-    public class myholder extends RecyclerView.ViewHolder{
-        public myholder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this,itemView);
-        }
     }
 }

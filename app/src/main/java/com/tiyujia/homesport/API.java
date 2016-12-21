@@ -15,4 +15,5 @@ public class API {
     public static final SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy-MM-dd HH:mm");
     public static final SimpleDateFormat simpleYear =new SimpleDateFormat("yyyy年-MM月-dd日 HH:mm");
     public static final SimpleDateFormat format =new SimpleDateFormat("yyyy.MM.dd");
+    public static final SimpleDateFormat time =new SimpleDateFormat("HH.mm.ss");
 }

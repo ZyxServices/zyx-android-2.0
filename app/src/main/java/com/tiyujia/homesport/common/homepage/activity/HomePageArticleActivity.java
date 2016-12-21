@@ -31,16 +31,13 @@ import com.lzy.imagepicker.ui.ImagePreviewDelActivity;
 import com.lzy.imagepicker.view.CropImageView;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
-import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageCommentAdapter;
-import com.tiyujia.homesport.common.homepage.adapter.HomePageVenueUserAdapter;
 import com.tiyujia.homesport.common.homepage.entity.ArticleModel;
-import com.tiyujia.homesport.common.homepage.entity.CurseModel;
 import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
-import com.tiyujia.homesport.common.homepage.entity.HomePageVenueWhomGoneEntity;
 import com.tiyujia.homesport.common.personal.activity.PersonalLogin;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.personal.model.UserInfoModel;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
@@ -54,15 +51,12 @@ import com.tiyujia.homesport.util.RefreshUtil;
 import com.tiyujia.homesport.util.StringUtil;
 import com.tiyujia.homesport.widget.GlideImageLoader;
 import com.tiyujia.homesport.widget.ImagePickerAdapter;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
@@ -90,6 +84,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
     @Bind(R.id.rvHomePageActicleDetail)     RecyclerView rvHomePageActicleDetail;
     private String token="tiyujia2016";
     int nowUserId;//当前用户ID
+    int userId;//发布者ID
     int modelId;//文章ID
     private int maxImgCount = 9;               //允许选择图片最大数
     private ImagePickerAdapter adapter;
@@ -143,7 +138,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                         webview.getSettings().setAppCacheEnabled(true);
                         webview.setWebChromeClient(new WebChromeClient());
                         webview.getSettings().setJavaScriptEnabled(true);
-                        int userId=articleModel.data.userId;
+                        userId=articleModel.data.userId;
                         final long createTime=articleModel.data.createTime;
                         OkGo.get(API.BASE_URL+"/v2/user/center_info")
                                 .tag(this)
@@ -437,6 +432,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
     @Override
     protected void onDestroy() {
         keyboardWatcher.destroy();
+        OkGo.getInstance().cancelTag(this);
         super.onDestroy();
     }
     @Override
@@ -497,5 +493,15 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                 startActivityForResult(intentPreview, REQUEST_CODE_PREVIEW);
                 break;
         }
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(HomePageArticleActivity.this, PersonalOtherHome.class);
+                intent.putExtra("id",userId);
+                startActivity(intent);
+            }
+        });
+
     }
+
 }

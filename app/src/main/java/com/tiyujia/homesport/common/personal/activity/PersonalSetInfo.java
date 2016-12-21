@@ -230,6 +230,12 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                                     finish();
                                 }
                             }
+
+                            @Override
+                            public void onError(Call call, Response response, Exception e) {
+                                super.onError(call, response, e);
+                                finish();
+                            }
                         });
                 break;
             case R.id.tvAddress:
@@ -307,6 +313,12 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                             if(lzyResponse.state==200){
                                 finish();
                             }
+                        }
+
+                        @Override
+                        public void onError(Call call, Response response, Exception e) {
+                            super.onError(call, response, e);
+                            finish();
                         }
                     });
         }

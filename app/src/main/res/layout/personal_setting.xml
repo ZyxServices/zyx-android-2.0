@@ -20,12 +20,10 @@
             android:src="@mipmap/btn_right"
             />
     </RelativeLayout>
-    <TextView
-        style="@style/boldlin"
-        />
     <RelativeLayout
         android:id="@+id/re_attestation"
         style="@style/personal_item_layout"
+        android:visibility="gone"
         >
         <TextView
             style="@style/personal_item_textview"
@@ -36,12 +34,10 @@
             android:src="@mipmap/btn_right"
             />
     </RelativeLayout>
-    <TextView
-        style="@style/boldlin"
-        />
     <RelativeLayout
         android:id="@+id/re_push"
         style="@style/personal_item_layout"
+        android:visibility="gone"
         >
         <TextView
             style="@style/personal_item_textview"
@@ -72,6 +68,7 @@
         <RelativeLayout
             android:id="@+id/re_grade"
             style="@style/personal_item_layout"
+            android:visibility="gone"
             >
             <TextView
                 style="@style/personal_item_textview"
@@ -96,8 +93,8 @@
                 android:text="清理缓存"
                 />
             <TextView
+                android:id="@+id/tvCache"
                 style="@style/personal_item_imageview"
-                android:text="24mb"
                 android:textColor="@color/day_edit_hit_color"
                 />
         </RelativeLayout>
