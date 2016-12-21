@@ -1,5 +1,6 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -69,6 +70,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
@@ -113,7 +117,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     private int maxImgCount = 9;               //允许选择图片最大数
     private ImagePickerAdapter adapter;
     private ArrayList<ImageItem> selImageList; //当前选择的所有图片
-    private ArrayList<ImageItem> images;
+    private List<ImageItem> images=new ArrayList<>();
     public static RecyclerView rvAddPicture;
     public static HomePageCommentEntity.HomePage entity;
     public static boolean isComment=true;
@@ -440,6 +444,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                                                         llCancelAndSend.setVisibility(View.GONE);
                                                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                                                         imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+                                                        images.clear();
                                                         onRefresh();
                                                     }
                                                 }
@@ -558,16 +563,45 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
         llToTalk.setVisibility(View.VISIBLE);
         isComment=true;
     }
+    boolean isFirstIn=true;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isFirstIn){
+            etToComment.requestFocus();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask(){
+                @Override
+                public void run(){
+                    InputMethodManager m = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    m.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+            }, 300);
+        }else {
+            etToComment.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+        }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isFirstIn=false;
+        etToComment.clearFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        isFirstIn=false;
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             //添加图片返回
             if (data != null && requestCode == REQUEST_CODE_SELECT) {
                 images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
                 selImageList.addAll(images);
                 adapter.setImages(selImageList);
-                llCancelAndSend.setVisibility(View.VISIBLE);
             }
         } else if (resultCode == ImagePicker.RESULT_CODE_BACK) {
             //预览图片返回
@@ -576,7 +610,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                 selImageList.clear();
                 selImageList.addAll(images);
                 adapter.setImages(selImageList);
-                llCancelAndSend.setVisibility(View.VISIBLE);
             }
         }
     }

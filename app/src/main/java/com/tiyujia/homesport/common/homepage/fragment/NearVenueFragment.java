@@ -74,7 +74,7 @@ import java.util.List;
         }
 
         private void setData() {
-            AMapLocationClient client = BootLoaderActivity.client;
+            AMapLocationClient client = HomeActivity.client;
             AMapLocation location = client.getLastKnownLocation();
             final double latitude= location.getLatitude();//纬度
             final double longitude=location.getLongitude();//经度

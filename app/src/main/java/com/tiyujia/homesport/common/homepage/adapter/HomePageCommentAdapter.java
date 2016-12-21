@@ -16,6 +16,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.activity.HomePageArticleActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
 import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
@@ -97,12 +98,22 @@ public class HomePageCommentAdapter extends BaseQuickAdapter<HomePageCommentEnti
                 public void onCommentItem(int toID,String backTo) {
                     InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                    HomePageSearchResultActivity.replyToId=toID;
-                    HomePageSearchResultActivity.isComment=false;
-                    HomePageSearchResultActivity.entity=entity;
-                    HomePageSearchResultActivity.etToComment.requestFocus();
-                    HomePageSearchResultActivity.etToComment.setHint("回复："+backTo);
-                    HomePageSearchResultActivity.rvAddPicture.setVisibility(View.GONE);
+                    if (mContext instanceof  HomePageSearchResultActivity){
+                        HomePageSearchResultActivity.replyToId=toID;
+                        HomePageSearchResultActivity.isComment=false;
+                        HomePageSearchResultActivity.entity=entity;
+                        HomePageSearchResultActivity.etToComment.requestFocus();
+                        HomePageSearchResultActivity.etToComment.setHint("回复："+backTo);
+                        HomePageSearchResultActivity.rvAddPicture.setVisibility(View.GONE);
+                    }else if (mContext instanceof HomePageArticleActivity){
+                        HomePageArticleActivity.replyToId=toID;
+                        HomePageArticleActivity.isComment=false;
+                        HomePageArticleActivity.entity=entity;
+                        HomePageArticleActivity.etToComment.requestFocus();
+                        HomePageArticleActivity.etToComment.setHint("回复："+backTo);
+                        HomePageArticleActivity.rvAddPicture.setVisibility(View.GONE);
+                    }
+
 
                 }
             });

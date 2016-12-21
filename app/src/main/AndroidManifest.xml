@@ -81,7 +81,9 @@
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".common.homepage.activity.HomePageActivePublishActivity" />
         <activity android:name=".common.homepage.activity.HomePageEquipmentShowActivity" />
-        <activity android:name=".common.homepage.activity.HomePageArticleActivity" />
+        <activity
+            android:name=".common.homepage.activity.HomePageArticleActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".common.homepage.activity.HomePageEquipmentInfo" />
         <activity android:name=".common.homepage.activity.HomePageDateInfo" />
         <activity android:name=".common.homepage.activity.CityMapActivity" />
@@ -99,7 +101,8 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".common.homepage.activity.MorePeopleGoneActivity"></activity>
+        <activity android:name=".common.homepage.activity.MorePeopleGoneActivity" />
+        <activity android:name=".common.community.activity.CommunityDynamicDetailActivity"></activity>
     </application>
 
 </manifest>

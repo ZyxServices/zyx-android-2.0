@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.BaseFragment;
 import com.tiyujia.homesport.BootLoaderActivity;
+import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageArticleActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageCourseActivity;
@@ -44,6 +46,7 @@ import com.tiyujia.homesport.common.homepage.adapter.HomePageRecentVenueAdapter;
 import com.tiyujia.homesport.common.homepage.entity.HomePageBannerEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageRecentVenueEntity;
 import com.tiyujia.homesport.util.CacheUtils;
+import com.tiyujia.homesport.util.DialogUtil;
 import com.tiyujia.homesport.util.JSONParseUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.PostUtil;
@@ -134,9 +137,6 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     @Override
     protected void initData() {
         setDatas();
-        SharedPreferences share=getActivity().getSharedPreferences("UserInfo",Context.MODE_PRIVATE);
-        String s=share.getString("City","");
-        tvSearchCity.setText(s);
         swipeContainer.setOnRefreshListener(this);
         RefreshUtil.refresh(swipeContainer,getActivity());
         ivHomePageAllVenue.setOnClickListener(this);
@@ -155,29 +155,39 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     }
     private void setDatas() {
         try {
-            AMapLocationClient client = BootLoaderActivity.client;
+            SharedPreferences share=getActivity().getSharedPreferences("UserInfo",Context.MODE_PRIVATE);
+            String s=share.getString("City","");
+            if (s.equals("")){
+                tvSearchCity.setText("定位中");
+            }else {
+                tvSearchCity.setText(s);
+            }
+            tvSearchCity.invalidate();
+            HomeActivity homeActivity=new HomeActivity();
+            AMapLocationClient client = homeActivity.client;
+            homeActivity.getLocation();
             AMapLocation location = client.getLastKnownLocation();
             final double latitude= location.getLatitude();//纬度
             final double longitude=location.getLongitude();//经度
-            ArrayList<String> cacheData1= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".1.json");
-            if (cacheData1==null||cacheData1.size()==0) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        String uri = API.BASE_URL + "/v2/venue/findVenue";
-                        HashMap<String, String> params = new HashMap<>();
-                        params.put("type", "2");
-                        params.put("lng", longitude + "");
-                        params.put("lat", latitude + "");
-                        params.put("number", "10");
-                        params.put("pageNumber", "1");
-                        String result = PostUtil.sendPostMessage(uri, params);
-                        JSONParseUtil.parseNetDataVenue(getActivity(),result,HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
-                    }
-                }.start();
-            }else {
-                JSONParseUtil.parseLocalDataVenue(getActivity(),HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
-            }
+                ArrayList<String> cacheData1= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".1.json");
+                if (cacheData1==null||cacheData1.size()==0) {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            String uri = API.BASE_URL + "/v2/venue/findVenue";
+                            HashMap<String, String> params = new HashMap<>();
+                            params.put("type", "2");
+                            params.put("lng", longitude + "");
+                            params.put("lat", latitude + "");
+                            params.put("number", "10");
+                            params.put("pageNumber", "1");
+                            String result = PostUtil.sendPostMessage(uri, params);
+                            JSONParseUtil.parseNetDataVenue(getActivity(),result,HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
+                        }
+                    }.start();
+                }else {
+                    JSONParseUtil.parseLocalDataVenue(getActivity(),HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
+                }
             ArrayList<String> cacheData2= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".2.json");
             if (cacheData2==null||cacheData2.size()==0) {
                 new Thread() {
@@ -196,8 +206,6 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
     }
     @Override public void onResume() {
         super.onResume();
