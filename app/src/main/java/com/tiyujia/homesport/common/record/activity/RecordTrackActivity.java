@@ -1,35 +1,28 @@
 package com.tiyujia.homesport.common.record.activity;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.record.adapter.RecordTrackAdapter;
-import com.tiyujia.homesport.common.personal.model.ActiveModel;
+import com.tiyujia.homesport.common.record.model.CityHistoryModel;
 import com.tiyujia.homesport.common.record.model.OverViewModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
-
-import java.util.ArrayList;
-
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Response;
 
@@ -45,8 +38,8 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
     @Bind(R.id.recyclerView)    RecyclerView recyclerView;
     @Bind(R.id.tvSportTimes)    TextView tvSportTimes;
     @Bind(R.id.tvTotalScore)    TextView tvTotalScore;
-    private AlertDialog builder;
     private String mToken;
+    private RecordTrackAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +55,12 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
         ivBack.setOnClickListener(this);
         ivShare.setOnClickListener(this);
         llTrack.setOnClickListener(this);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter=new RecordTrackAdapter(null);
+        adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        adapter.isFirstOnly(false);
+        recyclerView.setAdapter(adapter);
         OkGo.post(API.BASE_URL+"/v2/record/overview")
                 .tag(this)
                 .params("token",mToken)
@@ -74,6 +73,25 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
                         }
                     }
                 });
+        OkGo.post(API.BASE_URL+"/v2/record/history")
+                .tag(this)
+                .params("token",mToken)
+                .params("pageSize",100)
+                .params("pageNum",1)
+                .execute(new LoadCallback<CityHistoryModel>(this) {
+                    @Override
+                    public void onSuccess(CityHistoryModel cityHistoryModel, Call call, Response response) {
+                        if(cityHistoryModel.state==200){
+                            adapter.setNewData(cityHistoryModel.data);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, Response response, Exception e) {
+                        super.onError(call, response, e);
+                        showToast("网络连接错误");
+                    }
+                });
     }
     @Override
     public void onClick(View v) {
@@ -81,101 +99,13 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
             case R.id.ivBack:
                 finish();
                 break;
-            case R.id.ivShare:
-                View view = getLayoutInflater().inflate(R.layout.share_dialog, null);
-                final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
-                TextView tvQQ=(TextView)view.findViewById(R.id.tvQQ);
-                TextView tvQQzone=(TextView)view.findViewById(R.id.tvQQzone);
-                TextView tvWeChat=(TextView)view.findViewById(R.id.tvWeChat);
-                TextView tvFriends=(TextView)view.findViewById(R.id.tvFriends);
-                TextView tvSina=(TextView)view.findViewById(R.id.tvSina);
-                TextView tvDelete=(TextView)view.findViewById(R.id.tvDelete);
-                TextView tvCancel=(TextView)view.findViewById(R.id.tvCancel);
-
-                //分享到QQ
-                tvQQ.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        showToast("分享到QQ");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
-                //分享到QQ空间
-                tvQQzone.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("分享到QQ空间");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
-                //分享到微信好友
-                tvWeChat.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("分享到微信好友");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
-                //分享到朋友圈
-                tvFriends.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("分享到朋友圈");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
-                //分享到新浪微博
-                tvSina.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("分享到新浪微博");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
-                //删除
-                tvDelete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("删除");
-                        dialog.dismiss();
-                    }
-                });
-                //取消
-                tvCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("取消");
-                        dialog.dismiss();
-                    }
-                });
-                dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT));
-                Window window = dialog.getWindow();
-                // 设置显示动画
-                window.setWindowAnimations(R.style.main_menu_animstyle);
-                WindowManager.LayoutParams wl = window.getAttributes();
-                wl.x = 0;
-                wl.y = getWindowManager().getDefaultDisplay().getHeight();
-                // 以下这两句是为了保证按钮可以水平满屏
-                wl.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                wl.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                // 设置显示位置
-                dialog.onWindowAttributesChanged(wl);
-                // 设置点击外围解散
-                dialog.show();
-                break;
             case R.id.llTrack:
+                startActivity(new Intent(RecordTrackActivity.this,CityMapHistoryActivity.class));
                 showToast("调到地图界面");
                 break;
         }
     }
-    private void showDialog(){
+   /* private void showDialog(){
         builder = new AlertDialog.Builder(this).create();
         builder.setView(this.getLayoutInflater().inflate(R.layout.share_succeed_dialog, null));
         builder.show();
@@ -185,5 +115,6 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
         tvTitle.setText("分享成功");
         TextView tvContent=(TextView)builder.getWindow().findViewById(R.id.tvContent);
         tvContent.setText("感谢您的分享，祝您玩愉快");
-    }
+    }*/
+
 }

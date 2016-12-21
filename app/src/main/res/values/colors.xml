@@ -3,7 +3,7 @@
     <color name="colorPrimary">#c20013</color>
     <color name="colorPrimaryDark">#c20013</color>
     <color name="colorAccent">#FF4081</color>
-
+    <color name="bghuise">#F2F2F2</color>
     <!--洋李色 -->
     <color name="gainsboro">#DCDCDC</color>
     <!--橙色-->

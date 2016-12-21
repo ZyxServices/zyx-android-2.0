@@ -17,11 +17,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.util.DataCleanManagerUtil;
 import com.tiyujia.homesport.util.StatusBarUtil;
 
 import butterknife.Bind;
@@ -41,6 +43,7 @@ public class PersonalSystemSetting extends ImmersiveActivity implements View.OnC
     @Bind(R.id.re_about) RelativeLayout re_about;
     @Bind(R.id.re_feedback) RelativeLayout re_feedback;
     @Bind(R.id.tv_loginout) TextView tv_loginout;
+    @Bind(R.id.tvCache) TextView tvCache;
     @Bind(R.id.togglebutton)ToggleButton togglebutton;
     @Bind(R.id.tv_title)TextView tv_title;
     private AlertDialog builder;
@@ -65,6 +68,12 @@ public class PersonalSystemSetting extends ImmersiveActivity implements View.OnC
         re_feedback.setOnClickListener(this);
         tv_loginout.setOnClickListener(this);
         re_about.setOnClickListener(this);
+        try {
+            String cache = DataCleanManagerUtil.getTotalCacheSize(this);
+            tvCache.setText(cache);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -86,7 +95,25 @@ public class PersonalSystemSetting extends ImmersiveActivity implements View.OnC
 
                 break;
             case R.id.re_clean:
-
+                builder = new AlertDialog.Builder(PersonalSystemSetting.this).create();
+                builder.setView(getLayoutInflater().inflate(R.layout.clear_personal_dialog, null));
+                builder.show();
+                //去掉dialog四边的黑角
+                builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
+                builder.getWindow().findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        builder.dismiss();
+                    }
+                });
+                builder.getWindow().findViewById(R.id.dialog_confirm).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DataCleanManagerUtil.clearAllCache(getApplicationContext());
+                        Toast.makeText(getApplicationContext(), "清理完成", Toast.LENGTH_LONG).show();
+                        builder.dismiss();
+                    }
+                });
                 break;
             case R.id.re_feedback:
                 startActivity(new Intent(this,PersonalFeedback.class));
@@ -98,7 +125,7 @@ public class PersonalSystemSetting extends ImmersiveActivity implements View.OnC
                 startActivity(new Intent(this,PersonalAbout.class));
                 break;
         }
-    
+
 
     }
 
@@ -130,5 +157,14 @@ public class PersonalSystemSetting extends ImmersiveActivity implements View.OnC
         });
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            String cache = DataCleanManagerUtil.getTotalCacheSize(this);
+            tvCache.setText(cache);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

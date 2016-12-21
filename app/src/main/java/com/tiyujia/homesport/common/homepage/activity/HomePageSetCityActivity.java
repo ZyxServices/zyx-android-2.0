@@ -47,6 +47,7 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
     private ListView mCityLit;
     private TextView overlay;
     private TextView tvNowCity;
+    private TextView tvSetCityCancel;
     private EditText etSearchCity;
     private QuicLocationBar mQuicLocationBar;
     private HashMap<String, Integer> alphaIndexer;
@@ -80,6 +81,8 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
             }
         }
     };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +93,7 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
         mQuicLocationBar.setOnTouchLitterChangedListener(new LetterListViewListener());
         overlay=(TextView)findViewById(R.id.city_dialog);
         tvNowCity=(TextView)findViewById(R.id.tvNowCity);
+        tvSetCityCancel=(TextView)findViewById(R.id.tvSetCityCancel);
         etSearchCity= (EditText) findViewById(R.id.etSearchCity);
         mCityLit=(ListView) findViewById(R.id.city_list);
         mQuicLocationBar.setTextDialog(overlay);
@@ -104,6 +108,12 @@ public class HomePageSetCityActivity extends ImmersiveActivity {
         }
         initList();
         setListeners();
+        tvSetCityCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void setListeners() {

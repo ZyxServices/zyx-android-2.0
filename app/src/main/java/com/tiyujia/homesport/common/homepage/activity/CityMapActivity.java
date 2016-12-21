@@ -77,9 +77,9 @@ public class CityMapActivity extends ImmersiveActivity implements OnMarkerClickL
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
                 if(aMapLocation!=null){
-                        AMapLocation Location =  client.getLastKnownLocation();
-                        final double Latitude=Location.getLatitude();//获取纬度
-                        final double Longitude=Location.getLongitude();//获取经度
+                    if (aMapLocation.getErrorCode() == 0) {
+                        final double Latitude=aMapLocation.getLatitude();//获取纬度
+                        final double Longitude=aMapLocation.getLongitude();//获取经度
                         OkGo.post(API.BASE_URL+"/v2/venue/findVenue")
                                 .tag(this)
                                 .params("type",type)
@@ -115,6 +115,7 @@ public class CityMapActivity extends ImmersiveActivity implements OnMarkerClickL
                                         showToast("网络连接失败");
                                     }
                                 });
+                    }
                 }
             }
         };

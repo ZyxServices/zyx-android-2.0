@@ -18,6 +18,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -26,6 +31,7 @@ import com.tiyujia.homesport.common.homepage.fragment.HomePageFragment;
 import com.tiyujia.homesport.common.community.fragment.CommunityFragment;
 import com.tiyujia.homesport.common.personal.fragment.PersonalFragment;
 import com.tiyujia.homesport.common.record.fragment.RecordFragment;
+import com.tiyujia.homesport.util.CityUtils;
 import com.tiyujia.homesport.util.StatusBarUtil;
 import com.tiyujia.homesport.widget.CustomViewPager;
 import java.util.ArrayList;
@@ -49,12 +55,13 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client2;
-
+    public static AMapLocationClient client = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_home);
+        getLocation();
         setview();
         if (savedInstanceState != null) {
             if (fragmentList != null && fragmentList.size() > 0) {
@@ -309,11 +316,42 @@ public class HomeActivity extends ImmersiveActivity implements View.OnClickListe
         }
     }
 
+
+    private void getLocation() {
+        client =new AMapLocationClient(App.getContext());
+        AMapLocationListener aMapLocationListener = new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                if(aMapLocation!=null){
+                    String result = CityUtils.getLocationStr(aMapLocation);
+                    Log.i("city==>>",result);
+                    String City= aMapLocation.getCity();
+                    SharedPreferences share=getSharedPreferences("UserInfo",MODE_PRIVATE);
+                    SharedPreferences.Editor etr = share.edit();
+                    etr.putString("City",City);
+                    etr.apply();
+                }else {
+                }
+            }
+        };
+        client.setLocationListener(aMapLocationListener);
+        AMapLocationClientOption option=  new AMapLocationClientOption();
+        //设置模式为高精度
+        option.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //获取一次定位结果，该方法默认为false
+        option.setOnceLocation(true);
+        //获取最近3S内精度最高的一次定位结果
+        //设置setOnceLocationLatest(boolean b)接口为true。启动定位是SKD会返回最近3秒最高的一次定位结果，如果设置为true，setOnceLocation(boolean b)也会为true，反之不会，默认为false。
+        option.setOnceLocationLatest(true);
+        //给定位客户端对象设置定位参数
+        client.setLocationOption(option);
+        client.startLocation();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       SharedPreferences  share=getSharedPreferences("City",MODE_PRIVATE);
+        SharedPreferences  share=getSharedPreferences("City",MODE_PRIVATE);
         share.edit().clear().apply();
-
     }
 }

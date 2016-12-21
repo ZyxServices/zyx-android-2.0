@@ -2,54 +2,64 @@ package com.tiyujia.homesport.common.community.activity;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Parcel;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.ui.ImagePreviewDelActivity;
 import com.lzy.imagepicker.view.CropImageView;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.StringCallback;
-import com.lzy.okgo.request.BaseRequest;
+import com.tencent.upload.Const;
+import com.tencent.upload.UploadManager;
+import com.tencent.upload.task.ITask;
+import com.tencent.upload.task.IUploadTaskListener;
+import com.tencent.upload.task.VideoAttr;
+import com.tencent.upload.task.data.FileInfo;
+import com.tencent.upload.task.impl.VideoUploadTask;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.personal.activity.PersonalSetInfo;
 import com.tiyujia.homesport.entity.ImageUploadModel;
-import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
-import com.tiyujia.homesport.util.StringUtil;
+import com.tiyujia.homesport.util.GetSignTask;
 import com.tiyujia.homesport.widget.GlideImageLoader;
 import com.tiyujia.homesport.widget.ImagePickerAdapter;
-
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
@@ -64,6 +74,7 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
     public static final int IMAGE_ITEM_ADD = -1;
     public static final int REQUEST_CODE_SELECT = 100;
     public static final int REQUEST_CODE_PREVIEW = 101;
+    public static final int REQUEST_CODE_VIDEO = 102;
     private ImagePickerAdapter adapter;
     private ArrayList<ImageItem> selImageList; //当前选择的所有图片
     private int maxImgCount = 9;               //允许选择图片最大数
@@ -72,11 +83,30 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
     private TextView tvGallery;
     @Bind(R.id.ivBack)  ImageView ivBack;
     @Bind(R.id.tvPush)  TextView tvPush;
+    @Bind(R.id.tvIssueEdit)  TextView tvIssueEdit;
+    @Bind(R.id.tvCity)  TextView tvCity;
     @Bind(R.id.etIssueContent)  EditText etIssueContent;
+    @Bind(R.id.rlVideo)    RelativeLayout rlVideo;
+    @Bind(R.id.framelayoutvideo)    FrameLayout framelayoutvideo;
     private ArrayList<ImageItem> images;
     private String mToken;
     private int mUserId;
     private String local="";
+    private String videoPath;
+    private String framePicPath;
+    private String sign;
+    private String appid;
+    private String persistenceId = null;
+    private ImageView imageviewvideo;
+    private RecyclerView recyclerView;
+    private String videoSaveName;
+    private String bucket;
+    private Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private UploadManager mFileUploadManager=null;
+    private VideoUploadTask videoUploadTask=null;
+    private FileInfo mCurrPhotoInfo;
+    private ProgressDialog m_pDialog = null;
+    private String VideoUrl=null;//服务器返回的网络视频地址
 
 
     @Override
@@ -86,16 +116,30 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
         setInfo();
         initImagePicker();
         initWidget();
+        appid = "299201";
+        bucket = "vincentsu";
+        // 去用户的业务务器获取签名
+        GetSignTask task = new GetSignTask(this, appid, Const.FileType.Video, bucket,
+                null, null,new GetSignTask.OnGetSignListener(){
 
+            @Override
+            public void onSign(String result) {
+                // TODO Auto-generated method stub
+                sign = result;
+            }});
+        task.execute();
+
+        persistenceId = "videPersistenceId";
+        // 1，创建一个上传容器 需要1.appid 2.上传文件类型3.上传缓存（类型字符串，要全局唯一否则）
+        mFileUploadManager = new UploadManager(this, appid, Const.FileType.Video,persistenceId);
     }
-
     private void setInfo() {
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
     }
     private void initWidget() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.revImage);
+        recyclerView = (RecyclerView) findViewById(R.id.revImage);
         selImageList = new ArrayList<>();
         adapter = new ImagePickerAdapter(this, selImageList, maxImgCount);
         adapter.setOnItemClickListener(this);
@@ -104,7 +148,45 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
         recyclerView.setAdapter(adapter);
         ivBack.setOnClickListener(this);
         tvPush.setOnClickListener(this);
+        tvCity.setOnClickListener(this);
+        framelayoutvideo.setOnClickListener(this);
+        // 创建ProgressDialog对象
+        m_pDialog = new ProgressDialog(CommunityDynamicPublish.this);
+        m_pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        m_pDialog.setIndeterminate(false);
+        m_pDialog.setCancelable(false);
+        etIssueContent.addTextChangedListener(textWatcher);
     }
+    TextWatcher textWatcher=new TextWatcher(){
+        private CharSequence temp;
+        private int editStart ;
+        private int editEnd ;
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            temp=s;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            editStart = etIssueContent.getSelectionStart();
+            editEnd = etIssueContent.getSelectionEnd();
+            tvIssueEdit.setText(temp.length()+"/"+"500");
+            if (temp.length() > 10) {
+                Toast.makeText(CommunityDynamicPublish.this,
+                        "你输入的字数已经超过了限制！", Toast.LENGTH_SHORT)
+                        .show();
+                s.delete(editStart-1, editEnd);
+                int tempSelection = editStart;
+                etIssueContent.setText(s);
+                etIssueContent.setSelection(tempSelection);
+            }
+        }
+    };
 
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
@@ -152,9 +234,18 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 selImageList.addAll(images);
                 adapter.setImages(selImageList);
             }
+        }else if(requestCode==REQUEST_CODE_VIDEO&&resultCode==12){
+            rlVideo.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            //视频地址
+            videoPath = data.getStringExtra("videoPath");
+            //封面图片地址
+            framePicPath = data.getStringExtra("framePicPath");
+            imageviewvideo = (ImageView) findViewById(R.id.imageviewvideo);
+            Glide.with(CommunityDynamicPublish.this).load(framePicPath).error(R.drawable.jc_play_normal).into(imageviewvideo);
+            upLoadVideo(true);
         }
     }
-
     private void showDialogs() {
         View view = getLayoutInflater().inflate(R.layout.dynamic_dialog, null);
         dialog = new Dialog(this,R.style.Dialog_Fullscreen);
@@ -177,8 +268,17 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CommunityDynamicPublish.this, CommunityNewVideoActivity.class);
-                startActivity(intent);
+                if (Build.VERSION.SDK_INT >= 23) {
+                    int checkCallPhonePermission = ContextCompat.checkSelfPermission(CommunityDynamicPublish.this, Manifest.permission.CAMERA);
+                    if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
+                        ActivityCompat.requestPermissions(CommunityDynamicPublish.this,new String[]{Manifest.permission.CAMERA},222);
+                        return;
+                    }else{
+                        Intent intent = new Intent(CommunityDynamicPublish.this, YWRecordVideoActivity.class);
+                        startActivityForResult(intent,REQUEST_CODE_VIDEO);
+                    }
+                }
+                dialog.dismiss();
             }
         });
         dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -198,12 +298,22 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.ivBack:
+                if (!TextUtils.isEmpty(videoPath)) {
+                    File file = new File(videoPath);
+                    file.delete();
+                }
+                if (!TextUtils.isEmpty(framePicPath)) {
+                    File file = new File(framePicPath);
+                    file.delete();
+                }
                 finish();
+                break;
+            case R.id.tvCity:
+                startActivity(new Intent(CommunityDynamicPublish.this,CityAddressSelect.class));
                 break;
             case R.id.tvPush:
                 final String content=etIssueContent.getText().toString();
@@ -248,7 +358,27 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                         showToast("onError");
                                     }
                                 });
-                    }else {
+                    }else if(!TextUtils.isEmpty(VideoUrl)){
+                        OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                .params("userId",mUserId)
+                                .params("content",content)
+                                .params("visible",0)
+                                .params("videoUrl",VideoUrl)
+                                .params("local",local)
+                                .execute(new LoadCallback<LzyResponse>(CommunityDynamicPublish.this) {
+                                    @Override
+                                    public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                        if(lzyResponse.state==200){
+                                            showToast("发布成功");
+                                        }
+                                    }
+                                    @Override
+                                    public void onError(Call call, Response response, Exception e) {
+                                        super.onError(call, response, e);
+                                        showToast("失败");
+                                    }
+                                });
+                    }  else {
                         OkGo.post(API.BASE_URL+"/v2/cern/insert")
                                 .params("userId",mUserId)
                                 .params("content",content)
@@ -267,12 +397,18 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                         showToast("失败");
                                     }
                                 });
-
                     }
-
-
                 }else {
                     showToast("还没有填写内容哟~");
+                }
+                break;
+            case R.id.framelayoutvideo:
+                if (!TextUtils.isEmpty(videoPath)) {
+                    Intent intent = new Intent(CommunityDynamicPublish.this, WidthMatchVideo.class);
+                    intent.putExtra("videoPath", videoPath);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(CommunityDynamicPublish.this, "视频路径无效", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
@@ -282,5 +418,89 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
         super.onDestroy();
         //Activity销毁时，取消网络请求
         OkGo.getInstance().cancelTag(this);
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            //退出时删除录制的视频和图片
+            if (!TextUtils.isEmpty(videoPath)) {
+                File file = new File(videoPath);
+                file.delete();
+            }
+            if (!TextUtils.isEmpty(framePicPath)) {
+                File file = new File(framePicPath);
+                file.delete();
+            }
+
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    // 上传视频
+    public void upLoadVideo(boolean to_over_write) {
+        if(videoPath == null){
+            Toast.makeText(this, "请选择文件", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        VideoAttr videoAttr = new VideoAttr();
+        videoAttr.isCheck = false;
+        videoAttr.title = "red-1";
+        videoAttr.desc = "cos-video-desc" + videoPath;
+
+        String[] strarray = videoPath.split("[/]");
+        videoSaveName = strarray[strarray.length - 1];
+        m_pDialog.show();
+        // 构建要上传的任务
+        videoUploadTask = new VideoUploadTask(bucket, videoPath, "/"+ videoSaveName, "", videoAttr, to_over_write,new IUploadTaskListener(){
+            @Override
+            public void onUploadSucceed(final FileInfo result) {
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        mCurrPhotoInfo = result;
+                        VideoUrl=result.url;
+                        m_pDialog.hide();
+                    }
+                });
+            }
+            @Override
+            public void onUploadStateChange(ITask.TaskState state) {
+            }
+            @Override
+            public void onUploadProgress(final long totalSize,
+                                         final long sendSize) {
+                long p = (long) ((sendSize * 100) / (totalSize * 1.0f));
+                Log.i("jia", "上传进度: " + p + "%");
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        long p = (long) ((sendSize * 100) / (totalSize * 1.0f));
+                        m_pDialog.setMessage("短视频加载中: " + p + "%");
+                    }
+                });
+            }
+            @Override
+            public void onUploadFailed(final int errorCode,
+                                       final String errorMsg) {
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        m_pDialog.hide();
+                        Toast.makeText(getApplicationContext(),
+                                errorCode + " msg:" + errorMsg,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        videoUploadTask.authIsEmpty();
+        videoUploadTask.setAuth(sign);
+        mFileUploadManager.upload(videoUploadTask); // 开始上传
     }
 }

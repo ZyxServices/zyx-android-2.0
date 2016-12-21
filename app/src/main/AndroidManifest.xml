@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.tiyujia.homesport">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -21,11 +22,15 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- 地图功能相关权限 -->
     <!-- 相机功能相关权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -33,12 +38,14 @@
         android:icon="@mipmap/img_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:label,android:icon,android:allowBackup,android:supportsRtl,android:theme,android:anyDensity,android:name">
+        >
 
         <!-- 地图功能配置信息 -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="e6d608c85098eecf2980f025b728a546" />
+            android:value="c41464a8d4e9656d8c263b332f14aa35" />
 
         <service android:name="com.amap.api.location.APSService" />
         <!-- 地图功能配置信息 -->
@@ -71,7 +78,8 @@
         <activity android:name=".common.personal.activity.PersonalForgetRegister" />
         <activity android:name=".common.community.activity.CommunityAddAttention" />
         <activity android:name=".common.community.activity.CommunityDynamicPublish" />
-        <activity android:name=".common.community.activity.CommunityNewVideoActivity" />
+        <activity android:name=".common.community.activity.YWRecordVideoActivity" />
+        <activity android:name=".common.community.activity.CityAddressSelect" />
         <activity android:name=".common.homepage.activity.HomePageVenueSurveyActivity" />
         <activity android:name=".common.homepage.activity.HomePageDateActivity" />
         <activity android:name=".common.homepage.activity.HomePageEquipmentActivity" />
@@ -87,6 +95,7 @@
         <activity android:name=".common.homepage.activity.CityMapActivity" />
         <activity android:name=".common.record.activity.RecordTopActivity" />
         <activity android:name=".common.record.activity.RecordTrackActivity" />
+        <activity android:name=".common.record.activity.CityMapHistoryActivity" />
         <activity android:name="com.lzy.imagepicker.ui.ImagePreviewDelActivity" />
         <activity android:name=".common.homepage.activity.HomePageSetCityActivity" />
         <activity android:name=".common.homepage.activity.HomePageWholeSearchActivity" />

@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,6 +16,7 @@ import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.entity.ArticleModel;
 import com.tiyujia.homesport.common.homepage.entity.CurseModel;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.personal.model.UserInfoModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.util.LvUtil;
@@ -43,6 +45,7 @@ public class HomePageArticleActivity extends ImmersiveActivity {
     @Bind(R.id.tvTitle)    TextView tvTitle;
     @Bind(R.id.webview)    WebView webview;
     private String token="tiyujia2016";
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +82,7 @@ public class HomePageArticleActivity extends ImmersiveActivity {
                         webview.getSettings().setAppCacheEnabled(true);
                         webview.setWebChromeClient(new WebChromeClient());
                         webview.getSettings().setJavaScriptEnabled(true);
-                        int userId=articleModel.data.userId;
+                        userId=articleModel.data.userId;
                         final long createTime=articleModel.data.createTime;
                         OkGo.get(API.BASE_URL+"/v2/user/center_info")
                                 .tag(this)
@@ -113,7 +116,20 @@ public class HomePageArticleActivity extends ImmersiveActivity {
                     }
                 });
 
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(HomePageArticleActivity.this, PersonalOtherHome.class);
+                intent.putExtra("id",userId);
+                startActivity(intent);
+            }
+        });
 
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        OkGo.getInstance().cancelTag(this);
     }
 }

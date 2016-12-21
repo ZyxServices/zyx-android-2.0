@@ -1,1 +1,1 @@
-include ':app', ':okgo', ':imagepicker', ':Addresslibrary', ':picker'
+include ':app', ':okgo', ':imagepicker', ':Addresslibrary', ':picker', ':YunWangVideoSDK'

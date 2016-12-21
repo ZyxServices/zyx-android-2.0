@@ -32,6 +32,7 @@ import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.BaseFragment;
 import com.tiyujia.homesport.BootLoaderActivity;
+import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageArticleActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageCourseActivity;
@@ -155,7 +156,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
     }
     private void setDatas() {
         try {
-            AMapLocationClient client = BootLoaderActivity.client;
+            AMapLocationClient client = HomeActivity.client;
             AMapLocation location = client.getLastKnownLocation();
             final double latitude= location.getLatitude();//纬度
             final double longitude=location.getLongitude();//经度

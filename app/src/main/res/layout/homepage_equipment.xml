@@ -48,13 +48,4 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             />
     </LinearLayout>
-    <ImageView
-        android:id="@+id/ivPush"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/btn_write2"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="25dp"
-        android:layout_marginRight="25dp"
-        />
 </FrameLayout>

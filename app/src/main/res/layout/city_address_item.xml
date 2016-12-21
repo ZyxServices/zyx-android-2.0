@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white">
+    <TextView
+        style="@style/finelin"
+        android:layout_marginLeft="@dimen/dip12"
+        android:layout_marginRight="@dimen/dip12"/>
+<TextView
+    android:id="@+id/tvTitle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="成都市软件园"
+    android:textColor="@color/day_edit_color"
+    android:textSize="15sp"
+    android:paddingLeft="@dimen/dip12"
+    android:paddingRight="@dimen/dip12"
+    android:paddingTop="@dimen/dip15"
+    android:layout_marginBottom="4dp"
+    />
+<TextView
+    android:id="@+id/tvContent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="12sp"
+    android:textColor="@color/day_edit_hit_color"
+    android:paddingLeft="@dimen/dip12"
+    android:layout_marginBottom="15dp"
+    android:text="世纪城南路"
+    />
+</LinearLayout>
