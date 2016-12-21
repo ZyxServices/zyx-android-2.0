@@ -70,15 +70,7 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(recommend.userIconVo.avatar), 320, 320),ivAvatar,320,320);
         if(recommend.imgUrl!=null){
             String str= recommend.imgUrl;
-            ArrayList<String> imgUrls=new ArrayList<>();
-            if(str.contains(",")){
-                String[] s=str.split(",");
-                for(String s1:s){
-                    imgUrls.add(API.PICTURE_URL+s1);
-                }
-            }else {
-                imgUrls.add(API.PICTURE_URL +str);
-            }
+            List<String> imgUrls=StringUtil.stringToList(str);;
             NGLAdapter adapter = new NGLAdapter(context, imgUrls);
             nineGrid.setVisibility(View.VISIBLE);
             nineGrid.setGap(6);

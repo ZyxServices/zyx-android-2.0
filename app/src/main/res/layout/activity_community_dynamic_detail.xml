@@ -161,7 +161,7 @@
         android:layout_marginTop="8dp"
         android:id="@+id/nglDynamicDetailImages"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
         android:layout_marginLeft="12dp"/>
     <TextView
@@ -197,17 +197,64 @@
         android:textColor="#333333"
         android:textSize="16sp"
         android:layout_marginLeft="12dp" />
-    <android.support.v7.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/rvDynamicDetailSay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginBottom="50dp"
-        app:layoutManager="LinearLayoutManager"
-        />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <android.support.v7.widget.RecyclerView
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/rvDynamicDetailSay"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginBottom="50dp"
+                    app:layoutManager="LinearLayoutManager"
+                    />
+                <LinearLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:id="@+id/llLastLover"
+                    android:background="#ffffff"
+                    android:visibility="gone"
+                    android:orientation="vertical"
+                    >
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_gravity="center_horizontal"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/demo_10"
+                            app:riv_oval="true"
+                            app:riv_tile_mode="clamp"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#ffffff"
+                            android:textSize="15sp"
+                            android:layout_centerInParent="true"
+                            android:text="+99"/>
+                    </RelativeLayout>
+                    <TextView
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
+                        android:text="更多..."
+                        android:textColor="#999999"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="15sp"/>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
         <LinearLayout

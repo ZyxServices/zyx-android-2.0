@@ -57,6 +57,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
@@ -69,7 +72,6 @@ import okhttp3.Response;
 public class HomePageArticleActivity extends NewBaseActivity implements View.OnClickListener,KeyboardWatcher.OnKeyboardToggleListener,SwipeRefreshLayout.OnRefreshListener,
         ImagePickerAdapter.OnRecyclerViewItemClickListener{
     @Bind(R.id.ivBack)                      ImageView ivBack;
-    @Bind(R.id.ivMenu)                      ImageView ivMenu;
     @Bind(R.id.ivAvatar)                    ImageView ivAvatar;
     @Bind(R.id.ivLv)                        ImageView ivLv;
     @Bind(R.id.tvNickname)                  TextView tvNickname;
@@ -146,7 +148,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                                 .params("account_id",userId)
                                 .execute(new LoadCallback<UserInfoModel>(HomePageArticleActivity.this) {
                                     @Override
-                                    public void onSuccess(UserInfoModel userInfoModel, Call call, Response response) {
+                                    public void onSuccess(final UserInfoModel userInfoModel, Call call, Response response) {
                                         if(userInfoModel.state==200){
                                             tvNickname.setText(userInfoModel.data.nickname);
                                             tvTime.setText(API.simpleYear.format(createTime));
@@ -156,6 +158,14 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                                             }else {
                                                 LvUtil.setLv(ivLv,"初学乍练");
                                             }
+                                            ivAvatar.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent intent=new Intent(HomePageArticleActivity.this,PersonalOtherHome.class);
+                                                    intent.putExtra("id",userInfoModel.data.level.userId);
+                                                    HomePageArticleActivity.this.startActivity(intent);
+                                                }
+                                            });
                                         }
                                     }
                                     @Override
@@ -194,6 +204,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
         llToTalk.setOnClickListener(this);
         tvSend.setOnClickListener(this);
         tvCancel.setOnClickListener(this);
+        ivAvatar.setOnClickListener(this);
     }
 
     private void initImagePicker() {
@@ -274,6 +285,11 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                 } else {
                     writeToCallBack();
                 }
+                break;
+            case R.id.ivAvatar:
+                Intent intent=new Intent(HomePageArticleActivity.this,PersonalOtherHome.class);
+                intent.putExtra("id",userId);
+                HomePageArticleActivity.this.startActivity(intent);
                 break;
             case R.id.llToTalk:
                 llToTalk.setVisibility(View.GONE);
@@ -450,6 +466,35 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
         llCancelAndSend.setVisibility(View.GONE);
         llToTalk.setVisibility(View.VISIBLE);
         isComment=true;
+        etToComment.setHint("你想说点什么？");
+    }
+    boolean isFirstIn=true;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isFirstIn){
+            etToComment.requestFocus();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask(){
+                @Override
+                public void run(){
+                    InputMethodManager m = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    m.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }, 300);
+        }else {
+            etToComment.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+        }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isFirstIn=false;
+        etToComment.clearFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

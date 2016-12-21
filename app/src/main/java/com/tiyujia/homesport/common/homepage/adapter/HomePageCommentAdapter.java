@@ -16,6 +16,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageArticleActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
@@ -112,9 +113,14 @@ public class HomePageCommentAdapter extends BaseQuickAdapter<HomePageCommentEnti
                         HomePageArticleActivity.etToComment.requestFocus();
                         HomePageArticleActivity.etToComment.setHint("回复："+backTo);
                         HomePageArticleActivity.rvAddPicture.setVisibility(View.GONE);
+                    }else if (mContext instanceof CommunityDynamicDetailActivity){
+                        CommunityDynamicDetailActivity.replyToId=toID;
+                        CommunityDynamicDetailActivity.isComment=false;
+                        CommunityDynamicDetailActivity.entity=entity;
+                        CommunityDynamicDetailActivity.etToComment.requestFocus();
+                        CommunityDynamicDetailActivity.etToComment.setHint("回复："+backTo);
+                        CommunityDynamicDetailActivity.rvAddPicture.setVisibility(View.GONE);
                     }
-
-
                 }
             });
         }else {

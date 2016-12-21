@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_community_more_love"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <RelativeLayout
+        style="@style/personal_title_background"
+        >
+        <TextView
+            style="@style/personal_title"
+            android:text="他们都喜欢"
+            />
+        <ImageView
+            android:id="@+id/ivBack"
+            style="@style/personal_back"
+            />
+    </RelativeLayout>
+
+    <TextView
+        style="@style/finelin"
+        />
+    <TextView
+        style="@style/boldlin"/>
+    <include layout="@layout/recycleview_layout"/>
+</RelativeLayout>
