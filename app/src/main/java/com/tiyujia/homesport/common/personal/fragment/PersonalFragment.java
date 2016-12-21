@@ -131,7 +131,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                         if(userInfoModel.state==200){
                             PicassoUtil.handlePic(getActivity(), PicUtil.getImageUrlDetail(getActivity(),StringUtil.isNullAvatar(userInfoModel.data.avatar), 320, 320),ivAvatar,320,320);
                             String nickname=userInfoModel.data.nickname.toString();
-                            String level =userInfoModel.data.level.pointDesc.toString();
+//                            String level =userInfoModel.data.level.pointDesc.toString();
                             String signature=userInfoModel.data.signature.toString();
                             int fs=userInfoModel.data.fs;
                             int gz=userInfoModel.data.gz;

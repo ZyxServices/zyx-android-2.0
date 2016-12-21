@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.community.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by zzqybyb19860112 on 2016/12/21.
@@ -9,47 +10,24 @@ import java.io.Serializable;
 public class CommunityLoveEntity implements Serializable {
     public int state;
     public String successmsg;
-//    public LoveData data;
-
+    public LoveData data;
+    public class LoveData implements Serializable{
+        public List<LoveUser> userList;
+        public int totalCount;
+        public class LoveUser implements Serializable{
+            public int id;
+            public String nickName;
+            public String avatar;
+            public String authenticate;
+            public String step;
+            public String levelName;
+            public LoveUserLevel level;
+            public class LoveUserLevel implements Serializable{
+                public int id;
+                public int step;
+                public int pointCount;
+                public String pointDesc;
+            }
+        }
+    }
 }
-//{
-//        "data": {
-//        "userList": [
-//        {
-//        "id": 170,
-//        "nickName": "yiwen",
-//        "avatar": "group1/M00/00/01/052YyFfeYEWAB5afAAByu5QqB9s708.png",
-//        "authenticate": null,
-//        "step": null,
-//        "levelName": null,
-//        "level": {
-//        "id": 419,
-//        "step": 1,
-//        "pointCount": 100,
-//        "pointDesc": "初学乍练"
-//        }
-//        },
-//        {
-//        "id": 169,
-//        "nickName": "小薇薇",
-//        "avatar": "group1/M00/00/01/052YyFfeXg-AOA9kAAJyWgf8PYc270.png",
-//        "authenticate": null,
-//        "step": null,
-//        "levelName": null,
-//        "level": null
-//        },
-//        {
-//        "id": 171,
-//        "nickName": "小旭旭",
-//        "avatar": "group1/M00/00/14/dz1CN1hJHQiAaML2AAAiY-9XC4s705.png",
-//        "authenticate": null,
-//        "step": null,
-//        "levelName": null,
-//        "level": null
-//        }
-//        ],
-//        "totalCount": 3
-//        },
-//        "state": 200,
-//        "successmsg": "successmsg"
-//        }

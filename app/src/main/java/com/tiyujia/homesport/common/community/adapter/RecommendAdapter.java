@@ -80,6 +80,7 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
             }else {
                 imgUrls.add(API.PICTURE_URL +str);
             }
+            List<String> imgUrls=StringUtil.stringToList(str);;
             NGLAdapter adapter = new NGLAdapter(context, imgUrls);
             nineGrid.setVisibility(View.VISIBLE);
             nineGrid.setGap(6);

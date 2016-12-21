@@ -22,6 +22,7 @@ import com.tiyujia.homesport.util.StringUtil;
 import com.w4lle.library.NineGridlayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import okhttp3.Call;
@@ -68,13 +69,7 @@ public class HomePageEquipmentInfo extends ImmersiveActivity {
                         tvContent.setText(Model.data.content);
                         if (Model.data.imgUrl != null) {
                             String str = Model.data.imgUrl;
-                            ArrayList<String> imgUrls = new ArrayList<>();
-                            if (str.contains(",")) {
-                                String[] s = str.split(",");
-                                for (String s1 : s) {
-                                    imgUrls.add(API.PICTURE_URL + s1);
-                                }
-                            }
+                            List<String> imgUrls = StringUtil.stringToList(str);;
                             NGLAdapter adapter = new NGLAdapter(HomePageEquipmentInfo.this, imgUrls);
                             nineGrid.setVisibility(View.VISIBLE);
                             nineGrid.setGap(6);

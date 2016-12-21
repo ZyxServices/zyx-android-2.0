@@ -1,6 +1,5 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -38,8 +37,6 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
-import com.tiyujia.homesport.common.homepage.adapter.CommentListAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageCommentAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageVenueUserAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
@@ -47,7 +44,6 @@ import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageVenueWhomGoneEntity;
 import com.tiyujia.homesport.common.homepage.entity.VenueWholeBean;
 import com.tiyujia.homesport.common.personal.activity.PersonalLogin;
-import com.tiyujia.homesport.common.personal.model.MyDynamicModel;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -61,18 +57,15 @@ import com.tiyujia.homesport.util.StringUtil;
 import com.tiyujia.homesport.widget.GlideImageLoader;
 import com.tiyujia.homesport.widget.ImagePickerAdapter;
 import com.w4lle.library.NineGridlayout;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
@@ -83,7 +76,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     @Bind(R.id.rvHomePageVenueDetailWhomGone) RecyclerView rvHomePageVenueDetailWhomGone;
     @Bind(R.id.rvHomePageVenueDetailSay) RecyclerView rvHomePageVenueDetailSay;
     @Bind(R.id.ivVenueDetailBack)       ImageView ivVenueDetailBack;//左上角返回按钮
-    @Bind(R.id.ivVenueDetailMore)       ImageView ivVenueDetailMore;//右上角更多选择按钮
     @Bind(R.id.nglVenueDetail)          NineGridlayout nglVenueDetail;//顶部大图片集合
     @Bind(R.id.tvVenueDetailName)       TextView tvVenueDetailName;//攀岩馆名称
     @Bind(R.id.tvVenueTypeA)            TextView tvVenueTypeA;//类型A
@@ -227,7 +219,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     }
     private void setListeners() {
         ivVenueDetailBack.setOnClickListener(this);
-        ivVenueDetailMore.setOnClickListener(this);
         tvVenuePhone.setOnClickListener(this);
         llToTalk.setOnClickListener(this);
         tvSend.setOnClickListener(this);
@@ -262,8 +253,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     @Override
     public void onRefresh()  {
         list=new ArrayList<>();
-        final int [] pictures={R.drawable.demo_05,R.drawable.demo_06,R.drawable.demo_10,R.drawable.demo_10};
-        final String []userName={"土拨鼠","萌小妹","小美爱赵伟","萌小美美"};
         final String url=API.BASE_URL+"/v2/record/users";
         new Thread(){
             @Override
@@ -290,14 +279,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                                 entity.setAuthenticate(jsonObj.getString("authenticate")==null?"":jsonObj.getString("authenticate"));
                                 entity.setStep(jsonObj.getString("step")==null?"":jsonObj.getString("step"));
                                 entity.setLevel(jsonObj.getString("level")==null?"":jsonObj.getString("level"));
-                                list.add(entity);
-                            }
-                        }else {
-                            for (int i=0;i<4;i++){
-                                HomePageVenueWhomGoneEntity entity=new HomePageVenueWhomGoneEntity();
-                                entity.setUserPhotoUrl(pictures[i]+"");
-                                entity.setUserName(userName[i]);
-                                entity.setUserLevelUrl("初学乍练");
                                 list.add(entity);
                             }
                         }
@@ -370,9 +351,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                 break;
             case R.id.ivVenueDetailBack:
                 finish();
-                break;
-            case R.id.ivVenueDetailMore:
-                Toast.makeText(HomePageSearchResultActivity.this,"吐司",Toast.LENGTH_LONG).show();
                 break;
             case R.id.tvVenuePhone:
                 final AlertDialog builder = new AlertDialog.Builder(HomePageSearchResultActivity.this).create();
@@ -562,6 +540,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
         llCancelAndSend.setVisibility(View.GONE);
         llToTalk.setVisibility(View.VISIBLE);
         isComment=true;
+        etToComment.setHint("你想说点什么？");
     }
     boolean isFirstIn=true;
     @Override

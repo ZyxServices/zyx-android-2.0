@@ -1,4 +1,4 @@
-package com.tiyujia.homesport.common.homepage.activity;
+package com.tiyujia.homesport.common.community.activity;
 
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,7 +14,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.community.adapter.AddAttentionAdapter;
+import com.tiyujia.homesport.common.homepage.activity.MorePeopleGoneActivity;
 import com.tiyujia.homesport.common.homepage.adapter.MorePeopleGoneAdapter;
 import com.tiyujia.homesport.common.homepage.entity.WhomGoneEntity;
 import com.tiyujia.homesport.entity.LoadCallback;
@@ -27,15 +27,15 @@ import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class MorePeopleGoneActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
+public class CommunityMoreLoveActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
     @Bind(R.id.ivBack)          ImageView ivBack;
     @Bind(R.id.srlRefresh)      SwipeRefreshLayout srlRefresh;
     @Bind(R.id.recyclerView)    RecyclerView recyclerView;
-    MorePeopleGoneAdapter adapter;
+    MorePeopleGoneAdapter       adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_more_people_gone);
+        setContentView(R.layout.activity_community_more_love);
         adapter =new MorePeopleGoneAdapter(null);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -48,18 +48,20 @@ public class MorePeopleGoneActivity extends AppCompatActivity implements SwipeRe
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MorePeopleGoneActivity.this.finish();
+                CommunityMoreLoveActivity.this.finish();
             }
         });
     }
+
     @Override
     public void onRefresh() {
-        int venueId=getIntent().getIntExtra("venueId",0);
-        OkGo.post(API.BASE_URL+"/v2/record/users")
+        int concernId=getIntent().getIntExtra("concernId",0);
+        String token=getIntent().getStringExtra("token");
+        OkGo.post(API.BASE_URL+"/v2/concern/getConcernZanUser")
                 .tag(this)
-                .params("venueId",venueId)
-                .params("pageSize",100)
-                .params("pageNum",1)
+                .params("token",token)
+                .params("concernId",concernId)
+                .params("max",Integer.MAX_VALUE)
                 .execute(new LoadCallback<LzyResponse<List<WhomGoneEntity>>>(this) {
                     @Override
                     public void onSuccess(LzyResponse<List<WhomGoneEntity>> result, Call call, Response response) {

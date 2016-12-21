@@ -31,6 +31,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -45,7 +46,7 @@
         <!-- 地图功能配置信息 -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="c41464a8d4e9656d8c263b332f14aa35" />
+            android:value="41b06df45821e2e8780540298badbd71" />
 
         <service android:name="com.amap.api.location.APSService" />
         <!-- 地图功能配置信息 -->
@@ -111,7 +112,9 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".common.homepage.activity.MorePeopleGoneActivity" />
-        <activity android:name=".common.community.activity.CommunityDynamicDetailActivity"></activity>
+        <activity android:name=".common.community.activity.CommunityDynamicDetailActivity"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".common.community.activity.CommunityMoreLoveActivity"></activity>
     </application>
 
 </manifest>

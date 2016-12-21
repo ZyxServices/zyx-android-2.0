@@ -66,7 +66,11 @@ public class StringUtil {
         if(!strTemp.equals("")&&!strTemp.equals("null")&&strTemp!=null){
             String [] strList=strTemp.split(",");
             for (String s:strList){
-                result.add(API.PICTURE_URL+s);
+                if (!s.contains("group")){
+                    result.add(StringUtil.isNullAvatar(""));
+                }else {
+                    result.add(API.PICTURE_URL+PicUtil.getImageUrlDetail(null,s,720,480));
+                }
             }
         }
         return result;

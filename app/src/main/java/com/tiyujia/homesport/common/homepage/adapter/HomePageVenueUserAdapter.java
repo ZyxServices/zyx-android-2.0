@@ -70,10 +70,6 @@ public class HomePageVenueUserAdapter extends RecyclerView.Adapter {
                 public void onClick(View v) {
                     Intent intent=new Intent(context, PersonalOtherHome.class);
                     int userId=data.getUserId();
-                    if (userId==0){
-                        Toast.makeText(context,"没有用户信息",Toast.LENGTH_LONG).show();
-                        return;
-                    }
                     intent.putExtra("id",userId);
                     context.startActivity(intent);
                 }
@@ -84,10 +80,6 @@ public class HomePageVenueUserAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View v) {
                     Intent intent=new Intent(context, MorePeopleGoneActivity.class);
-                    if (mValues.get(0).getVenueId()==0){
-                        Toast.makeText(context,"没有更多用户信息",Toast.LENGTH_LONG).show();
-                        return;
-                    }
                     intent.putExtra("venueId",mValues.get(0).getVenueId());
                     context.startActivity(intent);
                 }

@@ -43,13 +43,7 @@ public class EquipmentShowAdapter extends BaseQuickAdapter<EquipmentShowModel.Mo
         ImageView ivAvatar= baseViewHolder.getView(R.id.ivAvatar);
         if (model.imgUrl != null) {
             String str = model.imgUrl;
-            ArrayList<String> imgUrls = new ArrayList<>();
-            if (str.contains(",")) {
-                String[] s = str.split(",");
-                for (String s1 : s) {
-                    imgUrls.add(API.PICTURE_URL + s1);
-                }
-            }
+            List<String> imgUrls = StringUtil.stringToList(str);;
             NGLAdapter adapter = new NGLAdapter(mContext, imgUrls);
             nineGrid.setVisibility(View.VISIBLE);
             nineGrid.setGap(6);
