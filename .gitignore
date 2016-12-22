@@ -9,3 +9,6 @@ build
 /*/*/.settings
 /*/*.iml
 app/
+!/app/libs/arm64-v8a/
+!/app/libs/
+!/app/src/main/
