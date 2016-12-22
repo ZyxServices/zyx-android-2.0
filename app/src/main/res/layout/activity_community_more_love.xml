@@ -9,7 +9,7 @@
         >
         <TextView
             style="@style/personal_title"
-            android:text="他们都喜欢"
+            android:text="他们都喜欢gkhjbjb"
             />
         <ImageView
             android:id="@+id/ivBack"

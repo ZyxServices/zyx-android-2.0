@@ -1,16 +1,10 @@
 package com.tiyujia.homesport.common.community.adapter;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.view.View;
-
-import com.amap.api.maps.AMap;
 import com.amap.api.services.core.PoiItem;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
-
 import java.util.List;
 
 /**

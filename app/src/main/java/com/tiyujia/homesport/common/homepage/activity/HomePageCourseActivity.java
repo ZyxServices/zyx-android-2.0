@@ -1,13 +1,11 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
-
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.fragment.CourseActionFragment;
@@ -16,16 +14,14 @@ import com.tiyujia.homesport.common.homepage.fragment.CourseCordFragment;
 import com.tiyujia.homesport.common.homepage.fragment.CourseNoviceFragment;
 import com.tiyujia.homesport.common.homepage.fragment.CourseStoneFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
  * 作者: Cymbi on 2016/11/17 18:17.
- * 邮箱:928902646@qq.com1
+ * 邮箱:928902646@qq.com11111112
  */
 
 public class HomePageCourseActivity extends ImmersiveActivity {

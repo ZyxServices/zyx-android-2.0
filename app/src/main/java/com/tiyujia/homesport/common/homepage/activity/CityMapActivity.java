@@ -1,43 +1,21 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps.AMap;
-import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.MapView;
-import com.amap.api.maps.model.BitmapDescriptorFactory;
-import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.Marker;
-import com.amap.api.maps.model.MarkerOptions;
-import com.amap.api.maps.model.Poi;
-import com.amap.api.maps.AMap.OnPOIClickListener;
-import com.amap.api.maps.AMap.OnMarkerClickListener;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
-import com.tiyujia.homesport.BootLoaderActivity;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.entity.CityMapModel;
-import com.tiyujia.homesport.common.record.fragment.RecordFragment;
 import com.tiyujia.homesport.entity.LoadCallback;
-import com.tiyujia.homesport.util.CityUtils;
-
-import java.util.zip.Inflater;
-
 import okhttp3.Call;
 import okhttp3.Response;
 
