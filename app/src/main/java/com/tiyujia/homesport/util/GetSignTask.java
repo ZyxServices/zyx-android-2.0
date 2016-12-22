@@ -95,7 +95,7 @@ public class GetSignTask extends AsyncTask<Void, Integer, String> {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.w("test","�쳣");
+			Log.w("test","");
 		}
 		//mListener.onSign(sign);
 		return sign;
@@ -114,7 +114,7 @@ public class GetSignTask extends AsyncTask<Void, Integer, String> {
 		// TODO Auto-generated method stub
 		super.onPreExecute();
 		mDialog.show();
-		mDialog.setMessage("��ȡǩ���С�������");
+		mDialog.setMessage("");
 	}
 	
 	public String encodeUrl(String signUrl){

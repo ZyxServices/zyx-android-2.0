@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageDateInfo;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -82,12 +84,20 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
         }else {}
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(active.user.avatar), 320, 320),ivAvatar,320,320);
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullImage(active.imgUrls), 720, 720),iv_background,720,720);
-       View view= baseViewHolder.getConvertView();
+        View view= baseViewHolder.getConvertView();
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i= new Intent(mContext,HomePageDateInfo.class);
                 i.putExtra("id",active.id);
+                mContext.startActivity(i);
+            }
+        });
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(mContext, PersonalOtherHome.class);
+                i.putExtra("id",active.user.id);
                 mContext.startActivity(i);
             }
         });
@@ -104,10 +114,24 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
                         .execute(new LoadCallback<LzyResponse>(activity) {
                             @Override
                             public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
-                                            if (lzyResponse.state==200){
-                                                Toast.makeText(activity,"赞",Toast.LENGTH_SHORT).show();
-                                                notify();
+                                            if (lzyResponse.successmsg.equals("添加成功")){
+                                                tv_zan.setText(Integer.valueOf(tv_zan.getText().toString())+1+"");
+                                                Drawable drawable = context.getResources().getDrawable(R.mipmap.btn_o_zan_s);
+                                                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+                                                tv_zan.setCompoundDrawables(drawable,null,null,null);
+                                                Toast.makeText(context,"已点赞！",Toast.LENGTH_LONG).show();}
+                                            else if (lzyResponse.successmsg.equals("取消点赞成功")){
+                                                tv_zan.setText(Integer.valueOf(tv_zan.getText().toString())-1+"");
+                                                Drawable drawable = context.getResources().getDrawable(R.mipmap.btn_good);
+                                                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+                                                tv_zan.setCompoundDrawables(drawable,null,null,null);
+                                                Toast.makeText(context,"已取消点赞！",Toast.LENGTH_LONG).show();
                                             }
+                            }
+                            @Override
+                            public void onError(Call call, Response response, Exception e) {
+                                super.onError(call, response, e);
+                                Toast.makeText(activity,"网络故障或服务器故障",Toast.LENGTH_SHORT).show();
                             }
                         });
 

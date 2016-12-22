@@ -17,7 +17,7 @@ public class CityHistoryModel implements Serializable {
         public int sportInfoId;
         public int score;
         public long spendTime;
-        public int concenId;
+        public Integer concernId;
         public int venueId;
         public long createTime;
         public String venueName;

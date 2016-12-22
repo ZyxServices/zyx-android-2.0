@@ -20,11 +20,13 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.entity.DateInfoModel;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -34,6 +36,8 @@ import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
 import com.tiyujia.homesport.util.StringUtil;
 import com.tiyujia.homesport.util.TimeUtil;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import okhttp3.Call;
@@ -66,6 +70,8 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
     private int mUserId;
     private String mToken;
     private int activityUserId;
+    private long lastTime;
+    private String imgUrls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +83,23 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
         RefreshUtil.refresh(srlRefresh,this);
         srlRefresh.setOnRefreshListener(this);
         onRefresh();
+        ivBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<String> list = new ArrayList<String>();
+                list.add(API.PICTURE_URL+imgUrls);
+                startActivity(ImageDetailActivity.getMyStartIntent(HomePageDateInfo.this, list,0, ImageDetailActivity.url_path));
+            }
+        });
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(HomePageDateInfo.this, PersonalOtherHome.class);
+                i.putExtra("id",activityUserId);
+                startActivity(i);
+            }
+        });
     }
-
     private void getInfo() {
         SharedPreferences share= getSharedPreferences("UserInfo",MODE_PRIVATE);
         mToken= share.getString("Token","");
@@ -100,8 +121,10 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
                     @Override
                     public void onSuccess(DateInfoModel dateInfoModel, Call call, Response response) {
                         if(dateInfoModel.state==200){
+                            imgUrls=dateInfoModel.data.imgUrls;
                             tvTitle.setText(dateInfoModel.data.title);
                             activityUserId=dateInfoModel.data.user.id;
+                            lastTime=dateInfoModel.data.lastTime;
                             String starttime=API.format.format(dateInfoModel.data.startTime);
                             String endtime=API.format.format(dateInfoModel.data.endTime);
                             tvTime.setText(starttime+"—"+endtime);
@@ -266,32 +289,37 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
                 });
                 break;
             case R.id.ivPush:
-                OkGo.post(API.BASE_URL+"/v2/member/add")
-                        .tag(this)
-                        .params("token",mToken)
-                        .params("userId",mUserId)
-                        .params("activityId",activityId)
-                        .params("activityUserId",activityUserId)
-                        .execute(new LoadCallback<LzyResponse>(this) {
-                            @Override
-                            public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
-                                if(lzyResponse.state==200){
-                                    AlertDialog  builder = new AlertDialog.Builder(HomePageDateInfo.this).create();
-                                    builder.setView(HomePageDateInfo.this.getLayoutInflater().inflate(R.layout.share_succeed_dialog, null));
-                                    builder.show();
-                                    //去掉dialog四边的黑角
-                                    builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
-                                    TextView tvTitle=(TextView)builder.getWindow().findViewById(R.id.tvTitle);
-                                    tvTitle.setText("报名成功");
-                                    TextView tvContent=(TextView)builder.getWindow().findViewById(R.id.tvContent);
-                                    tvContent.setText("感谢您的报名，祝您玩愉快");
-                                }else if(lzyResponse.state==10005){
-                                    showToast("请勿重复报名");
-                                }else if(lzyResponse.state==800){
-                                    showToast("账户失效，请重新注销登录");
+                long currentTime = System.currentTimeMillis();
+                if (currentTime>lastTime){
+                    showToast("报名时间已过，无法报名");
+                }else{
+                    OkGo.post(API.BASE_URL+"/v2/member/add")
+                            .tag(this)
+                            .params("token",mToken)
+                            .params("userId",mUserId)
+                            .params("activityId",activityId)
+                            .params("activityUserId",activityUserId)
+                            .execute(new LoadCallback<LzyResponse>(this) {
+                                @Override
+                                public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                    if(lzyResponse.state==200){
+                                        AlertDialog  builder = new AlertDialog.Builder(HomePageDateInfo.this).create();
+                                        builder.setView(HomePageDateInfo.this.getLayoutInflater().inflate(R.layout.share_succeed_dialog, null));
+                                        builder.show();
+                                        //去掉dialog四边的黑角
+                                        builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
+                                        TextView tvTitle=(TextView)builder.getWindow().findViewById(R.id.tvTitle);
+                                        tvTitle.setText("报名成功");
+                                        TextView tvContent=(TextView)builder.getWindow().findViewById(R.id.tvContent);
+                                        tvContent.setText("感谢您的报名，祝您玩愉快");
+                                    }else if(lzyResponse.state==10005){
+                                        showToast("请勿重复报名");
+                                    }else if(lzyResponse.state==800){
+                                        showToast("账户失效，请重新注销登录");
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
                 break;
         }
     }

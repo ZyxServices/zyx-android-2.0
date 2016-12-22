@@ -45,7 +45,7 @@
         style="@style/boldlin" />
     <TextView
         android:id="@+id/tvNoAddress"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#41A6ED"
         android:text="不显示位置"

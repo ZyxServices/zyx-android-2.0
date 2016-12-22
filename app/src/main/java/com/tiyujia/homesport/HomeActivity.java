@@ -107,6 +107,9 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
                 if(aMapLocation!=null){
                     AMapLocation Location = client.getLastKnownLocation();
                     String City= Location.getCity();
+                    if(City.contains("市")){
+                        City=City.replace("市","");
+                    }else {}
                     SharedPreferences share=getSharedPreferences("UserInfo",MODE_PRIVATE);
                     SharedPreferences.Editor etr = share.edit();
                     etr.putString("City",City);

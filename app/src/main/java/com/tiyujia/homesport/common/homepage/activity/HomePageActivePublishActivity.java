@@ -43,6 +43,7 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CityAddressSelect;
 import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
 import com.tiyujia.homesport.common.personal.activity.PersonalSetInfo;
 import com.tiyujia.homesport.entity.LoadCallback;
@@ -102,9 +103,10 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     @Bind(R.id.reEndTime)    RelativeLayout reEndTime;
     @Bind(R.id.reApplyEndTiem)    RelativeLayout reApplyEndTiem;
     @Bind(R.id.revImage)    RecyclerView revImage;
+    @Bind(R.id.reAddress)    RelativeLayout reAddress;
     @Bind(R.id.Chckbox)    CheckBox Chckbox;
     private SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    private int type;//活动类型(1、求约 2、求带)
+    private int type=2;//活动类型(1、求约 2、求带)
     private Dialog cameradialog;
     private String fileName;
     private final int PIC_FROM_CAMERA = 1;
@@ -125,12 +127,12 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     private String mToken;
     private int mUserId;
     private Date Apply,End,Start;
+    private String city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_active_publish);
-        ButterKnife.bind(this);
         setInfo();
         initview();
         initImagePicker();
@@ -138,8 +140,9 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     }
     private void setInfo() {
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-        mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
+        mToken=share.getString("Token","");
+        city=share.getString("City","");
     }
     private void initWidget() {
         selImageList = new ArrayList<>();
@@ -158,6 +161,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
         reStartTime.setOnClickListener(this);
         reEndTime.setOnClickListener(this);
         reApplyEndTiem.setOnClickListener(this);
+        reAddress.setOnClickListener(this);
     }
 
     private void initImagePicker() {
@@ -279,7 +283,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                                     .params("address",Address)
                                     .params("maxPeople",maxPeople)
                                     .params("price",price)
-                                    .params("city","成都")
+                                    .params("city",city)
                                     .params("paymentType",paymentType)
                                     .execute(new LoadCallback<LzyResponse>(this) {
                                         @Override
@@ -333,7 +337,10 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                         .build()
                         .show();
                 break;
-
+            case R.id.reAddress:
+                Intent i=new Intent(HomePageActivePublishActivity.this, CityAddressSelect.class);
+                startActivityForResult(i,101);
+                break;
         }
     }
     //开始时间选择器的确定和取消按钮的返回操作
@@ -508,23 +515,13 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
             }catch (Exception e){
                 e.printStackTrace();
             }
-            Thread thread1=new Thread(){
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     String path= UploadUtil.getImageAbsolutePath(HomePageActivePublishActivity.this,originalUri);
                     imageUrl=UploadUtil.getNetWorkImageAddress(path, HomePageActivePublishActivity.this);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (imageUrl!=null){
-                                cameradialog.dismiss();
-                            }
-                        }
-                    });
                 }
-            };
-            thread1.setPriority(8);
-            thread1.start();
+            }).start();
         }
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             //添加图片返回
@@ -541,6 +538,10 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                 selImageList.addAll(images);
                 adapter.setImages(selImageList);
             }
+        }
+        else if(requestCode==101&&resultCode==111){
+            String result = data.getStringExtra("cityTitle");
+            tvAddress.setText(result);
         }
     }
 }

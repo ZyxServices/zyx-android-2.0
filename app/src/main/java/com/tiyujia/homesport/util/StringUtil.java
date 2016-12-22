@@ -69,7 +69,7 @@ public class StringUtil {
                 if (!s.contains("group")){
                     result.add(StringUtil.isNullAvatar(""));
                 }else {
-                    result.add(API.PICTURE_URL+PicUtil.getImageUrlDetail(null,s,720,480));
+                    result.add(API.PICTURE_URL+PicUtil.getImageUrlDetail(null,s,160,160));
                 }
             }
         }

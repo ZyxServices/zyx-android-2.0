@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.tiyujia.homesport">
-
+<!-- 杨帆：c41464a8d4e9656d8c263b332f14aa35-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!-- 地图功能相关权限 -->
     <!-- 用于进行网络定位 -->
@@ -46,7 +46,7 @@
         <!-- 地图功能配置信息 -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="41b06df45821e2e8780540298badbd71" />
+            android:value="c41464a8d4e9656d8c263b332f14aa35" />
 
         <service android:name="com.amap.api.location.APSService" />
         <!-- 地图功能配置信息 -->

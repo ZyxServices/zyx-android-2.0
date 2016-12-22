@@ -2,6 +2,8 @@ package com.tiyujia.homesport;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
+
 import com.lzy.okgo.OkGo;
 
 /**
@@ -21,5 +23,9 @@ public class App extends Application {
     public static Context getContext() {
         return mContext;
     }
-
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 }

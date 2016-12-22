@@ -1,10 +1,13 @@
 package com.tiyujia.homesport.common.community.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,8 +20,14 @@ import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.adapter.CityAddressAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 
@@ -46,11 +55,20 @@ public class CityAddressSelect extends ImmersiveActivity implements PoiSearch.On
     private double Longitude;
     //查询实例
     private PoiSearch.Query query;
+    private CityAddressAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.city_address_select);
         initLocation();
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter=new CityAddressAdapter(null);
+        adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        adapter.isFirstOnly(false);
+        recyclerView.setAdapter(adapter);
+        search();
         etSearchCity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -67,57 +85,62 @@ public class CityAddressSelect extends ImmersiveActivity implements PoiSearch.On
 
             }
         });
+        tvSetCityCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etSearchCity.setText("");
+            }
+        });
+        tvNoAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.putExtra("cityTitle","");
+                setResult(111,intent);
+                finish();
+            }
+        });
+
     }
     private void initLocation() {
-        // 初始化定位
-        mLocationClient = new AMapLocationClient(getApplicationContext());
-        // 设置定位回调监听
-        mLocationClient.setLocationListener(mLocationListener);
-
-        // 初始化定位参数
-        mLocationOption = new AMapLocationClientOption();
-        // 设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        // 设置是否返回地址信息（默认返回地址信息）
-        mLocationOption.setNeedAddress(true);
-        // 设置是否只定位一次,默认为false
-        mLocationOption.setOnceLocation(false);
-        // 设置是否强制刷新WIFI，默认为强制刷新
-        mLocationOption.setWifiActiveScan(true);
-        // 设置是否允许模拟位置,默认为false，不允许模拟位置
-        mLocationOption.setMockEnable(false);
-        // 设置定位间隔,单位毫秒,默认为2000ms
-        mLocationOption.setInterval(2000);
-        // 给定位客户端对象设置定位参数
-        mLocationClient.setLocationOption(mLocationOption);
-        // 启动定位
-        mLocationClient.startLocation();
-
+        AMapLocationClient client = HomeActivity.client;
+        AMapLocation linser = client.getLastKnownLocation();
+        //定位成功回调信息，设置相关消息
+        Latitude = linser.getLatitude();//获取纬度
+        Longitude = linser.getLongitude();//获取经度
     }
     @Override
     public void onPoiSearched(PoiResult poiResult, int i) {
-       // poiResult.getPois();
-        Log.e("Result" ,""+ poiResult.getPois().get(0).getLatLonPoint());
+        if(i==1000&&poiResult!=null){
+            ArrayList<PoiItem> pois = poiResult.getPois();
+            adapter.setNewData(pois);
+            adapter.setOnClickResultListener(new CityAddressAdapter.OnClickResultListener() {
+                @Override
+                public void onClickResult(String result) {
+                    Intent intent=new Intent();
+                    intent.putExtra("cityTitle",result);
+                    setResult(111,intent);
+                    finish();
+                }
+            });
+        }
     }
-
     @Override
     public void onPoiItemSearched(PoiItem poiItem, int i) {
-
     }
     private void search() {
         String content= etSearchCity.getText().toString().trim();
         if(content==null){
             Toast.makeText(CityAddressSelect.this, "输入为空", Toast.LENGTH_SHORT).show();
-
         }else{
-            query = new PoiSearch.Query(content, "地名地址信息");
+            query = new PoiSearch.Query(content, "商务住宅|地名地址信息|道路附属设施");
             // keyWord表示搜索字符串，第二个参数表示POI搜索类型，默认为：生活服务、餐饮服务、商务住宅
             // 共分为以下20种：汽车服务|汽车销售|
             // 汽车维修|摩托车服务|餐饮服务|购物服务|生活服务|体育休闲服务|医疗保健服务|
             // 住宿服务|风景名胜|商务住宅|政府机构及社会团体|科教文化服务|交通设施服务|
             // 金融保险服务|公司企业|道路附属设施|地名地址信息|公共设施
             // cityCode表示POI搜索区域，（这里可以传空字符串，空字符串代表全国在全国范围内进行搜索）
-            query.setPageSize(10);// 设置每页最多返回多少条poiitem
+            query.setPageSize(20);// 设置每页最多返回多少条poiitem
             query.setPageNum(1);// 设置查第一页
             PoiSearch poiSearch = new PoiSearch(this, query);
             //如果不为空值
@@ -132,17 +155,4 @@ public class CityAddressSelect extends ImmersiveActivity implements PoiSearch.On
         }
 
     }
-
-
-    // 声明定位回调监听器
-    public AMapLocationListener mLocationListener = new AMapLocationListener() {
-        @Override
-        public void onLocationChanged(AMapLocation amapLocation) {
-            AMapLocation linser = mLocationClient.getLastKnownLocation();
-                    //定位成功回调信息，设置相关消息
-                    Latitude = linser.getLatitude();//获取纬度
-                    Longitude = linser.getLongitude();//获取经度
-
-        }
-    };
 }

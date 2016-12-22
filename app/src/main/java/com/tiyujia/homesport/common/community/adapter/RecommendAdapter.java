@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.ninegrid.NineGridView;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
@@ -68,13 +69,21 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
             baseViewHolder.setText(R.id.tvAddress,"先写一个成都好了");
         }
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(recommend.userIconVo.avatar), 320, 320),ivAvatar,320,320);
-        if(recommend.imgUrl!=null){
-            String str= recommend.imgUrl;
-            List<String> imgUrls=StringUtil.stringToList(str);;
+        String str= recommend.imgUrl;
+        if(str!=null){
+        final ArrayList<String>  imgUrls=(ArrayList<String>) StringUtil.stringToList(str);;
             NGLAdapter adapter = new NGLAdapter(context, imgUrls);
             nineGrid.setVisibility(View.VISIBLE);
             nineGrid.setGap(6);
             nineGrid.setAdapter(adapter);
+            nineGrid.setOnItemClickListerner(new NineGridlayout.OnItemClickListerner() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    mContext.startActivity(ImageDetailActivity.getMyStartIntent(mContext, imgUrls,position, ImageDetailActivity.url_path));
+                }
+            });
+        }else {
+            nineGrid.setVisibility(View.GONE);
         }
         ivAvatar.setOnClickListener(new View.OnClickListener() {
             @Override

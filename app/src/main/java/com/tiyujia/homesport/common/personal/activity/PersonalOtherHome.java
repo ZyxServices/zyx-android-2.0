@@ -1,15 +1,21 @@
 package com.tiyujia.homesport.common.personal.activity;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
@@ -21,12 +27,18 @@ import com.tiyujia.homesport.common.personal.fragment.OtherEquipmentShowFragment
 import com.tiyujia.homesport.common.personal.model.UserInfoModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.FastBlurUtil;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.StringUtil;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,12 +64,26 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
     @Bind(R.id.tab)    TabLayout tab;
     @Bind(R.id.vp)    ViewPager vp;
     @Bind(R.id.personal_appbar)    AppBarLayout appbar;
+    @Bind(R.id.ivBackground)    ImageView ivBackground;
     private State state;
     private List<String> mTitle=new ArrayList<String>();
     private List<Fragment> mFragment = new ArrayList<Fragment>();
     private String token="tiyujia2016";
     private int account_id;
-
+    private String avatarUrl="";
+    private static final int HANDLE_IMAGE=1;
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case HANDLE_IMAGE:
+                    Bitmap bitmap= (Bitmap) msg.obj;
+                    Bitmap blur = FastBlurUtil.blurBitmap(bitmap);
+                    ivBackground.setImageBitmap(blur);
+                    break;
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +128,6 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
             }
         });
     }
-
     private void setData() {
         OkGo.get(API.BASE_URL+"/v2/user/center_info")
                 .tag(this)
@@ -110,9 +135,10 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
                 .params("account_id",account_id)
                 .execute(new LoadCallback<UserInfoModel>(this) {
                     @Override
-                    public void onSuccess(UserInfoModel userInfoModel, Call call, Response response) {
+                    public void onSuccess(final UserInfoModel userInfoModel, Call call, Response response) {
                         if(userInfoModel.state==200){
-                            PicassoUtil.handlePic(PersonalOtherHome.this, PicUtil.getImageUrlDetail(PersonalOtherHome.this, StringUtil.isNullAvatar(userInfoModel.data.avatar), 320, 320),ivAvatar,320,320);
+                            avatarUrl=userInfoModel.data.avatar;
+                            PicassoUtil.handlePic(PersonalOtherHome.this, PicUtil.getImageUrlDetail(PersonalOtherHome.this, StringUtil.isNullAvatar(avatarUrl), 320, 320),ivAvatar,320,320);
                             tvNickname.setText(userInfoModel.data.nickname);
                             tvContent.setText("个人简介:"+userInfoModel.data.signature);
                             if (userInfoModel.data.level!=null&&userInfoModel.data.level.equals("")){
@@ -120,9 +146,22 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
                             }else {
                                 LvUtil.setLv(ivLv,"初学乍练");
                             }
+                            tvAttention.setText(userInfoModel.data.gz+"");
+                            tvFans.setText(userInfoModel.data.fs+"");
+                            if(userInfoModel.data.avatar!=null){
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final Bitmap blur = getBitmap(API.PICTURE_URL+userInfoModel.data.avatar);
+                                        Message message=new Message();
+                                        message.what=HANDLE_IMAGE;
+                                        message.obj=blur;
+                                        handler.sendMessage(message);
+                                    }
+                                }).start();
+                            }
                         }
-                        tvAttention.setText(userInfoModel.data.gz+"");
-                        tvFans.setText(userInfoModel.data.fs+"");
+
                     }
                     @Override
                     public void onError(Call call, Response response, Exception e) {
@@ -134,6 +173,7 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
     private void setView() {
         ivBack.setOnClickListener(this);
         tvAddAttention.setOnClickListener(this);
+        ivAvatar.setOnClickListener(this);
         mTitle.add("他的动态");
         mTitle.add("他的活动");
         mTitle.add("他的装备");
@@ -166,6 +206,15 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
             case R.id.ivBack:
                 finish();
                 break;
+            case R.id.ivAvatar:
+                if(!TextUtils.isEmpty(avatarUrl)){
+                    ArrayList<String> str=new ArrayList<>();
+                    str.add(API.PICTURE_URL+avatarUrl);
+                    startActivity(ImageDetailActivity.getMyStartIntent(this, str,0, ImageDetailActivity.url_path));
+                }else {
+                    ivAvatar.setClickable(false);
+                }
+                break;
             case R.id.tvAddAttention:
                SharedPreferences share= getSharedPreferences("UserInfo",MODE_PRIVATE);
                 String  Token= share.getString("Token","");
@@ -187,5 +236,25 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
                         });
                 break;
         }
+    }
+    public Bitmap getBitmap(String url) {
+        Bitmap bm = null;
+        try {
+            URL iconUrl = new URL(url);
+            URLConnection conn = iconUrl.openConnection();
+            HttpURLConnection http = (HttpURLConnection) conn;
+            int length = http.getContentLength();
+            conn.connect();
+            // 获得图像的字符流
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is, length);
+            bm = BitmapFactory.decodeStream(bis);
+            bis.close();
+            is.close();// 关闭流
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bm;
     }
 }

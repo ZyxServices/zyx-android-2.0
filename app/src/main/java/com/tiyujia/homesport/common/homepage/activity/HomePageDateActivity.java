@@ -46,7 +46,7 @@ import okhttp3.Response;
  * 邮箱:928902646@qq.com
  */
 
-public class HomePageDateActivity extends ImmersiveActivity implements View.OnClickListener ,SwipeRefreshLayout.OnRefreshListener,BaseQuickAdapter.RequestLoadMoreListener{
+public class HomePageDateActivity extends ImmersiveActivity implements View.OnClickListener ,SwipeRefreshLayout.OnRefreshListener{
     @Bind(R.id.ivMenu) ImageView ivMenu;
     @Bind(R.id.ivBack) ImageView ivBack;
     @Bind(R.id.ivPush) ImageView ivPush;
@@ -61,11 +61,11 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
     private AttendAdapter adapter;
     private int state=0;//状态（0、全部 1、正在报名 2、已结束）
     private int type=0;//类型（0、全部 1、求约 2、求带）
-    private int number=10;//每页显示条数
+    private int number=100;//每页显示条数
     private int pageNumber=1;//当前第几页
     private int RgType;//手选类型
     private int RgState;//手选状态
-    private String city;//城市
+    private String city="";//城市
     private boolean isInitCache = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +94,7 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
+        city=share.getString("City","");
         ivMenu.setOnClickListener(this);
         ivBack.setOnClickListener(this);
         ivPush.setOnClickListener(this);
@@ -239,9 +240,9 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
                 .tag(this)
                 .params("state",state)
                 .params("type",type)
+                .params("city",city)
                 .params("number",number)
                 .params("pageNumber",pageNumber)
-                .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
                 .execute(new LoadCallback<ActiveModel>(this) {
                     @Override
                     public void onSuccess(ActiveModel activeModel, Call call, Response response) {
@@ -252,17 +253,6 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
                         super.onError(call, response, e);
                         showToast("网络连接错误");
                     }
-
-                    @Override
-                    public void onCacheSuccess(ActiveModel activeModel, Call call) {
-                        //一般来说,只需要第一次初始化界面的时候需要使用缓存刷新界面,以后不需要,所以用一个变量标识
-                        if (!isInitCache) {
-                            //一般来说,缓存回调成功和网络回调成功做的事情是一样的,所以这里直接回调onSuccess
-                            onSuccess(activeModel, call, null);
-                            isInitCache = true;
-                        }
-                    }
-
                     @Override
                     public void onAfter(@Nullable ActiveModel activeModel, @Nullable Exception e) {
                         super.onAfter(activeModel, e);
@@ -280,33 +270,5 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
         });
     }
 
-    @Override
-    public void onLoadMoreRequested() {
-        OkGo.post(API.BASE_URL+"/v2/activity/query")
-                .tag(this)
-                .params("state",state)
-                .params("type",type)
-                .params("number",number)
-                .params("pageNumber",pageNumber+1)
-                .cacheMode(CacheMode.NO_CACHE)
-                .execute(new LoadCallback<ActiveModel>(this) {
-                    @Override
-                    public void onSuccess(ActiveModel activeModel, Call call, Response response) {
-                        if(activeModel.state==200){adapter.setNewData(activeModel.data);}
-                    }
-                    @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        showToast("网络连接错误");
-                    }
 
-
-                    @Override
-                    public void onAfter(@Nullable ActiveModel activeModel, @Nullable Exception e) {
-                        super.onAfter(activeModel, e);
-                        adapter.removeAllFooterView();
-                        setRefreshing(false);
-                    }
-                });
-    }
 }

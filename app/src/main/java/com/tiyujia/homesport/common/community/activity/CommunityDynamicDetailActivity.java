@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -38,6 +39,7 @@ import com.tiyujia.homesport.common.homepage.adapter.HomePageCommentAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
 import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
 import com.tiyujia.homesport.common.personal.activity.PersonalLogin;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -101,6 +103,9 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     CommunityLoveAdapter loveAdapter;
     HomePageCommentAdapter commentAdapter;
     String token;
+    private String avatarImage;
+    private int userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,6 +151,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
         llToTalk.setOnClickListener(this);
         ivDynamicDetailMore.setOnClickListener(this);
         llLastLover.setOnClickListener(this);
+        rivDynamicDetailAvatar.setOnClickListener(this);
     }
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
@@ -238,6 +244,8 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                     @Override
                     public void onSuccess(LzyResponse<DynamicDetailEntity> info, Call call, Response response) {
                         dynamicOwnerId=info.data.concern.userIconVo.id;
+                        avatarImage=info.data.concern.userIconVo.avatar;
+                        userId=info.data.concern.userIconVo.id;
                         String photoUrl=API.PICTURE_URL+info.data.concern.userIconVo.avatar;
                         Picasso.with(CommunityDynamicDetailActivity.this).load(photoUrl).into(rivDynamicDetailAvatar);
                         tvDynamicDetailName.setText(info.data.concern.userIconVo.nickName+"");
@@ -249,6 +257,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                         }
                         String time=API.simpleDateFormat.format(new Date(info.data.concern.createTime));
                         tvDynamicDetailTime.setText(time);
+
                         int follow=info.data.concern.follow;
                         boolean isFollowed=(follow==1)?true:false;
                         if (isFollowed){
@@ -258,11 +267,26 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                             tvDynamicDetailConcern.setVisibility(View.VISIBLE);
                             tvDynamicDetailCancel.setVisibility(View.GONE);
                         }
+                        if(nowUserId==info.data.concern.userId){
+                            tvDynamicDetailCancel.setVisibility(View.GONE);
+                            tvDynamicDetailConcern.setVisibility(View.GONE);
+                        }
                         tvDynamicDetailText.setText(info.data.concern.topicContent);
-                        List<String> imageUrls= StringUtil.stringToList(info.data.concern.imgUrl);
-                        NGLAdapter adapter = new NGLAdapter(CommunityDynamicDetailActivity.this, imageUrls);
-                        nglDynamicDetailImages.setGap(6);
-                        nglDynamicDetailImages.setAdapter(adapter);
+                        if(info.data.concern.imgUrl!=null){
+                            final ArrayList<String> imageUrls=(ArrayList<String>) StringUtil.stringToList(info.data.concern.imgUrl);
+                            NGLAdapter adapter = new NGLAdapter(CommunityDynamicDetailActivity.this, imageUrls);
+                            nglDynamicDetailImages.setGap(6);
+                            nglDynamicDetailImages.setAdapter(adapter);
+                            nglDynamicDetailImages.setOnItemClickListerner(new NineGridlayout.OnItemClickListerner() {
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    startActivity(ImageDetailActivity.getMyStartIntent(CommunityDynamicDetailActivity.this, imageUrls,position, ImageDetailActivity.url_path));
+                                }
+                            });
+                        }else {
+                            nglDynamicDetailImages.setVisibility(View.GONE);
+                        }
+
                     }
                 });
         if (nowUserId==dynamicOwnerId){
@@ -275,44 +299,50 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     }
     @Override
     public void onClick(View v) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            switch (v.getId()){
-                case R.id.tvCancel:
-                    etToComment.setText("");
-                    llToTalk.setVisibility(View.VISIBLE);
-                    llCancelAndSend.setVisibility(View.GONE);
-                    imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
-                    break;
-                case R.id.tvSend:
-                    if (TextUtils.isEmpty(etToComment.getText().toString())){
-                        Toast.makeText(this,"请输入评论或回复内容！",Toast.LENGTH_LONG).show();
-                    }else {
-                        writeToCallBack();
-                    }
-                    break;
-                case R.id.llToTalk:
-                    llToTalk.setVisibility(View.GONE);
-                    etToComment.requestFocus();
-                    llCancelAndSend.setVisibility(View.VISIBLE);
-                    if (isComment){
-                        rvAddPicture.setVisibility(View.VISIBLE);
-                    }else {
-                        rvAddPicture.setVisibility(View.GONE);
-                    }
-                    imm.showSoftInput(etToComment,InputMethodManager.SHOW_FORCED);
-                    break;
-                case R.id.ivDynamicDetailMore:
-                    Toast.makeText(CommunityDynamicDetailActivity.this,"吐司",Toast.LENGTH_LONG).show();
-                    break;
-                case R.id.ivDynamicDetailBack:
-                    finish();
-                    break;
-                case R.id.llLastLover:
-                    Intent intent=new Intent(this, CommunityMoreLoveActivity.class);
-                    intent.putExtra("token",token);
-                    intent.putExtra("concernId",recommendId);
-                    startActivity(intent);
-                    break;
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        switch (v.getId()){
+            case R.id.tvCancel:
+                etToComment.setText("");
+                llToTalk.setVisibility(View.VISIBLE);
+                llCancelAndSend.setVisibility(View.GONE);
+                imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+                break;
+            case R.id.rivDynamicDetailAvatar:
+                Intent i= new Intent(this, PersonalOtherHome.class);
+                i.putExtra("id",userId);
+                startActivity(i);
+                break;
+            case R.id.tvSend:
+                if (TextUtils.isEmpty(etToComment.getText().toString())){
+                    Toast.makeText(this,"请输入评论或回复内容！",Toast.LENGTH_LONG).show();
+                }else {
+                    writeToCallBack();
+                }
+                break;
+            case R.id.llToTalk:
+                llToTalk.setVisibility(View.GONE);
+                etToComment.requestFocus();
+                llCancelAndSend.setVisibility(View.VISIBLE);
+                if (isComment){
+                    rvAddPicture.setVisibility(View.VISIBLE);
+                }else {
+                    rvAddPicture.setVisibility(View.GONE);
+                }
+                imm.showSoftInput(etToComment,InputMethodManager.SHOW_FORCED);
+                break;
+            case R.id.ivDynamicDetailMore:
+                Toast.makeText(CommunityDynamicDetailActivity.this,"吐司",Toast.LENGTH_LONG).show();
+                break;
+            case R.id.ivDynamicDetailBack:
+                finish();
+                break;
+            case R.id.llLastLover:
+                Intent intent=new Intent(this, CommunityMoreLoveActivity.class);
+                intent.putExtra("token",token);
+                intent.putExtra("concernId",recommendId);
+                startActivity(intent);
+                break;
+
         }
     }
     private void writeToCallBack(){
