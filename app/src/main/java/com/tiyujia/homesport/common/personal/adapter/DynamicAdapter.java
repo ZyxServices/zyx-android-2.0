@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
 import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
@@ -58,11 +59,17 @@ public class DynamicAdapter extends BaseQuickAdapter<MyDynamicModel.Dynamic>{
         PicassoUtil.handlePic(mContext, PicUtil.getImageUrlDetail(mContext, StringUtil.isNullAvatar(dynamic.userIconVo.avatar), 320, 320), ivAvatar, 320, 320);
         if (dynamic.imgUrl != null) {
             String str = dynamic.imgUrl;
-            List<String> imgUrls = StringUtil.stringToList(str);
+            final ArrayList<String> imgUrls =(ArrayList) StringUtil.stringToList(str);
             NGLAdapter adapter = new NGLAdapter(mContext, imgUrls);
             nineGrid.setVisibility(View.VISIBLE);
             nineGrid.setGap(6);
             nineGrid.setAdapter(adapter);
+            nineGrid.setOnItemClickListerner(new NineGridlayout.OnItemClickListerner() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    mContext.startActivity(ImageDetailActivity.getMyStartIntent(mContext, imgUrls,position, ImageDetailActivity.url_path));
+                }
+            });
         }else {
             nineGrid.setVisibility(View.GONE);
         }
@@ -71,7 +78,7 @@ public class DynamicAdapter extends BaseQuickAdapter<MyDynamicModel.Dynamic>{
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(mContext, CommunityDynamicDetailActivity.class);
-                intent.putExtra("recommendId",dynamic.userId);
+                intent.putExtra("recommendId",dynamic.id);
                 mContext.startActivity(intent);
             }
         });

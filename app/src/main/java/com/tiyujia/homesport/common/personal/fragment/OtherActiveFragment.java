@@ -35,7 +35,7 @@ public class OtherActiveFragment extends BaseFragment implements  SwipeRefreshLa
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srlRefresh;
     private AttendAdapter adapter;
-    private String mToken;
+    private String mToken="tiyujia2016";
     private int mUserId;
     private int page=1;
     private int pageSize=100;
@@ -62,8 +62,6 @@ public class OtherActiveFragment extends BaseFragment implements  SwipeRefreshLa
         onRefresh();
     }
     private void setInfo() {
-        SharedPreferences share = getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-        mToken=share.getString("Token","");
         mUserId=getArguments().getInt("account_id",0);
     }
     @Override

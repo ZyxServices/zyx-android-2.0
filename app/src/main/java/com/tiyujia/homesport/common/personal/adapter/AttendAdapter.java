@@ -17,6 +17,7 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageDateInfo;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -89,6 +90,14 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
             public void onClick(View v) {
                 Intent i= new Intent(mContext,HomePageDateInfo.class);
                 i.putExtra("id",active.id);
+                mContext.startActivity(i);
+            }
+        });
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(mContext, PersonalOtherHome.class);
+                i.putExtra("id",active.user.id);
                 mContext.startActivity(i);
             }
         });

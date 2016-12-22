@@ -24,6 +24,7 @@
     <RelativeLayout
         android:id="@+id/re_record"
         style="@style/personal_item_layout"
+        android:visibility="gone"
         >
         <TextView
             style="@style/personal_item_textview"
@@ -34,10 +35,6 @@
             android:src="@mipmap/btn_right"
             />
     </RelativeLayout>
-    <TextView
-        style="@style/boldlin"
-        />
-
         <RelativeLayout
             style="@style/personal_item_layout"
             >

@@ -24,12 +24,19 @@ import com.tiyujia.homesport.App;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.entity.CityMapModel;
+import com.tiyujia.homesport.common.record.model.CityHistoryModel;
+import com.tiyujia.homesport.common.record.model.CityMapHistroyModel;
+import com.tiyujia.homesport.common.record.model.OverViewModel;
 import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.entity.LzyResponse;
 
+import java.util.List;
+
+import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class CityMapHistoryActivity extends ImmersiveActivity implements OnMarkerClickListener {
+public class CityMapHistoryActivity extends ImmersiveActivity {
     ImageView ivBack;
     private MapView mvMap;
     private AMap aMap;
@@ -40,11 +47,13 @@ public class CityMapHistoryActivity extends ImmersiveActivity implements OnMarke
     private Integer pageNumber=1;
     private TextView tvCity;
     private String token;
+    @Bind(R.id.tvCityNumber) TextView tvCityNumber;
+    @Bind(R.id.tvHistoryNumber) TextView tvHistoryNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_city_map);
+        setContentView(R.layout.activity_history_map);
         SharedPreferences share=getSharedPreferences("UserInfo",MODE_PRIVATE);
         token=share.getString("Token","");
         mvMap = (MapView) findViewById(R.id.mvMap);
@@ -52,8 +61,20 @@ public class CityMapHistoryActivity extends ImmersiveActivity implements OnMarke
         if (aMap == null) {
             aMap = mvMap.getMap();
         }
+
+        OkGo.post(API.BASE_URL+"/v2/record/overview")
+                .params("token",token)
+                .execute(new LoadCallback<LzyResponse<OverViewModel>>(this) {
+                    @Override
+                    public void onSuccess(LzyResponse<OverViewModel> model, Call call, Response response) {
+                        if(model.state==200){
+                            tvCityNumber.setText(model.data.cityNumber+"");
+                            tvHistoryNumber.setText(model.data.fpNumber+"");
+                        }
+                    }
+                });
+
         getLocation();
-        aMap.setOnMarkerClickListener(this);
         ivBack=(ImageView) findViewById(R.id.ivBack);
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,28 +95,35 @@ public class CityMapHistoryActivity extends ImmersiveActivity implements OnMarke
                         OkGo.post(API.BASE_URL+"/v2/record/footprint/city")
                                 .tag(this)
                                 .params("token",token)
-                                .execute(new LoadCallback<CityMapModel>(CityMapHistoryActivity.this) {
+                                .execute(new LoadCallback<CityMapHistroyModel>(CityMapHistoryActivity.this) {
                                     @Override
-                                    public void onSuccess(CityMapModel city, Call call, Response response) {
+                                    public void onSuccess(CityMapHistroyModel city, Call call, Response response) {
                                         if(city.state==200){
                                             for (int i=0;i<city.data.size();i++){
-                                                CityMapModel.City jk = city.data.get(i);
-                                                LatLng mlatlng = new LatLng(jk.latitude,jk.longitude);
-                                                MarkerOptions markerOptions=new MarkerOptions();
-                                                markerOptions.position(mlatlng);
-                                                markerOptions.title(jk.name).snippet(jk.id+"");
-                                                markerOptions.draggable(true);
-                                                View view=getLayoutInflater().inflate(R.layout.city_info_bubble,null);
-                                                tvCity=(TextView)view.findViewById(R.id.tvCity);
-                                                TextView  tvNumber=(TextView)view.findViewById(R.id.tvNumber);
-                                                tvNumber.setText(i+"");
-                                                tvCity.setText(jk.name);
-                                                markerOptions.icon(BitmapDescriptorFactory.fromView(view));
-                                                markerOptions.setFlat(true);
-                                                aMap.addMarker(markerOptions);
-                                                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Latitude,Longitude), 10));
+                                                CityMapHistroyModel.History jk = city.data.get(i);
+                                                for(int j=0;j<jk.footprints.size();j++){
+                                                    CityMapHistroyModel.History.Footprints js = jk.footprints.get(j);
+                                                    LatLng mlatlng = new LatLng(js.latitude,js.longitude);
+                                                    MarkerOptions markerOptions=new MarkerOptions();
+                                                    markerOptions.position(mlatlng);
+                                                    markerOptions.title(js.venueName).snippet(js.address+"");
+                                                    markerOptions.draggable(true);
+                                                    View view=getLayoutInflater().inflate(R.layout.city_info_bubble,null);
+                                                    tvCity=(TextView)view.findViewById(R.id.tvCity);
+                                                    TextView  tvNumber=(TextView)view.findViewById(R.id.tvNumber);
+                                                    tvNumber.setText(j+"");
+                                                    tvCity.setText(js.venueName);
+                                                    markerOptions.icon(BitmapDescriptorFactory.fromView(view));
+                                                    markerOptions.setFlat(true);
+                                                    aMap.addMarker(markerOptions);
+                                                    aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Latitude,Longitude), 10));
+                                                }
                                             }
                                         }
+                                           /* for (int i=0;i<city..size();i++){
+                                                CityMapHistroyModel.History.Footprints jk = city.footprints.get(i);
+
+                                        }*/
                                     }
                                     @Override
                                     public void onError(Call call, Response response, Exception e) {
@@ -159,17 +187,6 @@ public class CityMapHistoryActivity extends ImmersiveActivity implements OnMarke
         mvMap.onDestroy();
         client.onDestroy();//销毁定位客户端。
     }
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-       /* String name=marker.getTitle();
-        int id=Integer.parseInt(marker.getSnippet());
-        SharedPreferences share = getSharedPreferences("City",MODE_PRIVATE);
-        SharedPreferences.Editor etr = share.edit();
-        etr.putString("name",name);
-        etr.putInt("id",id);
-        etr.apply();
-        finish();*/
-        return true;
-    }
+
 
 }

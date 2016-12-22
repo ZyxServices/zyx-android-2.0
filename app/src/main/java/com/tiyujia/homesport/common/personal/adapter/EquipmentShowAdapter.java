@@ -5,6 +5,7 @@ import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
@@ -43,11 +44,19 @@ public class EquipmentShowAdapter extends BaseQuickAdapter<EquipmentShowModel.Mo
         ImageView ivAvatar= baseViewHolder.getView(R.id.ivAvatar);
         if (model.imgUrl != null) {
             String str = model.imgUrl;
-            List<String> imgUrls = StringUtil.stringToList(str);;
+            final ArrayList<String> imgUrls =(ArrayList) StringUtil.stringToList(str);;
             NGLAdapter adapter = new NGLAdapter(mContext, imgUrls);
             nineGrid.setVisibility(View.VISIBLE);
             nineGrid.setGap(6);
             nineGrid.setAdapter(adapter);
+            nineGrid.setOnItemClickListerner(new NineGridlayout.OnItemClickListerner() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    mContext.startActivity(ImageDetailActivity.getMyStartIntent(mContext, imgUrls,position, ImageDetailActivity.url_path));
+                }
+            });
+        }else {
+            nineGrid.setVisibility(View.GONE);
         }
         PicassoUtil.handlePic(mContext, PicUtil.getImageUrlDetail(mContext, StringUtil.isNullAvatar(model.userIconVo.avatar), 320, 320), ivAvatar, 320, 320);
     }

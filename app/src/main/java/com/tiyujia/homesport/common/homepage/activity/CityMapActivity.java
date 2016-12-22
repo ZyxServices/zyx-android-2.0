@@ -61,8 +61,8 @@ public class CityMapActivity extends ImmersiveActivity implements OnMarkerClickL
         if (aMap == null) {
             aMap = mvMap.getMap();
         }
-        getLocation();
         aMap.setOnMarkerClickListener(this);
+        getLocation();
         ivBack=(ImageView) findViewById(R.id.ivBack);
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override

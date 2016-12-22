@@ -73,6 +73,8 @@ public class OtherDynamicFragment extends BaseFragment implements SwipeRefreshLa
                 .tag(this)
                 .params("token",mToken)
                 .params("accountId",mUserId)
+                .params("page",1)
+                .params("pageSize",100)
                 .execute(new LoadCallback<MyDynamicModel>(getActivity()) {
                     @Override
                     public void onSuccess(MyDynamicModel model, Call call, Response response) {

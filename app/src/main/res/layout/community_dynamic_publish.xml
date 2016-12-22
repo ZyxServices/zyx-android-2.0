@@ -117,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@mipmap/btn_adress2"
-            android:text="成都"
+            android:text=""
             android:textSize="15sp"
             android:textColor="@color/day_edit_color"
             android:layout_alignParentRight="true"

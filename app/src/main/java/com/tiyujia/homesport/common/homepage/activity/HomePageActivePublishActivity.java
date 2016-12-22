@@ -43,6 +43,7 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CityAddressSelect;
 import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
 import com.tiyujia.homesport.common.personal.activity.PersonalSetInfo;
 import com.tiyujia.homesport.entity.LoadCallback;
@@ -102,6 +103,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     @Bind(R.id.reEndTime)    RelativeLayout reEndTime;
     @Bind(R.id.reApplyEndTiem)    RelativeLayout reApplyEndTiem;
     @Bind(R.id.revImage)    RecyclerView revImage;
+    @Bind(R.id.reAddress)    RelativeLayout reAddress;
     @Bind(R.id.Chckbox)    CheckBox Chckbox;
     private SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private int type=2;//活动类型(1、求约 2、求带)
@@ -131,7 +133,6 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_active_publish);
-        ButterKnife.bind(this);
         setInfo();
         initview();
         initImagePicker();
@@ -160,6 +161,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
         reStartTime.setOnClickListener(this);
         reEndTime.setOnClickListener(this);
         reApplyEndTiem.setOnClickListener(this);
+        reAddress.setOnClickListener(this);
     }
 
     private void initImagePicker() {
@@ -335,7 +337,10 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                         .build()
                         .show();
                 break;
-
+            case R.id.reAddress:
+                Intent i=new Intent(HomePageActivePublishActivity.this, CityAddressSelect.class);
+                startActivityForResult(i,101);
+                break;
         }
     }
     //开始时间选择器的确定和取消按钮的返回操作
@@ -533,6 +538,10 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                 selImageList.addAll(images);
                 adapter.setImages(selImageList);
             }
+        }
+        else if(requestCode==101&&resultCode==111){
+            String result = data.getStringExtra("cityTitle");
+            tvAddress.setText(result);
         }
     }
 }

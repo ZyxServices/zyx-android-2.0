@@ -101,7 +101,6 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
                 break;
             case R.id.llTrack:
                 startActivity(new Intent(RecordTrackActivity.this,CityMapHistoryActivity.class));
-                showToast("调到地图界面");
                 break;
         }
     }

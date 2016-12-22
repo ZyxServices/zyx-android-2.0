@@ -27,8 +27,20 @@ public class RecordTopAdapter extends BaseQuickAdapter<TopModel.Top> {
 
     @Override
     protected void convert(BaseViewHolder baseViewHolder, TopModel.Top top) {
-        baseViewHolder.setText(R.id.tvNickname,top.userIconVo.nickName)
-        .setText(R.id.tvRankNum,top.rankNum+"");
+        baseViewHolder.setText(R.id.tvNickname,top.userIconVo.nickName);
+        TextView tvRankNum=baseViewHolder.getView(R.id.tvRankNum);
+        if(baseViewHolder.getAdapterPosition()==0){
+            tvRankNum.setBackgroundResource(R.mipmap.one);
+            tvRankNum.setText("");
+        }else if(baseViewHolder.getAdapterPosition()==1){
+            tvRankNum.setBackgroundResource(R.mipmap.two);
+            tvRankNum.setText("");
+        }else if(baseViewHolder.getAdapterPosition()==2){
+            tvRankNum.setBackgroundResource(R.mipmap.three);
+            tvRankNum.setText("");
+        }else{
+            tvRankNum.setText("  "+top.rankNum+"");
+        }
         TextView tvTotalScore=baseViewHolder.getView(R.id.tvTotalScore);
         if (top.totalScore==null||top.totalScore.equals("")){
             tvTotalScore.setText("0");

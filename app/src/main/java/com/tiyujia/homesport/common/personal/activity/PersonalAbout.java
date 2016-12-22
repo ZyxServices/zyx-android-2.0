@@ -1,5 +1,7 @@
 package com.tiyujia.homesport.common.personal.activity;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -30,12 +32,27 @@ public class PersonalAbout extends ImmersiveActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.personal_about);
         tv_title.setText("关于我们");
-        tvVersions.setText("版本 7.0.131");
+        tvVersions.setText(getVersion());
         personal_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+    }
+    /**
+     * 获取版本号
+     * @return 当前应用的版本号
+     */
+    public String getVersion() {
+        try {
+            PackageManager manager = this.getPackageManager();
+            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+            String version = info.versionName;
+            return  version;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return this.getString(R.string.can_not_find_version_name);
+        }
     }
 }

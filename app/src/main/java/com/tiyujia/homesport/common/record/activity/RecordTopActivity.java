@@ -101,7 +101,7 @@ public class RecordTopActivity extends ImmersiveActivity implements View.OnClick
                         if(user.state==200){
                             if(user.data!=null){
                                 tvNickname.setText(user.data.userIconVo.nickName);
-                                tvUserNumber.setText(user.data.rankNum+"");
+                                tvUserNumber.setText("  "+user.data.rankNum+"");
                                 tvTotalScore.setText(user.data.totalScore+"");
                                 if (user.data.userIconVo.levelName!=null&&user.data.userIconVo.levelName.equals("")){
                                     LvUtil.setLv(ivLv,user.data.userIconVo.levelName);

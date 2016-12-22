@@ -33,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocationClient;
 import com.bumptech.glide.Glide;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
@@ -48,6 +49,7 @@ import com.tencent.upload.task.VideoAttr;
 import com.tencent.upload.task.data.FileInfo;
 import com.tencent.upload.task.impl.VideoUploadTask;
 import com.tiyujia.homesport.API;
+import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.entity.ImageUploadModel;
@@ -95,6 +97,7 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
     private String videoPath;
     private String framePicPath;
     private String sign;
+    private Integer recordId=null;
     private String appid;
     private String persistenceId = null;
     private ImageView imageviewvideo;
@@ -137,6 +140,9 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
+        local=share.getString("City","");
+        tvCity.setText(local);
+        recordId=getIntent().getIntExtra("recordId",0);
     }
     private void initWidget() {
         recyclerView = (RecyclerView) findViewById(R.id.revImage);
@@ -244,6 +250,9 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
             imageviewvideo = (ImageView) findViewById(R.id.imageviewvideo);
             Glide.with(CommunityDynamicPublish.this).load(framePicPath).error(R.drawable.jc_play_normal).into(imageviewvideo);
             upLoadVideo(true);
+        }else if (requestCode==101&&resultCode==111){
+            local=data.getStringExtra("cityTitle");
+            tvCity.setText(local);
         }
     }
     private void showDialogs() {
@@ -313,7 +322,8 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 finish();
                 break;
             case R.id.tvCity:
-                startActivity(new Intent(CommunityDynamicPublish.this,CityAddressSelect.class));
+                Intent inten=new Intent(CommunityDynamicPublish.this,CityAddressSelect.class);
+                startActivityForResult(inten,101);
                 break;
             case R.id.tvPush:
                 final String content=etIssueContent.getText().toString();
@@ -332,25 +342,53 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                         List<String> da =imageUploadModel.data;
                                         String[] str = (String[])da.toArray(new String[da.size()]);
                                         String imgUrl=  StringUtils.join(str,",");
-                                        OkGo.post(API.BASE_URL+"/v2/cern/insert")
-                                                .params("userId",mUserId)
-                                                .params("content",content)
-                                                .params("imgUrl",imgUrl)
-                                                .params("visible",0)
-                                                .params("local",local)
-                                                .execute(new LoadCallback<LzyResponse>(CommunityDynamicPublish.this) {
-                                                    @Override
-                                                    public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
-                                                        if(lzyResponse.state==200){
-                                                            showToast("发布成功");
+                                        if(recordId==null){
+                                            OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                                    .params("token",mToken)
+                                                    .params("userId",mUserId)
+                                                    .params("content",content)
+                                                    .params("imgUrl",imgUrl)
+                                                    .params("visible",0)
+                                                    .params("local",local)
+                                                    .execute(new LoadCallback<LzyResponse>(CommunityDynamicPublish.this) {
+                                                        @Override
+                                                        public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                                            if(lzyResponse.state==200){
+                                                                showToast("发布成功");
+                                                                finish();
+                                                            }
                                                         }
-                                                    }
-                                                    @Override
-                                                    public void onError(Call call, Response response, Exception e) {
-                                                        super.onError(call, response, e);
-                                                        showToast("失败");
-                                                    }
-                                                });
+                                                        @Override
+                                                        public void onError(Call call, Response response, Exception e) {
+                                                            super.onError(call, response, e);
+                                                            showToast("失败");
+                                                        }
+                                                    });
+                                        }else {
+                                            OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                                    .params("token",mToken)
+                                                    .params("userId",mUserId)
+                                                    .params("content",content)
+                                                    .params("imgUrl",imgUrl)
+                                                    .params("visible",0)
+                                                    .params("local",local)
+                                                    .params("recordId",recordId)
+                                                    .execute(new LoadCallback<LzyResponse>(CommunityDynamicPublish.this) {
+                                                        @Override
+                                                        public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                                            if(lzyResponse.state==200){
+                                                                showToast("发布成功");
+                                                                finish();
+                                                            }
+                                                        }
+                                                        @Override
+                                                        public void onError(Call call, Response response, Exception e) {
+                                                            super.onError(call, response, e);
+                                                            showToast("失败");
+                                                        }
+                                                    });
+                                        }
+
                                     }
                                     @Override
                                     public void onError(Call call, Response response, Exception e) {
@@ -360,6 +398,7 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                 });
                     }else if(!TextUtils.isEmpty(VideoUrl)){
                         OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                .params("token",mToken)
                                 .params("userId",mUserId)
                                 .params("content",content)
                                 .params("visible",0)
@@ -370,6 +409,7 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                     public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
                                         if(lzyResponse.state==200){
                                             showToast("发布成功");
+                                            finish();
                                         }
                                     }
                                     @Override
@@ -378,8 +418,9 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                         showToast("失败");
                                     }
                                 });
-                    }  else {
+                    }  else {  if(recordId==null){
                         OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                .params("token",mToken)
                                 .params("userId",mUserId)
                                 .params("content",content)
                                 .params("visible",0)
@@ -389,6 +430,7 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                     public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
                                         if(lzyResponse.state==200){
                                             showToast("发布成功");
+                                            finish();
                                         }
                                     }
                                     @Override
@@ -397,6 +439,29 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                         showToast("失败");
                                     }
                                 });
+                    }else{
+                        OkGo.post(API.BASE_URL+"/v2/cern/insert")
+                                .params("token",mToken)
+                                .params("userId",mUserId)
+                                .params("content",content)
+                                .params("visible",0)
+                                .params("local",local)
+                                .params("recordId",recordId)
+                                .execute(new LoadCallback<LzyResponse>(CommunityDynamicPublish.this) {
+                                    @Override
+                                    public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                        if(lzyResponse.state==200){
+                                            showToast("发布成功");
+                                            finish();
+                                        }
+                                    }
+                                    @Override
+                                    public void onError(Call call, Response response, Exception e) {
+                                        super.onError(call, response, e);
+                                        showToast("失败");
+                                    }
+                                });
+                    }
                     }
                 }else {
                     showToast("还没有填写内容哟~");
@@ -413,6 +478,7 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 break;
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
