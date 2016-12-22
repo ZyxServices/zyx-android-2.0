@@ -41,6 +41,7 @@ import com.tiyujia.homesport.common.personal.activity.PersonalLogin;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.EmojiFilterUtil;
 import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PostUtil;
@@ -107,6 +108,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
         etToComment= (EditText) llCancelAndSend.findViewById(R.id.etToComment);
         tvCancel= (TextView) llCancelAndSend.findViewById(R.id.tvCancel);
         tvSend= (TextView) llCancelAndSend.findViewById(R.id.tvSend);
+        setBaseData();
         onRefresh();
         loveAdapter=new CommunityLoveAdapter(null);
         loveAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
@@ -129,6 +131,14 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
         keyboardWatcher = new KeyboardWatcher(this);
         keyboardWatcher.setListener(this);
     }
+
+    private void setBaseData() {
+        SharedPreferences share=getSharedPreferences("UserInfo",MODE_PRIVATE);
+        token=share.getString("Token","");
+        recommendId=getIntent().getIntExtra("recommendId",0);
+        nowUserId=share.getInt("UserId",0);
+    }
+
     private void setListeners() {
         ivDynamicDetailBack.setOnClickListener(this);
         tvCancel.setOnClickListener(this);
@@ -191,8 +201,6 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                 });
     }
     private void getWhoLove() {
-        SharedPreferences share=getSharedPreferences("UserInfo",MODE_PRIVATE);
-        token=share.getString("Token","");
         OkGo.get(API.BASE_URL+"/v2/concern/getConcernZanUser")
                 .tag(this)
                 .params("token",token)
@@ -222,9 +230,6 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     }
     @Override
     public void onRefresh() {
-        recommendId=getIntent().getIntExtra("recommendId",0);
-        SharedPreferences share=getSharedPreferences("UserInfo",MODE_PRIVATE);
-        nowUserId=share.getInt("UserId",0);
         OkGo.get(API.BASE_URL+"/v2/concern/getOne")
                 .tag(this)
                 .params("concernId",recommendId)
@@ -312,13 +317,14 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     }
     private void writeToCallBack(){
         final String uri = API.BASE_URL + "/v2/comment/insert";
+        String tempText = etToComment.getText().toString().trim();
+        final String commentText= EmojiFilterUtil.filterEmoji(CommunityDynamicDetailActivity.this,tempText);
         if (nowUserId==0){
             Toast.makeText(this,"您还没有登录呢，亲！请登录！",Toast.LENGTH_LONG).show();
             Intent intent=new Intent(this, PersonalLogin.class);
             startActivity(intent);
         }else {
             if (isComment) {
-                final String commentText = etToComment.getText().toString().trim();
                 if (images.size()!=0) {
                     ArrayList<File> files = new ArrayList<>();
                     for (int i = 0; i < images.size(); i++) {
@@ -334,7 +340,8 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                                     String[] str = (String[]) da.toArray(new String[da.size()]);
                                     String imgUrl = StringUtils.join(str, ",");
                                     OkGo.post(uri)
-                                            .params("comment_type", "4")
+                                            .params("token", token)
+                                            .params("comment_type", "1")
                                             .params("comment_id", recommendId + "")
                                             .params("model_create_id", "-1")
                                             .params("comment_account", nowUserId + "")
@@ -374,7 +381,8 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                         public void run() {
                             try {
                                 HashMap<String, String> params = new HashMap<>();
-                                params.put("comment_type", "4");
+                                params.put("token", token);
+                                params.put("comment_type", "1");
                                 params.put("comment_id", recommendId + "");
                                 params.put("model_create_id", "-1");
                                 params.put("comment_account", nowUserId + "");
@@ -403,11 +411,11 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                     }.start();
                 }
             }else {
-                handleReply(replyToId);
+                handleReply(replyToId,commentText);
             }
         }
     }
-    private void handleReply(final int replyToId){
+    private void handleReply(final int replyToId,final String replyContent){
         new Thread(){
             @Override
             public void run() {
@@ -416,7 +424,6 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                     int replyParentId=entity.id;
                     int replyFromUser=nowUserId;
                     int replyToUser=(replyToId==0)?entity.userVo.id:replyToId;
-                    String replyContent=etToComment.getText().toString().trim();
                     HashMap<String,String> params=new HashMap<String, String>();
                     params.put("token",""+token);
                     params.put("reply_parent_id",""+replyParentId);
@@ -473,7 +480,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isFirstIn){
+        if (!isFirstIn&&isBackFromSelectPic){
             etToComment.requestFocus();
             Timer timer = new Timer();
             timer.schedule(new TimerTask(){
@@ -497,11 +504,12 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
     }
-
+    boolean isBackFromSelectPic=false;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         isFirstIn=false;
+        isBackFromSelectPic=true;
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             //添加图片返回
             if (data != null && requestCode == REQUEST_CODE_SELECT) {

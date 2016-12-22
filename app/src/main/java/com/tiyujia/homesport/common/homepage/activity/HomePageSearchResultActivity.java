@@ -15,6 +15,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +51,7 @@ import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.CacheUtils;
 import com.tiyujia.homesport.util.DegreeUtil;
+import com.tiyujia.homesport.util.EmojiFilterUtil;
 import com.tiyujia.homesport.util.JSONParseUtil;
 import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.PostUtil;
@@ -66,6 +69,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
@@ -101,6 +107,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     VenueWholeBean data;
     int venueId;//场馆ID
     int nowUserId;//当前用户ID
+    String token;
     public static final int HANDLE_BASE_DATA=1;
     public static final int HANDLE_BASE_VENUE_DATA=2;
     public static final int IMAGE_ITEM_ADD = -1;
@@ -283,8 +290,10 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                             }
                         }
                     }
-                    HomePageVenueWhomGoneEntity empty=new HomePageVenueWhomGoneEntity();
-                    list.add(empty);
+                    if (list.size()==4){
+                        HomePageVenueWhomGoneEntity empty=new HomePageVenueWhomGoneEntity();
+                        list.add(empty);
+                    }
                     handler.sendEmptyMessage(HANDLE_BASE_DATA);
                 }catch (Exception e){
                     e.printStackTrace();
@@ -383,14 +392,16 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     private void writeToCallBack(){
         final String uri = API.BASE_URL + "/v2/comment/insert";
         share= getSharedPreferences("UserInfo", MODE_PRIVATE);
+        token= share.getString("Token","");
         nowUserId = share.getInt("UserId", 0);
+        String tempText = etToComment.getText().toString().trim();
+        final String commentText = EmojiFilterUtil.filterEmoji(HomePageSearchResultActivity.this,tempText);
         if (nowUserId==0){
             Toast.makeText(this,"您还没有登录呢，亲！请登录！",Toast.LENGTH_LONG).show();
             Intent intent=new Intent(this, PersonalLogin.class);
             startActivity(intent);
         }else {
             if (isComment) {
-               final String commentText = etToComment.getText().toString().trim();
                 if (images.size()!=0) {
                     ArrayList<File> files = new ArrayList<>();
                         for (int i = 0; i < images.size(); i++) {
@@ -406,6 +417,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                                     String[] str = (String[]) da.toArray(new String[da.size()]);
                                     String imgUrl = StringUtils.join(str, ",");
                                     OkGo.post(uri)
+                                            .params("token", token)
                                             .params("comment_type", "4")
                                             .params("comment_id", venueId + "")
                                             .params("model_create_id", "-1")
@@ -446,6 +458,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                         public void run() {
                             try {
                                 HashMap<String, String> params = new HashMap<>();
+                                params.put("token", token);
                                 params.put("comment_type", "4");
                                 params.put("comment_id", venueId + "");
                                 params.put("model_create_id", "-1");
@@ -467,6 +480,15 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                                             onRefresh();
                                         }
                                     });
+                                }else if (state==800){
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(HomePageSearchResultActivity.this, "登陆已过期，请重新登陆！", Toast.LENGTH_SHORT).show();
+                                            Intent intent=new Intent(HomePageSearchResultActivity.this,PersonalLogin.class);
+                                            HomePageSearchResultActivity.this.startActivity(intent);
+                                        }
+                                    });
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -475,11 +497,11 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                     }.start();
                 }
             }else {
-                handleReply(replyToId);
+                handleReply(replyToId,commentText);
             }
         }
     }
-    private void handleReply(final int replyToId){
+    private void handleReply(final int replyToId,final String replyContent){
         new Thread(){
             @Override
             public void run() {
@@ -489,7 +511,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                     int replyParentId=entity.id;
                     int replyFromUser=nowUserId;
                     int replyToUser=(replyToId==0)?entity.userVo.id:replyToId;
-                    String replyContent=etToComment.getText().toString().trim();
                     HashMap<String,String> params=new HashMap<String, String>();
                     params.put("token",""+token);
                     params.put("reply_parent_id",""+replyParentId);
@@ -546,7 +567,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isFirstIn){
+        if (!isFirstIn&&isBackFromSelectPic){
             etToComment.requestFocus();
             Timer timer = new Timer();
             timer.schedule(new TimerTask(){
@@ -570,11 +591,12 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
     }
-
+    boolean isBackFromSelectPic=false;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         isFirstIn=false;
+        isBackFromSelectPic=true;
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             //添加图片返回
             if (data != null && requestCode == REQUEST_CODE_SELECT) {

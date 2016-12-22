@@ -42,6 +42,7 @@ import com.tiyujia.homesport.common.personal.model.UserInfoModel;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.EmojiFilterUtil;
 import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
@@ -85,6 +86,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
     @Bind(R.id.srlRefresh)                  SwipeRefreshLayout srlRefresh;//下拉刷新
     @Bind(R.id.rvHomePageActicleDetail)     RecyclerView rvHomePageActicleDetail;
     private String token="tiyujia2016";
+    String userToken;
     int nowUserId;//当前用户ID
     int userId;//发布者ID
     int modelId;//文章ID
@@ -109,6 +111,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.article_info);
+        getBaseData();
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,6 +201,12 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
         setListeners();
         keyboardWatcher = new KeyboardWatcher(this);
         keyboardWatcher.setListener(this);
+    }
+
+    private void getBaseData() {
+        share= getSharedPreferences("UserInfo", MODE_PRIVATE);
+        nowUserId = share.getInt("UserId", 0);
+        userToken=share.getString("Token","");
     }
 
     private void setListeners() {
@@ -307,15 +316,15 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
 
     private void writeToCallBack(){
         final String uri = API.BASE_URL + "/v2/comment/insert";
-        share= getSharedPreferences("UserInfo", MODE_PRIVATE);
-        nowUserId = share.getInt("UserId", 0);
+        String tempText = etToComment.getText().toString().trim();
+        final String commentText=EmojiFilterUtil.filterEmoji(HomePageArticleActivity.this,tempText);
         if (nowUserId==0){
             Toast.makeText(this,"您还没有登录呢，亲！请登录！",Toast.LENGTH_LONG).show();
             Intent intent=new Intent(this, PersonalLogin.class);
             startActivity(intent);
         }else {
             if (isComment) {
-                final String commentText = etToComment.getText().toString().trim();
+
                 if (images.size()!=0) {
                     ArrayList<File> files = new ArrayList<>();
                     for (int i = 0; i < images.size(); i++) {
@@ -331,6 +340,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                                     String[] str = (String[]) da.toArray(new String[da.size()]);
                                     String imgUrl = StringUtils.join(str, ",");
                                     OkGo.post(uri)
+                                            .params("token",userToken)
                                             .params("comment_type", "0")
                                             .params("comment_id", modelId + "")
                                             .params("model_create_id", "-1")
@@ -371,6 +381,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                         public void run() {
                             try {
                                 HashMap<String, String> params = new HashMap<>();
+                                params.put("token", userToken);
                                 params.put("comment_type", "0");
                                 params.put("comment_id", modelId + "");
                                 params.put("model_create_id", "-1");
@@ -400,23 +411,22 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                     }.start();
                 }
             }else {
-                handleReply(replyToId);
+                handleReply(replyToId,commentText);
             }
         }
     }
-    private void handleReply(final int replyToId){
+
+    private void handleReply(final int replyToId,final String replyContent){
         new Thread(){
             @Override
             public void run() {
                 try{
                     String url=API.BASE_URL+"/v2/reply/addReply";
-                    String token=share.getString("Token","");
                     int replyParentId=entity.id;
                     int replyFromUser=nowUserId;
                     int replyToUser=(replyToId==0)?entity.userVo.id:replyToId;
-                    String replyContent=etToComment.getText().toString().trim();
                     HashMap<String,String> params=new HashMap<String, String>();
-                    params.put("token",""+token);
+                    params.put("token",""+userToken);
                     params.put("reply_parent_id",""+replyParentId);
                     params.put("reply_from_user",""+replyFromUser);
                     params.put("reply_to_user",""+replyToUser);
@@ -472,7 +482,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isFirstIn){
+        if (!isFirstIn&&isBackFromSelectPic){
             etToComment.requestFocus();
             Timer timer = new Timer();
             timer.schedule(new TimerTask(){
@@ -496,9 +506,12 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
     }
+    boolean isBackFromSelectPic=false;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        isFirstIn=false;
+        isBackFromSelectPic=true;
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             //添加图片返回
             if (data != null && requestCode == REQUEST_CODE_SELECT) {

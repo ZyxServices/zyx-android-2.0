@@ -9,13 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.MorePeopleGoneActivity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageVenueWhomGoneEntity;
 import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
+import com.tiyujia.homesport.util.EmptyViewHolder;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ public class HomePageVenueUserAdapter extends RecyclerView.Adapter {
     Context context;
     List<HomePageVenueWhomGoneEntity> mValues;
     private static final int LAST_DATA=1;
+    private static final int VIEW_TYPE = -1;
     public HomePageVenueUserAdapter(Context context, List<HomePageVenueWhomGoneEntity> mValues) {
         this.context = context;
         if (mValues.size()==0){
@@ -40,15 +40,22 @@ public class HomePageVenueUserAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        if (viewType==LAST_DATA){
-            view = LayoutInflater.from(context).inflate(R.layout.item_rv_homepage_venuedetail_user_gone_last, null);
-            view.setLayoutParams(lp);
-            return new VenueUserLastHolder(view);
+        LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        if(VIEW_TYPE==viewType){
+            view=LayoutInflater.from(context).inflate(R.layout.small_empty_view,parent, false);
+            view.setLayoutParams(lp2);
+            return new EmptyViewHolder(view);
         }else {
-            view = LayoutInflater.from(context).inflate(R.layout.item_rv_homepage_venuedetail_user_gone, null);
-            view.setLayoutParams(lp);
-            return new VenueUserHolder(view);
+            if (viewType==LAST_DATA){
+                view = LayoutInflater.from(context).inflate(R.layout.item_rv_homepage_venuedetail_user_gone_last, null);
+                view.setLayoutParams(lp1);
+                return new VenueUserLastHolder(view);
+            }else {
+                view = LayoutInflater.from(context).inflate(R.layout.item_rv_homepage_venuedetail_user_gone, null);
+                view.setLayoutParams(lp1);
+                return new VenueUserHolder(view);
+            }
         }
     }
     @Override
@@ -84,11 +91,16 @@ public class HomePageVenueUserAdapter extends RecyclerView.Adapter {
                     context.startActivity(intent);
                 }
             });
+        }else if (viewHolder instanceof EmptyViewHolder){
+            EmptyViewHolder emptyHolder= (EmptyViewHolder) viewHolder;
+            emptyHolder.tvEmpty.setText("暂时没有人去过该场馆");
         }
     }
     @Override
     public int getItemViewType(int position) {
-        if (position==mValues.size()-1){
+        if (mValues.size() <= 0) {
+            return VIEW_TYPE;
+        }else if (position==mValues.size()-1&&mValues.size()==5){
             return LAST_DATA;
         }
         return super.getItemViewType(position);
@@ -96,7 +108,7 @@ public class HomePageVenueUserAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mValues.size() > 0 ? mValues.size() : 1;
     }
     class VenueUserHolder extends RecyclerView.ViewHolder{
         RoundedImageView rivHomePageUserPhoto;

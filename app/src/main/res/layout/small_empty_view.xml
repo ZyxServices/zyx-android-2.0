@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="250dp"
+    android:orientation="vertical"
     android:background="@color/background"
     >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center">
     <ImageView
         android:id="@+id/image"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@mipmap/img_kong"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="200dp"
         />
     <TextView
         android:id="@+id/text_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/image"
         android:text="暂无数据"
         android:textColor="@color/day_edit_color"
         android:textSize="18sp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="100dp"
-        android:layout_centerHorizontal="true"
         />
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -2,40 +2,38 @@ package com.tiyujia.homesport.common.homepage.activity;
 
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
+import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
-import com.tiyujia.homesport.common.community.adapter.AddAttentionAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.MorePeopleGoneAdapter;
 import com.tiyujia.homesport.common.homepage.entity.WhomGoneEntity;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.RefreshUtil;
-
 import java.util.List;
-
-import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class MorePeopleGoneActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
-    @Bind(R.id.ivBack)          ImageView ivBack;
-    @Bind(R.id.srlRefresh)      SwipeRefreshLayout srlRefresh;
-    @Bind(R.id.recyclerView)    RecyclerView recyclerView;
+public class MorePeopleGoneActivity extends NewBaseActivity implements SwipeRefreshLayout.OnRefreshListener{
+    ImageView ivBack;
+    SwipeRefreshLayout srlRefresh;
+    RecyclerView recyclerView;
     MorePeopleGoneAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_people_gone);
+        ivBack= (ImageView) findViewById(R.id.ivBack);
+        srlRefresh= (SwipeRefreshLayout) findViewById(R.id.srlRefresh);
+        recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         adapter =new MorePeopleGoneAdapter(null);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
