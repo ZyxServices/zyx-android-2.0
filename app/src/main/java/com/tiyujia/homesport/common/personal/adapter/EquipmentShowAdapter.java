@@ -32,14 +32,11 @@ public class EquipmentShowAdapter extends BaseQuickAdapter<EquipmentShowModel.Mo
 
     @Override
     protected void convert(BaseViewHolder baseViewHolder, EquipmentShowModel.Model model) {
-        Long systemTime = new Date(System.currentTimeMillis()).getTime();//获取当前时间
-        long createTime=model.createTime;
-        String disTime=TimeUtil.getDisTime(systemTime,createTime);
         baseViewHolder.setText(R.id.tv_nickname,model.userIconVo.nickName)
         .setText(R.id.desc,"  "+model.content)
         .setText(R.id.tv_msg,model.commentCounts+"")
         .setText(R.id.tv_zan,model.zanCounts+"")
-        .setText(R.id.tv_time,disTime+"前发布");
+        .setText(R.id.tv_time,API.simpleDateFormat.format(model.createTime)+"发布");
         NineGridlayout nineGrid= baseViewHolder.getView(R.id.nineGrid);
         ImageView ivAvatar= baseViewHolder.getView(R.id.ivAvatar);
         if (model.imgUrl != null) {
