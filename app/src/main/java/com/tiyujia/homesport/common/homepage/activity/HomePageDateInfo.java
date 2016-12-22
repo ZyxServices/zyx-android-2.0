@@ -316,6 +316,8 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
                                         showToast("请勿重复报名");
                                     }else if(lzyResponse.state==800){
                                         showToast("账户失效，请重新注销登录");
+                                    }else if(lzyResponse.state==10013){
+                                        showToast("报名人数已满，无法报名");
                                     }
                                 }
                             });

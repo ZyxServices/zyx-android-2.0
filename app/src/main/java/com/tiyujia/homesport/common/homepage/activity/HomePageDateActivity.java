@@ -270,5 +270,9 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
         });
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRefresh();
+    }
 }
