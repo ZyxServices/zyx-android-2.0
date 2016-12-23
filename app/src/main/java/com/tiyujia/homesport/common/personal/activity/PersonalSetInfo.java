@@ -145,7 +145,6 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
                             if(!TextUtils.isEmpty(signature)){
                                 etSignature.setText(signature);
                             }else {
-                                etSignature.setText("输入您的签名");
                             }
                             if(!TextUtils.isEmpty(sex)){
                                 if(sex.equals("1")){

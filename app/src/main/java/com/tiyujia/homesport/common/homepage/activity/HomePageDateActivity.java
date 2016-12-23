@@ -11,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,7 @@ import okhttp3.Response;
  * 邮箱:928902646@qq.com
  */
 
-public class HomePageDateActivity extends ImmersiveActivity implements View.OnClickListener ,SwipeRefreshLayout.OnRefreshListener{
+public class HomePageDateActivity extends ImmersiveActivity implements View.OnClickListener ,SwipeRefreshLayout.OnRefreshListener,RadioGroup.OnCheckedChangeListener {
     @Bind(R.id.ivMenu) ImageView ivMenu;
     @Bind(R.id.ivBack) ImageView ivBack;
     @Bind(R.id.ivPush) ImageView ivPush;
@@ -67,11 +68,15 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
     private int RgState;//手选状态
     private String city="";//城市
     private boolean isInitCache = false;
+    private RadioGroup rgType,rgState;
+    private View view;
+    private TextView tvComplete;
+    private RadioButton rbTypeAll,rbDateType,rbLeadType,rbStateAll,rbStart,rbEnd,rbApply;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_date);
-        ButterKnife.bind(this);
         setInfo();
         adapter=new AttendAdapter(this,null);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -98,6 +103,62 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
         ivMenu.setOnClickListener(this);
         ivBack.setOnClickListener(this);
         ivPush.setOnClickListener(this);
+        view = getLayoutInflater().inflate(R.layout.homepage_type_dialog, null);
+        rgType=(RadioGroup) view.findViewById(R.id.rgType);
+        rgState=(RadioGroup) view.findViewById(R.id.rgState);
+        dialog = new Dialog(this,R.style.dialog);
+        ImageView ivBack=(ImageView) view.findViewById(R.id.ivBack);
+        ImageView ivClose=(ImageView) view.findViewById(R.id.ivClose);
+        rbTypeAll=(RadioButton) view.findViewById(R.id.rbTypeAll);
+        rbDateType=(RadioButton) view.findViewById(R.id.rbDateType);
+        rbLeadType=(RadioButton) view.findViewById(R.id.rbLeadType);
+        rbStateAll=(RadioButton) view.findViewById(R.id.rbStateAll);
+        rbStart=(RadioButton) view.findViewById(R.id.rbStart);
+        rbEnd=(RadioButton) view.findViewById(R.id.rbEnd);
+        rbApply=(RadioButton) view.findViewById(R.id.rbApply);
+        tvComplete=(TextView) view.findViewById(R.id.tvComplete);
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        ivClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        tvComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRefresh();
+                dialog.dismiss();
+            }
+        });
+        dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        Window window = dialog.getWindow();
+        // 设置显示动画
+        window.setWindowAnimations(R.style.main_menu_animstyle);
+        WindowManager.LayoutParams wl = window.getAttributes();
+        wl.x = tvline.getWidth();
+        wl.y = tvline.getHeight();
+        // 以下这两句是为了保证按钮可以水平满屏
+        wl.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        wl.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        // 设置显示位置
+        dialog.onWindowAttributesChanged(wl);
+        // 设置点击外围解散
+        dialog.setCanceledOnTouchOutside(true);
+        window.setGravity(Gravity.TOP);
+        //加下面代码可以去掉状态栏
+        if (Build.VERSION.SDK_INT < 19) {
+            return;
+        }
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override
@@ -107,126 +168,9 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
                 finish();
                 break;
             case R.id.ivMenu:
-                View view = getLayoutInflater().inflate(R.layout.homepage_type_dialog, null);
-                dialog = new Dialog(this,R.style.dialog);
-                ImageView ivBack=(ImageView) view.findViewById(R.id.ivBack);
-                ImageView ivClose=(ImageView) view.findViewById(R.id.ivClose);
-                final RadioGroup rgType=(RadioGroup) view.findViewById(R.id.rgType);
-                final RadioGroup rgState=(RadioGroup) view.findViewById(R.id.rgState);
-                final RadioButton rbTypeAll=(RadioButton) view.findViewById(R.id.rbTypeAll);
-                final RadioButton rbDateType=(RadioButton) view.findViewById(R.id.rbDateType);
-                final RadioButton rbLeadType=(RadioButton) view.findViewById(R.id.rbLeadType);
-                final RadioButton rbStateAll=(RadioButton) view.findViewById(R.id.rbStateAll);
-                final RadioButton rbStart=(RadioButton) view.findViewById(R.id.rbStart);
-                final RadioButton rbEnd=(RadioButton) view.findViewById(R.id.rbEnd);
-                final RadioButton rbApply=(RadioButton) view.findViewById(R.id.rbApply);
-                TextView tvComplete=(TextView) view.findViewById(R.id.tvComplete);
-                ivBack.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                    finish();
-                    }
-                });
-                ivClose.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-                tvComplete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        rgType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                            if(rbTypeAll.getId()==checkedId){
-                              RgType=0;
-                            }
-                            if(rbDateType.getId()==checkedId){
-                              RgType=1;
-                            }
-                            if(rbLeadType.getId()==checkedId){
-                              RgType=2;
-                            }
-                            }
-                        });
-                        rgState.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                                if(rbStateAll.getId()==checkedId){
-                                    RgState=0;
-                                } if(rbStart.getId()==checkedId){
-                                    RgState=0;
-                                } if(rbEnd.getId()==checkedId){
-                                    RgState=2;
-                                } if(rbApply.getId()==checkedId){
-                                    RgState=1;
-                                }
-                            }
-                        });
-
-                        OkGo.post(API.BASE_URL+"/v2/activity/query")
-                                .tag(this)
-                                .params("state",RgState)
-                                .params("type",RgType)
-                                .params("number",number)
-                                .params("pageNumber",pageNumber)
-                                .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)
-                                .execute(new LoadCallback<ActiveModel>(HomePageDateActivity.this) {
-                                    @Override
-                                    public void onSuccess(ActiveModel activeModel, Call call, Response response) {
-                                        if(activeModel.state==200){adapter.setNewData(activeModel.data);}
-                                    }
-                                    @Override
-                                    public void onError(Call call, Response response, Exception e) {
-                                        super.onError(call, response, e);
-                                        showToast("网络连接错误");
-                                    }
-
-                                    @Override
-                                    public void onCacheSuccess(ActiveModel activeModel, Call call) {
-                                        //一般来说,只需要第一次初始化界面的时候需要使用缓存刷新界面,以后不需要,所以用一个变量标识
-                                        if (!isInitCache) {
-                                            //一般来说,缓存回调成功和网络回调成功做的事情是一样的,所以这里直接回调onSuccess
-                                            onSuccess(activeModel, call, null);
-                                            isInitCache = true;
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onAfter(@Nullable ActiveModel activeModel, @Nullable Exception e) {
-                                        super.onAfter(activeModel, e);
-                                        adapter.removeAllFooterView();
-                                        setRefreshing(false);
-                                    }
-                                });
-                        dialog.dismiss();
-                    }
-                });
-                dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT));
-                Window window = dialog.getWindow();
-                // 设置显示动画
-                window.setWindowAnimations(R.style.main_menu_animstyle);
-                WindowManager.LayoutParams wl = window.getAttributes();
-                wl.x = tvline.getWidth();
-                wl.y = tvline.getHeight();
-                // 以下这两句是为了保证按钮可以水平满屏
-                wl.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                wl.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                // 设置显示位置
-                dialog.onWindowAttributesChanged(wl);
-                // 设置点击外围解散
-                dialog.setCanceledOnTouchOutside(true);
-                window.setGravity(Gravity.TOP);
-                //加下面代码可以去掉状态栏
-                if (Build.VERSION.SDK_INT < 19) {
-                    return;
-                }
-                getWindow().setFlags(
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 dialog.show();
+                rgState.setOnCheckedChangeListener(this);
+                rgType.setOnCheckedChangeListener(this);
                 break;
             case R.id.ivPush:
                 startActivity(new Intent(this,HomePageActivePublishActivity.class));
@@ -273,6 +217,40 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
             });
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRefresh();
+    }
 
-
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (group.getId()){
+            case R.id.rgType:
+                if(rbTypeAll.getId()==checkedId){
+                    type=0;
+                }
+                if(rbDateType.getId()==checkedId){
+                    type=1;
+                }
+                if(rbLeadType.getId()==checkedId){
+                    type=2;
+                }
+                break;
+            case R.id.rgState:
+                if(rbStateAll.getId()==checkedId){
+                    state=0;
+                }
+                if(rbStart.getId()==checkedId){
+                    state=0;
+                }
+                if(rbEnd.getId()==checkedId){
+                    state=2;
+                }
+                if(rbApply.getId()==checkedId){
+                    state=1;
+                }
+                break;
+        }
+    }
 }

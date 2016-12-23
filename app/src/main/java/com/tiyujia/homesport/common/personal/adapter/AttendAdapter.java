@@ -67,13 +67,22 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
         }
         int memberPeople=active.memberPeople;
         int maxPeople=active.maxPeople;
+
         baseViewHolder.setText(R.id.tvNickname,active.user.nickname)
                 .setText(R.id.tv_title,active.title)
                 .setText(R.id.tv_address,active.city)
                 .setText(R.id.tv_msg,active.commentNumber+"")
                 .setText(R.id.tvTime,createTime)
-                .setText(R.id.tv_apply,"已报名："+memberPeople+" 剩余名额:0人")
                 .setText(R.id.tv_zan,active.zan+"");
+        TextView tv_apply = baseViewHolder.getView(R.id.tv_apply);
+        if(maxPeople==0){
+            tv_apply.setText("已报名："+memberPeople);
+        }else if(maxPeople>memberPeople) {
+            tv_apply.setText("已报名："+memberPeople+"还剩: "+(maxPeople-memberPeople)+"名");
+        }else if(maxPeople<=memberPeople){
+            tv_apply.setText("报名人数已满");
+        }
+
         if (active.activityType==0){
             tv_active_lable.setText("求约");
         }else if (active.activityType==1){

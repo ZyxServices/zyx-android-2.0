@@ -14,6 +14,7 @@
     <string name="personal_setting_feedback">意见反馈</string>
     <string name="personal_setting_push">提交</string>
     <string name="my_activity">我的活动</string>
+    <string name="register_name_digits">._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ</string>
     <string name="can_not_find_version_name">版本号异常</string>
     <string name="personal_setting_feedback_hint">我们需要您提出宝贵的意见,我们才能快速成长哦!</string>
 

@@ -62,6 +62,10 @@ public class CityAddressSelect extends ImmersiveActivity implements PoiSearch.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.city_address_select);
         initLocation();
+        int gone = getIntent().getIntExtra("gone", 0);
+        if(gone==1){
+            tvNoAddress.setVisibility(View.GONE);
+        }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter=new CityAddressAdapter(null);
