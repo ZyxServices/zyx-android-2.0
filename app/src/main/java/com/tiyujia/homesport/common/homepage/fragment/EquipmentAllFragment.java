@@ -58,6 +58,7 @@ public class EquipmentAllFragment extends BaseFragment implements SwipeRefreshLa
     public void onRefresh() {
         OkGo.post(API.BASE_URL+"/v2/equip/query")
                 .tag(this)
+                .params("id",0)
                 .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
                 .execute(new LoadCallback<EquipmentModel>(getActivity()) {
                     @Override
