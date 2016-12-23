@@ -339,6 +339,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                 break;
             case R.id.reAddress:
                 Intent i=new Intent(HomePageActivePublishActivity.this, CityAddressSelect.class);
+                i.putExtra("gone",1);
                 startActivityForResult(i,101);
                 break;
         }
