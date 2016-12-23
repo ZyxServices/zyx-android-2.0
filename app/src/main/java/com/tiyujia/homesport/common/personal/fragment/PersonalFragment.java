@@ -198,9 +198,13 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                 getActivity().startActivity(new Intent(getActivity(), PersonalSystemSetting.class));
                 break;
             case R.id.ivAvatar:
+                if(avatarUrl==null){
                     ArrayList<String> str=new ArrayList<>();
-                    str.add(API.PICTURE_URL+avatarUrl);
+                    str.add("http://image.tiyujia.com/group1/M00/00/00/052YyFfXxLKARvQWAAAbNiA-OGw444.png");
                     getActivity().startActivity(ImageDetailActivity.getMyStartIntent(getActivity(), str,0, ImageDetailActivity.url_path));
+                }else {ArrayList<String> str=new ArrayList<>();
+                    str.add(API.PICTURE_URL+avatarUrl);
+                    getActivity().startActivity(ImageDetailActivity.getMyStartIntent(getActivity(), str,0, ImageDetailActivity.url_path));}
                 break;
             case R.id.ll_attention:
                 getActivity().startActivity(new Intent(getActivity(), PersonalAttention.class));
