@@ -256,18 +256,22 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
                     @Override
                     public void onAfter(@Nullable ActiveModel activeModel, @Nullable Exception e) {
                         super.onAfter(activeModel, e);
-                        adapter.removeAllFooterView();
-                        setRefreshing(false);
+                        if (adapter!=null) {
+                            adapter.removeAllFooterView();
+                            setRefreshing(false);
+                        }
                     }
                 });
     }
     public void setRefreshing(final boolean refreshing) {
-        srlRefresh.post(new Runnable() {
-            @Override
-            public void run() {
-                srlRefresh.setRefreshing(refreshing);
-            }
-        });
+        if (srlRefresh!=null) {
+            srlRefresh.post(new Runnable() {
+                @Override
+                public void run() {
+                    srlRefresh.setRefreshing(refreshing);
+                }
+            });
+        }
     }
 
 

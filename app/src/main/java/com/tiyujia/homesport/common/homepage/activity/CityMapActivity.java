@@ -9,6 +9,13 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
@@ -19,7 +26,7 @@ import com.tiyujia.homesport.entity.LoadCallback;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class CityMapActivity extends ImmersiveActivity implements OnMarkerClickListener {
+public class CityMapActivity extends ImmersiveActivity implements AMap.OnMarkerClickListener {
     ImageView ivBack;
     private MapView mvMap;
     private AMap aMap;

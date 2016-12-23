@@ -52,6 +52,8 @@ import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.fragment.AttentionFragment;
+import com.tiyujia.homesport.common.community.fragment.RecommendFragment;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -355,6 +357,8 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                                         public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
                                                             if(lzyResponse.state==200){
                                                                 showToast("发布成功");
+                                                                AttentionFragment.isFirstIn=false;
+                                                                RecommendFragment.isFirstIn=false;
                                                                 finish();
                                                             }
                                                         }

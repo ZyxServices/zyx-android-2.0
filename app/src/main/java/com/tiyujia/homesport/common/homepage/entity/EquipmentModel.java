@@ -11,7 +11,7 @@ import java.util.List;
 public class EquipmentModel implements Serializable {
     public int state;
     public List<Equipment> data;
-    public class Equipment{
+    public class Equipment implements Serializable{
         public int id;
         public long createTime;
         public String title;
@@ -26,13 +26,13 @@ public class EquipmentModel implements Serializable {
         public int commentCounts;
         public int zanCounts;
         public UserIconVo userIconVo;
-        public class UserIconVo{
+        public class UserIconVo implements Serializable{
             public  int id;
             public  int authenticate;
             public  String nickName;
             public  String avatar;
             public Level level;
-            public class Level{
+            public class Level implements Serializable{
                 public String pointDesc;
             }
         }

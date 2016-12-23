@@ -203,7 +203,12 @@ public class HomePageEquipmentShowActivity extends ImmersiveActivity implements 
                                             .execute(new LoadCallback<LzyResponse>(HomePageEquipmentShowActivity.this) {
                                                 @Override
                                                 public void onSuccess(LzyResponse equipment, Call call, Response response) {
-                                                    if(equipment.state==200){showToast("发布成功");}
+                                                    if(equipment.state==200){
+                                                        showToast("发布成功");
+                                                        finish();
+                                                    }else {
+                                                        showToast("未知错误"+equipment.state);
+                                                    }
                                                 }
 
                                                 @Override

@@ -95,18 +95,22 @@ public class AttentionFragment extends BaseFragment implements  SwipeRefreshLayo
                     @Override
                     public void onAfter(@Nullable RecommendModel recommendModel, @Nullable Exception e) {
                         super.onAfter(recommendModel, e);
-                        adapter.removeAllFooterView();
-                        setRefreshing(false);
+                        if (adapter!=null){
+                            adapter.removeAllFooterView();
+                            setRefreshing(false);
+                        }
                     }
                 });
     }
     public void setRefreshing(final boolean refreshing) {
-        srlRefresh.post(new Runnable() {
-            @Override
-            public void run() {
-                srlRefresh.setRefreshing(refreshing);
-            }
-        });
+        if (srlRefresh!=null) {
+            srlRefresh.post(new Runnable() {
+                @Override
+                public void run() {
+                    srlRefresh.setRefreshing(refreshing);
+                }
+            });
+        }
     }
 
     @Override
@@ -127,9 +131,17 @@ public class AttentionFragment extends BaseFragment implements  SwipeRefreshLayo
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接错误在·");
+                        showToast("网络连接错误");
                         adapter.showLoadMoreFailedView();
                     }
                 });
+    }
+    public static boolean isFirstIn=true;
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isFirstIn) {
+            onRefresh();
+        }
     }
 }

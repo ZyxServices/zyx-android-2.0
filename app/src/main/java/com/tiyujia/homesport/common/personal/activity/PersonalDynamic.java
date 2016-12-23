@@ -113,4 +113,10 @@ public class PersonalDynamic extends ImmersiveActivity implements SwipeRefreshLa
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRefresh();
+    }
 }

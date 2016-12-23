@@ -97,17 +97,29 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
                     @Override
                     public void onAfter(@Nullable RecommendModel recommendModel, @Nullable Exception e) {
                         super.onAfter(recommendModel, e);
-                        adapter.removeAllFooterView();
-                        setRefreshing(false);
+                        if (adapter!=null) {
+                            adapter.removeAllFooterView();
+                            setRefreshing(false);
+                        }
                     }
                 });
     }
     public void setRefreshing(final boolean refreshing) {
-        srlRefresh.post(new Runnable() {
-            @Override
-            public void run() {
-                srlRefresh.setRefreshing(refreshing);
-            }
-        });
+        if (srlRefresh!=null) {
+            srlRefresh.post(new Runnable() {
+                @Override
+                public void run() {
+                    srlRefresh.setRefreshing(refreshing);
+                }
+            });
+        }
+    }
+    public static boolean isFirstIn=true;
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isFirstIn) {
+            onRefresh();
+        }
     }
 }

@@ -12,7 +12,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,7 +45,9 @@ import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.DeleteUtil;
 import com.tiyujia.homesport.util.EmojiFilterUtil;
+import com.tiyujia.homesport.util.FollowUtil;
 import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PostUtil;
@@ -128,6 +132,12 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
         rvDynamicDetailSay.setItemAnimator(new DefaultItemAnimator());
         rvDynamicDetailSay.setLayoutManager(new LinearLayoutManager(this));
         rvDynamicDetailSay.setAdapter(commentAdapter);
+        View view= LayoutInflater.from(this).inflate(R.layout.normal_empty_view,null);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        view.setLayoutParams(lp2);
+        TextView tvEmptyText= (TextView) view.findViewById(R.id.text_empty);
+        tvEmptyText.setText("没有更多评论");
+        commentAdapter.setEmptyView(view);
         initImagePicker();
         initWidget();
         RefreshUtil.refresh(srlRefresh,this);
@@ -143,7 +153,6 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
         recommendId=getIntent().getIntExtra("recommendId",0);
         nowUserId=share.getInt("UserId",0);
     }
-
     private void setListeners() {
         ivDynamicDetailBack.setOnClickListener(this);
         tvCancel.setOnClickListener(this);
@@ -152,6 +161,8 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
         ivDynamicDetailMore.setOnClickListener(this);
         llLastLover.setOnClickListener(this);
         rivDynamicDetailAvatar.setOnClickListener(this);
+        tvDynamicDetailConcern.setOnClickListener(this);
+        tvDynamicDetailCancel.setOnClickListener(this);
     }
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
@@ -286,14 +297,14 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                         }else {
                             nglDynamicDetailImages.setVisibility(View.GONE);
                         }
-
+                        if (nowUserId==dynamicOwnerId){
+                            ivDynamicDetailMore.setVisibility(View.VISIBLE);
+                        }else {
+                            ivDynamicDetailMore.setVisibility(View.GONE);
+                        }
                     }
                 });
-        if (nowUserId==dynamicOwnerId){
-            ivDynamicDetailMore.setVisibility(View.VISIBLE);
-        }else {
-            ivDynamicDetailMore.setVisibility(View.GONE);
-        }
+
         getWhoLove();
         getCommentList();
     }
@@ -301,6 +312,14 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     public void onClick(View v) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         switch (v.getId()){
+            case R.id.tvDynamicDetailConcern:
+                FollowUtil.handleFollowTransaction(CommunityDynamicDetailActivity.this,API.BASE_URL+"/v2/follow/add",token,
+                        nowUserId,dynamicOwnerId,tvDynamicDetailConcern,tvDynamicDetailCancel);
+                break;
+            case R.id.tvDynamicDetailCancel:
+                FollowUtil.handleFollowTransaction(CommunityDynamicDetailActivity.this,API.BASE_URL+"/v2/follow/unfollow",token,
+                        nowUserId,dynamicOwnerId,tvDynamicDetailCancel,tvDynamicDetailConcern);
+                break;
             case R.id.tvCancel:
                 etToComment.setText("");
                 llToTalk.setVisibility(View.VISIBLE);
@@ -331,7 +350,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                 imm.showSoftInput(etToComment,InputMethodManager.SHOW_FORCED);
                 break;
             case R.id.ivDynamicDetailMore:
-                Toast.makeText(CommunityDynamicDetailActivity.this,"吐司",Toast.LENGTH_LONG).show();
+                DeleteUtil.handleDeleteOtherTransaction(CommunityDynamicDetailActivity.this,"/v2/concern/del/",token,recommendId,userId);
                 break;
             case R.id.ivDynamicDetailBack:
                 finish();
@@ -342,7 +361,6 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                 intent.putExtra("concernId",recommendId);
                 startActivity(intent);
                 break;
-
         }
     }
     private void writeToCallBack(){

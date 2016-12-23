@@ -125,8 +125,10 @@ public class ActiveFragment extends BaseFragment implements  SwipeRefreshLayout.
                     @Override
                     public void onAfter(@Nullable ActiveModel activeModel, @Nullable Exception e) {
                         super.onAfter(activeModel, e);
-                        adapter.removeAllFooterView();
-                        setRefreshing(false);
+                        if (adapter!=null) {
+                            adapter.removeAllFooterView();
+                            setRefreshing(false);
+                        }
                     }
                 });
     }

@@ -25,11 +25,13 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
 import com.tiyujia.homesport.common.homepage.entity.DateInfoModel;
 import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.DeleteUtil;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -78,7 +80,6 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_date_info);
         getInfo();
-        setView();
         activityId=getIntent().getIntExtra("id",0);
         RefreshUtil.refresh(srlRefresh,this);
         srlRefresh.setOnRefreshListener(this);
@@ -99,6 +100,7 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
                 startActivity(i);
             }
         });
+        setView();
     }
     private void getInfo() {
         SharedPreferences share= getSharedPreferences("UserInfo",MODE_PRIVATE);
@@ -144,11 +146,15 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
                             String  create= TimeUtil.checkTime(dateInfoModel.data.createTime);
                             String  end= TimeUtil.checkTime(dateInfoModel.data.endTime);
                             tvStartTime.setText(create+"~"+end);
-
                             tvPhone.setText(dateInfoModel.data.user.phone);
                             tvCity.setText(dateInfoModel.data.city);
                             PicassoUtil.handlePic(HomePageDateInfo.this, PicUtil.getImageUrlDetail(HomePageDateInfo.this, StringUtil.isNullImage(dateInfoModel.data.imgUrls), 1280,720 ),ivBackground,1280,720);
                             PicassoUtil.handlePic(HomePageDateInfo.this, PicUtil.getImageUrlDetail(HomePageDateInfo.this, StringUtil.isNullImage(dateInfoModel.data.user.avatar), 320,320 ),ivAvatar,320,320);
+                            if (mUserId==activityUserId){
+                                ivShare.setVisibility(View.VISIBLE);
+                            }else {
+                                ivShare.setVisibility(View.GONE);
+                            }
                         }
                     }
 
@@ -176,65 +182,66 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
             case R.id.ivShare:
                 View view = getLayoutInflater().inflate(R.layout.share_dialog, null);
                 final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
-                TextView tvQQ=(TextView)view.findViewById(R.id.tvQQ);
-                TextView tvQQzone=(TextView)view.findViewById(R.id.tvQQzone);
-                TextView tvWeChat=(TextView)view.findViewById(R.id.tvWeChat);
-                TextView tvFriends=(TextView)view.findViewById(R.id.tvFriends);
-                TextView tvSina=(TextView)view.findViewById(R.id.tvSina);
+//                TextView tvQQ=(TextView)view.findViewById(R.id.tvQQ);
+//                TextView tvQQzone=(TextView)view.findViewById(R.id.tvQQzone);
+//                TextView tvWeChat=(TextView)view.findViewById(R.id.tvWeChat);
+//                TextView tvFriends=(TextView)view.findViewById(R.id.tvFriends);
+//                TextView tvSina=(TextView)view.findViewById(R.id.tvSina);
                 TextView tvDelete=(TextView)view.findViewById(R.id.tvDelete);
                 TextView tvCancel=(TextView)view.findViewById(R.id.tvCancel);
-
-                //分享到QQ
-                tvQQ.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        showToast("分享到QQ");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
-                //分享到QQ空间
-                tvQQzone.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("分享到QQ空间");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
-                //分享到微信好友
-                tvWeChat.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("分享到微信好友");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
-                //分享到朋友圈
-                tvFriends.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("分享到朋友圈");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
-                //分享到新浪微博
-                tvSina.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showToast("分享到新浪微博");
-                        showDialog();
-                        dialog.dismiss();
-                    }
-                });
+//
+//                //分享到QQ
+//                tvQQ.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v)
+//                    {
+//                        showToast("分享到QQ");
+//                        showDialog();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                //分享到QQ空间
+//                tvQQzone.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        showToast("分享到QQ空间");
+//                        showDialog();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                //分享到微信好友
+//                tvWeChat.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        showToast("分享到微信好友");
+//                        showDialog();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                //分享到朋友圈
+//                tvFriends.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        showToast("分享到朋友圈");
+//                        showDialog();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                //分享到新浪微博
+//                tvSina.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        showToast("分享到新浪微博");
+//                        showDialog();
+//                        dialog.dismiss();
+//                    }
+//                });
                 //删除
                 tvDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showToast("删除");
+                        DeleteUtil.handleDeleteActiveTransaction(HomePageDateInfo.this,mToken,activityId,mUserId);
+                        showToast("删除活动成功");
                         dialog.dismiss();
                     }
                 });

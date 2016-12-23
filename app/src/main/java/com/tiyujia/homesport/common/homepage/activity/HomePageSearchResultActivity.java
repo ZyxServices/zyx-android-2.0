@@ -19,7 +19,9 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebChromeClient;
@@ -192,6 +194,12 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
         rvHomePageVenueDetailSay.setItemAnimator(new DefaultItemAnimator());
         rvHomePageVenueDetailSay.setLayoutManager(new LinearLayoutManager(this));
         rvHomePageVenueDetailSay.setAdapter(commentAdapter);
+        View view= LayoutInflater.from(HomePageSearchResultActivity.this).inflate(R.layout.normal_empty_view,null);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        view.setLayoutParams(lp2);
+        TextView tvEmptyText= (TextView) view.findViewById(R.id.text_empty);
+        tvEmptyText.setText("没有更多评论");
+        commentAdapter.setEmptyView(view);
         RefreshUtil.refresh(srlRefresh,this);
         srlRefresh.setOnRefreshListener(this);
         setVenueData();
@@ -233,7 +241,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     }
     private void setVenueData() {
         venueId=getIntent().getIntExtra("venueId",0);
-        ArrayList<String> cacheData= (ArrayList<String>) CacheUtils.readJson(HomePageSearchResultActivity.this, HomePageSearchResultActivity.this.getClass().getName() + "_1.json");
+        ArrayList<String> cacheData= (ArrayList<String>) CacheUtils.readJson(HomePageSearchResultActivity.this, HomePageSearchResultActivity.this.getClass().getName() + "_"+venueId+".json");
         if (cacheData==null||cacheData.size()==0) {
             new Thread() {
                 @Override
@@ -242,11 +250,11 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                     HashMap<String, String> params = new HashMap<>();
                     params.put("venueId", ""+venueId);
                     String result = PostUtil.sendPostMessage(uri, params);
-                    JSONParseUtil.parseNetDataVenueDetail(HomePageSearchResultActivity.this,result, HomePageSearchResultActivity.this.getClass().getName()+"_1.json",data, handler, HANDLE_BASE_VENUE_DATA);
+                    JSONParseUtil.parseNetDataVenueDetail(HomePageSearchResultActivity.this,result, HomePageSearchResultActivity.this.getClass().getName()+"_"+venueId+".json",data, handler, HANDLE_BASE_VENUE_DATA);
                 }
             }.start();
         }else {
-            JSONParseUtil.parseLocalDataVenueDetail(HomePageSearchResultActivity.this, HomePageSearchResultActivity.this.getClass().getName()+"_1.json",data, handler, HANDLE_BASE_VENUE_DATA);
+            JSONParseUtil.parseLocalDataVenueDetail(HomePageSearchResultActivity.this, HomePageSearchResultActivity.this.getClass().getName()+"_"+venueId+".json",data, handler, HANDLE_BASE_VENUE_DATA);
         }
     }
     public void setRefreshing(final boolean refreshing) {
@@ -305,21 +313,25 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                 .execute(new LoadCallback<HomePageCommentEntity>(this) {
                     @Override
                     public void onSuccess(HomePageCommentEntity homePage, Call call, Response response) {
-                        if (homePage.state==200){
-                            commentAdapter.setNewData(homePage.data);
-                            commentAdapter.setOnItemClickListener(new HomePageCommentAdapter.OnItemClickListener() {
-                                @Override
-                                public void OnItemClick(HomePageCommentEntity.HomePage data,String backTo) {
-                                    isComment=false;
-                                    entity=data;
-                                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    llToTalk.setVisibility(View.GONE);
-                                    etToComment.requestFocus();
-                                    etToComment.setHint("回复："+backTo);
-                                    llCancelAndSend.setVisibility(View.VISIBLE);
-                                    imm.showSoftInput(etToComment,InputMethodManager.SHOW_FORCED);
-                                }
-                            });
+                        if (homePage.state==200) {
+                            if (homePage.data != null) {
+                                commentAdapter.setNewData(homePage.data);
+                                commentAdapter.setOnItemClickListener(new HomePageCommentAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void OnItemClick(HomePageCommentEntity.HomePage data, String backTo) {
+                                        isComment = false;
+                                        entity = data;
+                                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                        llToTalk.setVisibility(View.GONE);
+                                        etToComment.requestFocus();
+                                        etToComment.setHint("回复：" + backTo);
+                                        llCancelAndSend.setVisibility(View.VISIBLE);
+                                        imm.showSoftInput(etToComment, InputMethodManager.SHOW_FORCED);
+                                    }
+                                });
+                            }else {
+
+                            }
                         }
                     }
                     @Override
