@@ -96,8 +96,10 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
              switch (msg.what){
                  case HANDLE_IMAGE:
                      Bitmap bitmap= (Bitmap) msg.obj;
-                     Bitmap blur = FastBlurUtil.blurBitmap(bitmap);
-                     ivBackground.setImageBitmap(blur);
+                     if(bitmap!=null){
+                         Bitmap blur = FastBlurUtil.blurBitmap(bitmap);
+                         ivBackground.setImageBitmap(blur);
+                     }else {}
                      break;
              }
          }
