@@ -222,11 +222,14 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
     public void onResume() {
         super.onResume();
         tvName=(TextView)view.findViewById(R.id.tvName);
+        if(TextUtils.isEmpty(tvName.getText())){
+            tvName.setText("0");
+        }else {
         SharedPreferences city=getActivity().getSharedPreferences("City", Context.MODE_PRIVATE);
         String name=city.getString("name","");
         levelid=city.getInt("id",0);
         if(!TextUtils.isEmpty(name)){
             tvName.setText(name);
         }else {}
-    }
+    }}
 }

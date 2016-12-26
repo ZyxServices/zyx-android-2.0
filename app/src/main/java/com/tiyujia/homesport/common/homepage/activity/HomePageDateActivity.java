@@ -61,7 +61,6 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
     @Bind(R.id.ivMenu) ImageView ivMenu;
     @Bind(R.id.ivBack) ImageView ivBack;
     @Bind(R.id.ivPush) ImageView ivPush;
-    @Bind(R.id.tvTitle) TextView tvTitle;
     @Bind(R.id.tvline)    TextView tvline;
     @Bind(R.id.cbDateBanner) ConvenientBanner cbDateBanner;
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
@@ -306,7 +305,7 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
             iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(HomePageDateActivity.this, HomePageArticleActivity.class);
+                    Intent intent=new Intent(HomePageDateActivity.this, HomePageDateInfo.class);
                     intent.putExtra("id",data.getModelId());
                     startActivity(intent);
                 }
@@ -317,7 +316,7 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
             this.data=data;
             pos=position;
             Rect rect = new Rect();
-            ((Activity)context).getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+            getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
             int x = rect.width();
             PicassoUtil.handlePic(context, data.imageUrl, iv, x, 720);
         }

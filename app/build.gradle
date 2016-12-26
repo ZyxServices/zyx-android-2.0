@@ -18,6 +18,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            ndk {
+                abiFilters "x86", "armeabi-v7a", "armeabi"
+            }
+        }
+        debug {
+            ndk {
+                abiFilters "x86", "armeabi-v7a", "armeabi"
+            }
         }
     }
     lintOptions {
@@ -92,4 +101,5 @@ dependencies {
     compile project(':image_zoom_drag_vp')
     compile files('libs/Android_Map3D_SDK_V4.1.3_20161208.jar')
     compile files('libs/Volley.jar')
+    compile 'com.linsea:universalvideoview:1.1.0@aar'
 }

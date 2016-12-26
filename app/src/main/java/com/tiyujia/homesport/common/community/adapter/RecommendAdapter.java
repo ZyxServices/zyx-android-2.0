@@ -5,21 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.RecyclerView;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ff.imagezoomdrag.ImageDetailActivity;
-import com.lzy.ninegrid.NineGridView;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
@@ -33,6 +29,8 @@ import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.StringUtil;
+import com.universalvideoview.UniversalMediaController;
+import com.universalvideoview.UniversalVideoView;
 import com.w4lle.library.NineGridlayout;
 
 import java.util.ArrayList;
@@ -49,15 +47,17 @@ import okhttp3.Response;
 
 public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend> {
     Context context;
-
     public RecommendAdapter(Context context, List<RecommendModel.Recommend> data) {
         super(R.layout.personal_dynamic_item, data);
         this.context=context;
     }
     @Override
     protected void convert(BaseViewHolder baseViewHolder, final RecommendModel.Recommend recommend) {
+        final String videoUrl=recommend.videoUrl;
         ImageView ivAvatar=baseViewHolder.getView(R.id.ivAvatar);
         NineGridlayout nineGrid=baseViewHolder.getView(R.id.nineGrid);
+        FrameLayout frVideo=baseViewHolder.getView(R.id.frVideo);
+        ImageView ivVideoStart=baseViewHolder.getView(R.id.ivVideoStart);
         baseViewHolder.setText(R.id.tvNickname,recommend.userIconVo.nickName)
                 .setText(R.id.tvDesc,recommend.topicContent)
                 .setText(R.id.tvMsg,recommend.commentCounts+"");
@@ -66,10 +66,24 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
         if(!TextUtils.isEmpty(recommend.local)){
             baseViewHolder.setText(R.id.tvAddress,recommend.local);
         }else {
-            baseViewHolder.setText(R.id.tvAddress,"先写一个成都好了");
+            baseViewHolder.setText(R.id.tvAddress,"");
         }
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(recommend.userIconVo.avatar), 320, 320),ivAvatar,320,320);
         String str= recommend.imgUrl;
+        if(TextUtils.isEmpty(videoUrl)){
+            frVideo.setVisibility(View.GONE);
+        }else {
+            ivVideoStart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   Uri uri=Uri.parse(videoUrl);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    Log.v("URI:::::::::", uri.toString());
+                    intent.setDataAndType(uri, "video/mp4");
+                    mContext.startActivity(intent);
+                }
+            });
+        }
         if(str!=null){
         final ArrayList<String>  imgUrls=(ArrayList<String>) StringUtil.stringToList(str);;
             NGLAdapter adapter = new NGLAdapter(context, imgUrls);
@@ -144,5 +158,8 @@ public class RecommendAdapter extends BaseQuickAdapter<RecommendModel.Recommend>
                 }
             }
         });
+
     }
+
+
 }

@@ -44,7 +44,6 @@ public class AttentionFragment extends BaseFragment implements  SwipeRefreshLayo
     private int mUserId;
     private int page=1;
     private int pageSize=20;
-
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.recycleview_layout,null);

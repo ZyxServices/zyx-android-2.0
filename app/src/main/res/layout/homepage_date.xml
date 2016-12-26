@@ -51,27 +51,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/tvTitle"
-                    android:layout_width="210dp"
-                    android:layout_height="45dp"
-                    android:layout_centerInParent="true"
-                    android:background="#73000000"
-                    android:text="成都地区A2交流大会"
-                    android:textSize="18sp"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    />
             <com.bigkoo.convenientbanner.ConvenientBanner
                 android:id="@+id/cbDateBanner"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 app:canLoop="true"
                 />
-            </RelativeLayout>
             <TextView
                 style="@style/boldlin" />
             <android.support.v7.widget.RecyclerView
