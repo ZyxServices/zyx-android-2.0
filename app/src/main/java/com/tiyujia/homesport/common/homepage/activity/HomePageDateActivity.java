@@ -1,11 +1,15 @@
 package com.tiyujia.homesport.common.homepage.activity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,22 +24,28 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
+import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.cache.CacheMode;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.entity.HomePageBannerEntity;
 import com.tiyujia.homesport.common.personal.adapter.AttendAdapter;
 import com.tiyujia.homesport.common.personal.model.ActiveModel;
 import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.util.CacheUtils;
+import com.tiyujia.homesport.util.JSONParseUtil;
+import com.tiyujia.homesport.util.PicassoUtil;
+import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,7 +61,6 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
     @Bind(R.id.ivMenu) ImageView ivMenu;
     @Bind(R.id.ivBack) ImageView ivBack;
     @Bind(R.id.ivPush) ImageView ivPush;
-    @Bind(R.id.tvTitle) TextView tvTitle;
     @Bind(R.id.tvline)    TextView tvline;
     @Bind(R.id.cbDateBanner) ConvenientBanner cbDateBanner;
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
@@ -72,7 +81,25 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
     private View view;
     private TextView tvComplete;
     private RadioButton rbTypeAll,rbDateType,rbLeadType,rbStateAll,rbStart,rbEnd,rbApply;
-
+    private List<HomePageBannerEntity> banners = new ArrayList<>();
+    public static final int HANDLE_BANNER_DATA=2;
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case HANDLE_BANNER_DATA:
+                    cbDateBanner.setPages(new CBViewHolderCreator<ImageHolderView>() {
+                        @Override public HomePageDateActivity.ImageHolderView createHolder() {
+                            return new HomePageDateActivity.ImageHolderView();
+                        }
+                    }, banners).setPageIndicator(
+                            new int[] { R.drawable.dot_normal, R.drawable.dot_selected})
+                            .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL);
+                    cbDateBanner.postInvalidate();
+                    break;
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,6 +207,21 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
 
     @Override
     public void onRefresh() {
+        ArrayList<String> cacheData2= (ArrayList<String>) CacheUtils.readJson(this, this.getClass().getName() + ".2.json");
+        if (cacheData2==null||cacheData2.size()==0) {
+            new Thread() {
+                @Override
+                public void run() {
+                    String uri = API.BASE_URL + "/v2/search/deva";
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("model", "2");
+                    String result = PostUtil.sendPostMessage(uri, params);
+                    JSONParseUtil.parseNetDataHomeBanner(HomePageDateActivity.this,result,this.getClass().getName()+"2.json",banners, handler, HANDLE_BANNER_DATA);
+                }
+            }.start();
+        }else {
+            JSONParseUtil.parseLocalDataHomeBanner(this,this.getClass().getName()+".2.json",banners, handler, HANDLE_BANNER_DATA);
+        }
         OkGo.post(API.BASE_URL+"/v2/activity/query")
                 .tag(this)
                 .params("state",state)
@@ -251,6 +293,32 @@ public class HomePageDateActivity extends ImmersiveActivity implements View.OnCl
                     state=1;
                 }
                 break;
+        }
+    }
+    public class ImageHolderView implements Holder<HomePageBannerEntity> {
+        private ImageView iv;
+        int pos=0;
+        HomePageBannerEntity data;
+        @Override public View createView(Context context) {
+            iv = new ImageView(context);
+            iv.setScaleType(ImageView.ScaleType.FIT_XY);
+            iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(HomePageDateActivity.this, HomePageDateInfo.class);
+                    intent.putExtra("id",data.getModelId());
+                    startActivity(intent);
+                }
+            });
+            return iv;
+        }
+        @Override public void UpdateUI(Context context, final int position, HomePageBannerEntity data) {
+            this.data=data;
+            pos=position;
+            Rect rect = new Rect();
+            getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+            int x = rect.width();
+            PicassoUtil.handlePic(context, data.imageUrl, iv, x, 720);
         }
     }
 }

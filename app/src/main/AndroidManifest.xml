@@ -79,6 +79,7 @@
         <activity android:name=".common.community.activity.CommunityAddAttention" />
         <activity android:name=".common.community.activity.CommunityDynamicPublish" />
         <activity android:name=".common.community.activity.YWRecordVideoActivity" />
+        <activity android:name=".common.community.activity.WidthMatchVideo" />
         <activity android:name=".common.community.activity.CityAddressSelect" />
         <activity android:name=".common.homepage.activity.HomePageVenueSurveyActivity" />
         <activity android:name=".common.homepage.activity.HomePageDateActivity" />

@@ -110,5 +110,28 @@ public class PicUtil {
         }
         return bitmap;
     }
+    /**
+     * 获取视频缩略图
+     *
+     * @param videoPath
+     * @param width
+     * @param height
+     * @param kind      MediaStore.Images.Thumbnails.MICRO_KIND 或 MediaStore.Images.Thumbnails.MINI_KIND
+     *
+     * @return
+     */
+    public static Bitmap getVideoThumbnail(String videoPath, int width, int height, int kind) {
+        Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(videoPath, kind);
+        if (bitmap == null) {
+            return null;
+        }
+
+        if (width <= 0 || height <= 0) {
+            width = bitmap.getWidth();
+            height = bitmap.getHeight();
+        }
+
+        return ThumbnailUtils.extractThumbnail(bitmap, width, height, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+    }
 
 }

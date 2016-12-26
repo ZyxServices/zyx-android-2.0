@@ -91,7 +91,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:visibility="gone"
         />
+    <!--封面图-->
+    <FrameLayout
+        android:id="@+id/frVideo"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:background="@mipmap/test"
+        >
+        <ImageView
+            android:id="@+id/ivVideoStart"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:src="@mipmap/btn_play" />
+        </FrameLayout>
     <LinearLayout
         android:id="@+id/re1"
         style="@style/pack_re1"
