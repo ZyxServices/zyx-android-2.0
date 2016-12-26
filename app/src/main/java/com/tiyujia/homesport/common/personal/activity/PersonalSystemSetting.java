@@ -111,6 +111,13 @@ public class PersonalSystemSetting extends ImmersiveActivity implements View.OnC
                     public void onClick(View v) {
                         DataCleanManagerUtil.clearAllCache(getApplicationContext());
                         Toast.makeText(getApplicationContext(), "清理完成", Toast.LENGTH_LONG).show();
+                        String cache = null;
+                        try {
+                            cache = DataCleanManagerUtil.getTotalCacheSize(PersonalSystemSetting.this);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        tvCache.setText(cache);
                         builder.dismiss();
                     }
                 });
@@ -160,11 +167,5 @@ public class PersonalSystemSetting extends ImmersiveActivity implements View.OnC
     @Override
     protected void onResume() {
         super.onResume();
-        try {
-            String cache = DataCleanManagerUtil.getTotalCacheSize(this);
-            tvCache.setText(cache);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

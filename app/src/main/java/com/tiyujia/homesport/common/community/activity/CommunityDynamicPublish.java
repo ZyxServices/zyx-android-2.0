@@ -173,18 +173,15 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             temp=s;
         }
-
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-
         }
-
         @Override
         public void afterTextChanged(Editable s) {
             editStart = etIssueContent.getSelectionStart();
             editEnd = etIssueContent.getSelectionEnd();
             tvIssueEdit.setText(temp.length()+"/"+"500");
-            if (temp.length() > 10) {
+            if (temp.length() > 500) {
                 Toast.makeText(CommunityDynamicPublish.this,
                         "你输入的字数已经超过了限制！", Toast.LENGTH_SHORT)
                         .show();
@@ -195,7 +192,6 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
             }
         }
     };
-
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
         imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器

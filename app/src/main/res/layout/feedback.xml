@@ -38,13 +38,13 @@
             android:hint="我们需要您宝贵的意见哦"
             android:textColorHint="@color/day_edit_hit_color"
             android:gravity="top"
-
+            android:textColor="@color/day_edit_color"
             />
         <TextView
             android:id="@+id/tv_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="20/500"
+            android:text="0/500"
             android:textColor="@color/day_edit_hit_color"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
