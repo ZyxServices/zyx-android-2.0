@@ -37,6 +37,8 @@ public class FollowUtil {
                             Toast.makeText(activity, finalToast,Toast.LENGTH_SHORT).show();
                             view1.setVisibility(View.GONE);
                             view2.setVisibility(View.VISIBLE);
+                            view1.invalidate();
+                            view2.invalidate();
                         }
                     }
                 });

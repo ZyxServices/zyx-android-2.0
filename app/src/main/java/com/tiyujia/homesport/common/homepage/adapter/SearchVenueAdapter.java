@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
+import com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageWholeSearchActivity;
 import com.tiyujia.homesport.common.homepage.entity.SearchDynamicEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchVenueEntity;
@@ -62,7 +65,7 @@ public class SearchVenueAdapter extends RecyclerView.Adapter implements Filterab
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof SearchVenueHolder){
             SearchVenueHolder holder= (SearchVenueHolder) viewHolder;
-            SearchVenueEntity entity=values.get(position);
+            final SearchVenueEntity entity=values.get(position);
             String url=entity.getVenuePicture();
             if (url!=null&&!url.equals("")&&!url.equals("null")){
                 Picasso.with(context).load(url).into(holder.ivVenueSearchPic);
@@ -77,6 +80,14 @@ public class SearchVenueAdapter extends RecyclerView.Adapter implements Filterab
             TypeUtil.handleType(holder.tvVenueSearchTypeA, typeA);
             int degree = entity.getVenueDegree();
             DegreeUtil.handleDegrees(degree, holder.ivDegree1, holder.ivDegree2, holder.ivDegree3, holder.ivDegree4, holder.ivDegree5);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, HomePageSearchResultActivity.class);
+                    intent.putExtra("venueId",entity.getVenueId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
     @Override

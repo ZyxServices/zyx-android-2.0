@@ -1,7 +1,11 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +14,19 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageWholeSearchActivity;
 import com.tiyujia.homesport.common.homepage.entity.SearchUserEntity;
 import com.tiyujia.homesport.common.homepage.entity.UserModelEntity;
+import com.tiyujia.homesport.common.personal.activity.PersonalLogin;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
+import com.tiyujia.homesport.util.FollowUtil;
 import com.tiyujia.homesport.util.LvUtil;
 
 import java.util.ArrayList;
@@ -58,7 +68,7 @@ public class SearchUserAdapter extends RecyclerView.Adapter implements Filterabl
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof SearchUserHolder){
             final SearchUserHolder holder= (SearchUserHolder) viewHolder;
-            SearchUserEntity entity=values.get(position);
+            final SearchUserEntity entity=values.get(position);
             Picasso.with(context).load(entity.getUserPhotoUrl()).into(holder.rivUserPhoto);
             holder.tvUserName.setText(entity.getUserName());
             UserModelEntity modelEntity=entity.getEntity();
@@ -69,20 +79,42 @@ public class SearchUserAdapter extends RecyclerView.Adapter implements Filterabl
                 LvUtil.setLv(holder.ivUserLabel,modelEntity.getUserLabel());
                 holder.tvUserText.setText(modelEntity.getLastDynamic());
             }
+            SharedPreferences share=context.getSharedPreferences("UserInfo",Context.MODE_PRIVATE);
+            final String token=share.getString("Token","");
+            final int nowUserId=share.getInt("UserId",0);
             holder.tvUserConcern.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    holder.tvUserCancel.setVisibility(View.VISIBLE);
-                    holder.tvUserConcern.setVisibility(View.GONE);
+                    if (TextUtils.isEmpty(token)){
+                        Toast.makeText(context,"亲，您还未登陆，请登录！",Toast.LENGTH_SHORT).show();
+                        Intent intent=new Intent(context, PersonalLogin.class);
+                        context.startActivity(intent);
+                    }else {
+                        FollowUtil.handleFollowTransaction((Activity) context, API.BASE_URL+"/v2/follow/add",token,nowUserId,entity.getUserId(),holder.tvUserConcern,holder.tvUserCancel);
+                    }
                 }
             });
             holder.tvUserCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    holder.tvUserConcern.setVisibility(View.VISIBLE);
-                    holder.tvUserCancel.setVisibility(View.GONE);
+                    if (TextUtils.isEmpty(token)){
+                        Toast.makeText(context,"亲，您还未登陆，请登录！",Toast.LENGTH_SHORT).show();
+                        Intent intent=new Intent(context, PersonalLogin.class);
+                        context.startActivity(intent);
+                    }else {
+                        FollowUtil.handleFollowTransaction((Activity) context,API.BASE_URL+"/v2/follow/unfollow",token,nowUserId,entity.getUserId(),holder.tvUserCancel,holder.tvUserConcern);
+                    }
                 }
             });
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, PersonalOtherHome.class);
+                    intent.putExtra("id",entity.getUserId());
+                    context.startActivity(intent);
+                }
+            });
+
         }
     }
     @Override

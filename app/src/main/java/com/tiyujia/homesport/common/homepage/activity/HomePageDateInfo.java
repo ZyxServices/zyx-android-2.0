@@ -56,7 +56,7 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
     @Bind(R.id.ivAvatar)    ImageView ivAvatar;
     @Bind(R.id.ivBackground)    ImageView ivBackground;
     @Bind(R.id.ivLv)    ImageView ivLv;
-    @Bind(R.id.ivPush)    ImageView ivPush;
+    @Bind(R.id.tvPush)    TextView tvPush;
     @Bind(R.id.tvTitle)    TextView tvTitle;
     @Bind(R.id.tvTime)    TextView tvTime;
     @Bind(R.id.tvContent)    TextView tvContent;
@@ -112,7 +112,7 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
         ivBack.setOnClickListener(this);
         ivShare.setOnClickListener(this);
         tvPhone.setOnClickListener(this);
-        ivPush.setOnClickListener(this);
+        tvPush.setOnClickListener(this);
     }
     @Override
     public void onRefresh() {
@@ -295,7 +295,7 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
                     }
                 });
                 break;
-            case R.id.ivPush:
+            case R.id.tvPush:
                 long currentTime = System.currentTimeMillis();
                 if (currentTime>lastTime){
                     showToast("报名时间已过，无法报名");

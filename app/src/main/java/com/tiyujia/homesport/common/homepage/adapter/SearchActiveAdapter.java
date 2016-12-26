@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
+import com.tiyujia.homesport.common.homepage.activity.HomePageDateInfo;
 import com.tiyujia.homesport.common.homepage.activity.HomePageWholeSearchActivity;
 import com.tiyujia.homesport.common.homepage.entity.SearchActiveEntity;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -53,12 +56,20 @@ public class SearchActiveAdapter extends RecyclerView.Adapter implements Filtera
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof SearchActiveHolder){
             SearchActiveHolder holder= (SearchActiveHolder) viewHolder;
-            SearchActiveEntity entity=values.get(position);
+            final SearchActiveEntity entity=values.get(position);
             PicassoUtil.handlePic(context,entity.getImageUrl(),holder.ivActiveBgImg,240,180);
             holder.tvActiveType.setText(entity.getType()+"");
             holder.tvActiveTitle.setText(entity.getTitle()+"");
             holder.tvActiveRest.setText("已报名:"+entity.getAlreadyRegistered()+"  剩余名额:"+entity.getRestNumber());
             holder.tvActiveAward.setText("奖励:"+entity.getReward()+"元");
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, HomePageDateInfo.class);
+                    intent.putExtra("id",entity.getActiveId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
     @Override

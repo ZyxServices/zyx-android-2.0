@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageWholeSearchActivity;
 import com.tiyujia.homesport.common.homepage.entity.SearchDynamicEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchEquipEntity;
@@ -55,13 +57,21 @@ public class SearchDynamicAdapter extends RecyclerView.Adapter implements Filter
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof SearchDynamicHolder){
             SearchDynamicHolder holder= (SearchDynamicHolder) viewHolder;
-            SearchDynamicEntity entity=values.get(position);
+            final SearchDynamicEntity entity=values.get(position);
             holder.tvDynamicTitle.setText(entity.getDynamicTitle());
             List<String> imageUrls=entity.getDynamicImageList();
             NGLAdapter adapter = new NGLAdapter(context, imageUrls);
             holder.nglDynamicImages.setVisibility(View.VISIBLE);
             holder.nglDynamicImages.setGap(6);
             holder.nglDynamicImages.setAdapter(adapter);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, CommunityDynamicDetailActivity.class);
+                    intent.putExtra("recommendId",entity.getDynamicId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
     @Override

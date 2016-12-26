@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:src="@mipmap/nav_share"
+            android:src="@mipmap/btn_more"
             android:paddingTop="20dp"
             android:layout_alignParentRight="true"
             android:visibility="gone"
@@ -225,13 +225,16 @@
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
-    <ImageView
-        android:id="@+id/ivPush"
+    <TextView
+        android:id="@+id/tvPush"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:background="@drawable/apply_oval"
         android:layout_marginBottom="25dp"
         android:layout_marginRight="25dp"
+        android:text="报名"
+        android:textColor="@color/white"
+        android:gravity="center"
         />
 </FrameLayout>

@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.activity.HomePageArticleActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageWholeSearchActivity;
 import com.tiyujia.homesport.common.homepage.entity.SearchCourseEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchVenueEntity;
@@ -59,9 +61,17 @@ public class SearchCourseAdapter extends RecyclerView.Adapter implements Filtera
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof SearchCourseHolder){
             SearchCourseHolder holder= (SearchCourseHolder) viewHolder;
-            SearchCourseEntity entity=values.get(position);
+            final SearchCourseEntity entity=values.get(position);
             holder.tvCourseName.setText(entity.getCourseTitle());
             Picasso.with(context).load(entity.getCoursePicture()).into(holder.ivCoursePicture);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, HomePageArticleActivity.class);
+                    intent.putExtra("id",entity.getCourseId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
     @Override

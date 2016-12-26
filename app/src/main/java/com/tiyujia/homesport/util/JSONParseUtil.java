@@ -207,12 +207,14 @@ public class JSONParseUtil {
                     String imageUrl=data.getString("imgUrl");
                     List<String> images=new ArrayList<>();
                     if (imageUrl!=null&&!imageUrl.equals("")&&!imageUrl.equals("null")){
-                    String urlList[]=imageUrl.split(",");
-                    if (urlList.length!=0){
+                        if (imageUrl.contains(",")){
+                        String urlList[]=imageUrl.split(",");
                         for (String s:urlList){
                             images.add(API.PICTURE_URL+s);
-                        }
                     }
+                    }else {
+                            images.add(API.PICTURE_URL+imageUrl);
+                        }
                     }
                     entity.setEquipImageUrls(images);
                     list.add(entity);
@@ -427,11 +429,13 @@ public class JSONParseUtil {
                     String imageUrl=obj.getString("imgUrl");
                     List<String> images=new ArrayList<>();
                     if (imageUrl!=null&&!imageUrl.equals("")&&!imageUrl.equals("null")){
-                        String urlList[]=imageUrl.split(",");
-                        if (urlList.length!=0){
-                            for (int j=0;j<3;j++){
-                                images.add(API.PICTURE_URL+urlList[j]);
+                        if (imageUrl.contains(",")){
+                            String urlList[]=imageUrl.split(",");
+                            for (String s:urlList){
+                                images.add(API.PICTURE_URL+s);
                             }
+                        }else {
+                            images.add(API.PICTURE_URL+imageUrl);
                         }
                     }
                     searchEquipEntity.setEquipImageUrls(images);
@@ -446,7 +450,8 @@ public class JSONParseUtil {
                     SearchUserEntity searchUserEntity=new SearchUserEntity();
                     searchUserEntity.setUserId(obj.getInt("id"));
                     String tempStr=obj.getString("avatar");
-                    boolean isUrlRight=(tempStr==null||!tempStr.contains(".jpg")||!tempStr.contains(".png")||!tempStr.contains(".bmp")||!tempStr.contains(".gif"))?false:true;
+                    boolean isFomatRight=(!tempStr.contains(".jpg")&&!tempStr.contains(".png")&&!tempStr.contains(".bmp")&&!tempStr.contains(".gif"));
+                    boolean isUrlRight=(tempStr==null||isFomatRight)?false:true;
                     if (isUrlRight){
                         searchUserEntity.setUserPhotoUrl(API.PICTURE_URL+tempStr);
                     }else {

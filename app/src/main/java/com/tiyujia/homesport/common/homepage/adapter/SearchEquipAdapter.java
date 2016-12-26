@@ -1,6 +1,7 @@
 package com.tiyujia.homesport.common.homepage.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
+import com.tiyujia.homesport.common.homepage.activity.HomePageEquipmentInfo;
 import com.tiyujia.homesport.common.homepage.activity.HomePageWholeSearchActivity;
 import com.tiyujia.homesport.common.homepage.entity.SearchActiveEntity;
 import com.tiyujia.homesport.common.homepage.entity.SearchEquipEntity;
@@ -61,13 +64,21 @@ public class SearchEquipAdapter extends RecyclerView.Adapter implements Filterab
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof SearchEquipHolder){
             SearchEquipHolder holder= (SearchEquipHolder) viewHolder;
-            SearchEquipEntity entity=values.get(position);
+            final SearchEquipEntity entity=values.get(position);
             holder.tvEquipTitle.setText(entity.getEquipTitle());
             List<String> imageUrls=entity.getEquipImageUrls();
             NGLAdapter adapter = new NGLAdapter(context, imageUrls);
             holder.nglEquipImages.setVisibility(View.VISIBLE);
             holder.nglEquipImages.setGap(6);
             holder.nglEquipImages.setAdapter(adapter);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, HomePageEquipmentInfo.class);
+                    intent.putExtra("id",entity.getEquipId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
     @Override
