@@ -79,7 +79,7 @@
             android:layout_weight="1"
             />
     </LinearLayout>
-<com.amap.api.maps.MapView
+<com.amap.api.maps2d.MapView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/mvMap"

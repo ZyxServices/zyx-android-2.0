@@ -15,7 +15,7 @@ public class StringUtil {
         if (!isNull){
             isFalse=(!tempString.contains(".png"))&&(!tempString.contains(".jpg"))&&(!tempString.contains(".jpeg"))&&(!tempString.contains(".gif"));
         }
-        return isNull||isFalse?"http://image.tiyujia.com/group1/M00/00/00/052YyFfXxLKARvQWAAAbNiA-OGw444.png":"http://image.tiyujia.com/"+tempString;
+        return isNull||isFalse?"http://image.tiyujia.com/group1/M00/00/00/dz1CN1hiBGSAYKfgAAAR6iytn44189.png":"http://image.tiyujia.com/"+tempString;
     }
     public static String isNullImage(String tempString){
         boolean isNull=tempString == null || tempString.equals("") ||tempString.equals("null");

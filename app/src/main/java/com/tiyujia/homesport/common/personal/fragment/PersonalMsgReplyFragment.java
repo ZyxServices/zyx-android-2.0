@@ -11,12 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.BaseFragment;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.personal.activity.PersonalDynamic;
 import com.tiyujia.homesport.common.personal.adapter.MsgReplyAdapter;
 import com.tiyujia.homesport.common.personal.model.MsgModel;
 import com.tiyujia.homesport.entity.LoadCallback;
@@ -54,6 +57,12 @@ public class PersonalMsgReplyFragment extends BaseFragment implements SwipeRefre
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);
+        View view= LayoutInflater.from(getActivity()).inflate(R.layout.normal_empty_image_view,null);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        view.setLayoutParams(lp2);
+        TextView tvEmptyText= (TextView) view.findViewById(R.id.text_empty);
+        tvEmptyText.setText("暂无数据");
+        adapter.setEmptyView(view);
         RefreshUtil.refresh(srlRefresh,getActivity());
         srlRefresh.setOnRefreshListener(this);
         onRefresh();

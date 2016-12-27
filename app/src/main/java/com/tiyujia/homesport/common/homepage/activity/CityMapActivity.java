@@ -9,13 +9,13 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps.AMap;
-import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.MapView;
-import com.amap.api.maps.model.BitmapDescriptorFactory;
-import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.Marker;
-import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps2d.CameraUpdateFactory;
+import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.MapView;
+import com.amap.api.maps2d.model.BitmapDescriptorFactory;
+import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.Marker;
+import com.amap.api.maps2d.model.MarkerOptions;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.App;
@@ -88,7 +88,7 @@ public class CityMapActivity extends ImmersiveActivity implements AMap.OnMarkerC
                                             tvNumber.setText(i+"");
                                             tvCity.setText(jk.name);
                                             markerOptions.icon(BitmapDescriptorFactory.fromView(view));
-                                            markerOptions.setFlat(true);
+                                            //markerOptions.setFlat(true);
                                             aMap.addMarker(markerOptions);
                                             aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Latitude,Longitude), 10));
                                         }
@@ -158,7 +158,7 @@ public class CityMapActivity extends ImmersiveActivity implements AMap.OnMarkerC
         client.onDestroy();//销毁定位客户端。
     }
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(com.amap.api.maps2d.model.Marker marker) {
         String name=marker.getTitle();
         int id=Integer.parseInt(marker.getSnippet());
         SharedPreferences share = getSharedPreferences("City",MODE_PRIVATE);
@@ -168,6 +168,6 @@ public class CityMapActivity extends ImmersiveActivity implements AMap.OnMarkerC
         etr.apply();
         finish();
         return true;
-    }
 
+    }
 }

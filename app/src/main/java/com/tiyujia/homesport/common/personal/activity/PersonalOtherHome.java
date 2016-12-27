@@ -78,8 +78,9 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
             switch (msg.what){
                 case HANDLE_IMAGE:
                     Bitmap bitmap= (Bitmap) msg.obj;
-                    Bitmap blur = FastBlurUtil.blurBitmap(bitmap);
-                    ivBackground.setImageBitmap(blur);
+                    if (bitmap==null){
+                    }else {Bitmap blur = FastBlurUtil.blurBitmap(bitmap);
+                        ivBackground.setImageBitmap(blur);}
                     break;
             }
         }
