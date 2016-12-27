@@ -137,7 +137,7 @@ public class CityAddressSelect extends ImmersiveActivity implements PoiSearch.On
         if(content==null){
             Toast.makeText(CityAddressSelect.this, "输入为空", Toast.LENGTH_SHORT).show();
         }else{
-            query = new PoiSearch.Query(content, "");
+            query = new PoiSearch.Query(content, "地名地址信息");
             // keyWord表示搜索字符串，第二个参数表示POI搜索类型，默认为：生活服务、餐饮服务、商务住宅
             // 共分为以下20种：汽车服务|汽车销售|
             // 汽车维修|摩托车服务|餐饮服务|购物服务|生活服务|体育休闲服务|医疗保健服务|
