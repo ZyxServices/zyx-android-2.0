@@ -17,9 +17,9 @@
             style="@style/personal_title"
             />
     </RelativeLayout>
-<com.amap.api.maps.MapView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/mvMap"
-    />
+    <com.amap.api.maps2d.MapView
+        android:id="@+id/mvMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 </LinearLayout>

@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lvfq.pickerview.TimePickerView;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.BaseFragment;
@@ -31,7 +32,10 @@ import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.PickerViewUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
 import okhttp3.Call;
 import okhttp3.Response;
 
@@ -40,20 +44,17 @@ import okhttp3.Response;
  */
 public class RecordFragment extends BaseFragment implements View.OnClickListener {
     private View view;
-    private TextView tvTop,tvRecord,tvSportTimes,tvTotalScore,tvName,tvDifficulty,tvRecordEnd;
+    private TextView tvTimer,tvTop,tvRecord,tvSportTimes,tvTotalScore,tvName,tvDifficulty;
     private AlertDialog builder;
     private LinearLayout llTrack;
     private RelativeLayout rlJumpToMap;
-    private Chronometer tvTimer;
     private String mToken;
     private View ivSelect;
-    private RelativeLayout.LayoutParams layoutParams;
     private Integer levelid;
-    private Integer sportInfoId;
-    private long spendTime;
     private String[] level={"5.1","5.2","5.3","5.4","5.5","5.6","5.7","5.8","5.9","5.10a","5.10b","5.10c","5.10d","5.11a","5.11b","5.11c","5.11d","5.12a","5.12b","5.12c","5.12d",
             "5.13a","5.13b","5.13c","5.13d","5.14a","5.14b","5.14c","5.14d","5.15a","5.15b"};
     private ArrayList<String> list;
+    private Date date1;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,11 +68,10 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
         mToken=share.getString("Token","");
         tvTop=(TextView)view.findViewById(R.id.tvTop);
         tvRecord=(TextView)view.findViewById(R.id.tvRecord);
-        tvRecordEnd=(TextView)view.findViewById(R.id.tvRecordEnd);
         tvSportTimes=(TextView)view.findViewById(R.id.tvSportTimes);
         tvTotalScore=(TextView)view.findViewById(R.id.tvTotalScore);
         tvDifficulty=(TextView)view.findViewById(R.id.tvDifficulty);
-        tvTimer=(Chronometer)view.findViewById(R.id.tvTimer);
+        tvTimer=(TextView)view.findViewById(R.id.tvTimer);
         llTrack=(LinearLayout)view.findViewById(R.id.llTrack);
         rlJumpToMap= (RelativeLayout) view.findViewById(R.id.rlJumpToMap);
         ivSelect=view.findViewById(R.id.ivSelect);
@@ -80,7 +80,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
         llTrack.setOnClickListener(this);
         rlJumpToMap.setOnClickListener(this);
         ivSelect.setOnClickListener(this);
-        tvRecordEnd.setOnClickListener(this);
+        tvTimer.setOnClickListener(this);
         if(!TextUtils.isEmpty(mToken)){
             setData();
         }else {
@@ -105,67 +105,58 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
     }
     @Override
     public void onClick(View v) {
+        String format = "";
+        TimePickerView.Type type = null;
         switch (v.getId()){
             case R.id.tvTop:
                 getActivity().startActivity(new Intent(getActivity(),RecordTopActivity.class));
                 break;
             case R.id.tvRecord:
-                String s=tvName.getText().toString();
-                String b=tvDifficulty.getText().toString();
-                if(!TextUtils.isEmpty(s)&&!TextUtils.isEmpty(b)){
-                    tvTimer.setBase(SystemClock.elapsedRealtime());//计时器清零
-                    spendTime=tvTimer.getBase();
-                    int hour = (int) ((SystemClock.elapsedRealtime() -spendTime ) / 1000 / 60);
-                    tvTimer.setFormat("0"+String.valueOf(hour)+":%s");
-                    tvTimer.start();
-                    tvRecord.setVisibility(View.GONE);
-                    tvRecordEnd.setVisibility(View.VISIBLE);
-                }else {
-                    showToast("请选择场馆和线路难度");
-                }
-                break;
-            //上传用户运动记录
-            case R.id.tvRecordEnd:
-                OkGo.post(API.BASE_URL+"/v2/record/upload")
-                        .tag(this)
-                        .params("token",mToken)
-                        .params("venueId",levelid)
-                        .params("level",tvDifficulty.getText().toString())
-                        .params("spendTime",spendTime)
-                        .execute(new LoadCallback<LzyResponse>(getActivity()) {
-                            @Override
-                            public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
-                                if(lzyResponse.state==200){
-                                    tvRecord.setVisibility(View.VISIBLE);
-                                    tvRecordEnd.setVisibility(View.GONE);
-                                    tvTimer.stop();
-                                    builder = new AlertDialog.Builder(getActivity()).create();
-                                    builder.setView(getActivity().getLayoutInflater().inflate(R.layout.record_succeed_dialog, null));
-                                    builder.show();
-                                    //去掉dialog四边的黑角
-                                    builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
-                                    builder.getWindow().findViewById(R.id.tvLookRecord).setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
+                String levels =tvDifficulty.getText().toString();
+                String s=tvTimer.getText().toString();
+                if(!TextUtils.isEmpty(levels)&&!TextUtils.isEmpty(s)){
+                    long spendTime = date1.getTime();
+                    OkGo.post(API.BASE_URL+"/v2/record/upload")
+                            .tag(this)
+                            .params("token",mToken)
+                            .params("venueId",levelid)
+                            .params("level",levels)
+                            .params("spendTime",spendTime)
+                            .execute(new LoadCallback<LzyResponse>(getActivity()) {
+                                @Override
+                                public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                    if(lzyResponse.state==200){
+                                        tvRecord.setVisibility(View.VISIBLE);
+                                        builder = new AlertDialog.Builder(getActivity()).create();
+                                        builder.setView(getActivity().getLayoutInflater().inflate(R.layout.record_succeed_dialog, null));
+                                        builder.show();
+                                        //去掉dialog四边的黑角
+                                        builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
+                                        builder.getWindow().findViewById(R.id.tvLookRecord).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
 
-                                        }
-                                    });
-                                    builder.getWindow().findViewById(R.id.tvShow).setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            startActivity(new Intent(getActivity(),CommunityDynamicPublish.class));
-                                        }
-                                    });
-                                }else {
-                                    showToast("网络异常，请重试");
+                                            }
+                                        });
+                                        builder.getWindow().findViewById(R.id.tvShow).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                startActivity(new Intent(getActivity(),CommunityDynamicPublish.class));
+                                            }
+                                        });
+                                    }else {
+                                        showToast("网络异常，请重试");
+                                    }
                                 }
-                            }
-                            @Override
-                            public void onError(Call call, Response response, Exception e) {
-                                super.onError(call, response, e);
-                                showToast("网络连接失败");
-                            }
-                        });
+                                @Override
+                                public void onError(Call call, Response response, Exception e) {
+                                    super.onError(call, response, e);
+                                    showToast("网络连接失败");
+                                }
+                            });
+                }else {
+                    showToast("信息不完整");
+                }
                 break;
             case R.id.llTrack:
                 getActivity().startActivity(new Intent(getActivity(),RecordTrackActivity.class));
@@ -173,6 +164,17 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
             case R.id.rlJumpToMap:
                 Intent intent=new Intent(getActivity(),CityMapActivity.class);
                 getActivity().startActivityForResult(intent,11);
+                break;
+            case R.id.tvTimer:
+                type = TimePickerView.Type.HOURS_MINS;
+                format = "HH:mm";
+                PickerViewUtil.alertTimerPicker(getActivity(), type, format, new PickerViewUtil.TimerPickerCallBack() {
+                    @Override
+                    public void onTimeSelect(String date) {
+                        date1=new Date(date);
+                        tvTimer.setText(API.min.format(date1));
+                    }
+                });
                 break;
             case R.id.ivSelect:
                 String name=tvName.getText().toString();
@@ -190,29 +192,6 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                                 tvDifficulty.setText(list.get(postion));
                             }
                         });
-
-                        /*  OkGo.post(API.BASE_URL+"/v2/record/sportinfo/level")
-                                .tag(this)
-                                .params("venueId",levelid)
-                                .execute(new LoadCallback<LevelModel>(getActivity()) {
-                                    @Override
-                                    public void onSuccess(LevelModel levelModel, Call call, Response response) {
-                                        if (levelModel.state==200){
-
-                                            final ArrayList<Integer> listid = new ArrayList<>();
-                                            if(levelModel.data.size()>0){
-                                                for (int i=0;i<levelModel.data.size();i++){
-                                                    LevelModel.Level jk = levelModel.data.get(i);
-                                                    list.add(jk.level);
-                                                    listid.add(jk.id);
-                                                }
-                                            }else {}
-                                            if(list.size()>0){
-
-                                            }else {}
-                                        }
-                                    }
-                                });*/
                     }else {}
                 }
                 break;

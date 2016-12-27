@@ -58,7 +58,7 @@ public class PickerViewUtil {
             public void onTimeSelect(Date date) {
 //                        tvTime.setText(getTime(date));
                 SimpleDateFormat sdf = new SimpleDateFormat(format);
-                callBack.onTimeSelect(sdf.format(date));
+                callBack.onTimeSelect(date+"");
             }
         });
         pvTime.setTextSize(16);
