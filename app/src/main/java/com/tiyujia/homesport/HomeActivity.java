@@ -56,9 +56,6 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
      */
     private GoogleApiClient client2;
     public static AMapLocationClient client = null;
-    public static String nowCity;
-    public static double jingDu;
-    public static double weiDu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +83,6 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
             }
         }
         setTabSelection(ACTIVE);// 设置默认选中的tab页
-        try {
-            SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-            String token = share.getString("Token", null);
-            int UserId = share.getInt("UserId", 0);
-//            Log.i("token", token);
-//            Log.i("UserId", UserId + "");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -104,17 +92,22 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
         AMapLocationListener aMapLocationListener = new AMapLocationListener() {
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
-                if(aMapLocation!=null){
-                    AMapLocation Location = client.getLastKnownLocation();
-                    String City= Location.getCity();
-                    if(City.contains("市")){
-                        City=City.replace("市","");
-                    }else {}
+                if(aMapLocation!=null&&aMapLocation.getErrorCode()==0){
+                    String city= aMapLocation.getCity();
+                    if(city.contains("市")){
+                        city=city.replace("市","");
+                    }
                     SharedPreferences share=getSharedPreferences("UserInfo",MODE_PRIVATE);
                     SharedPreferences.Editor etr = share.edit();
-                    etr.putString("City",City);
+                    etr.putString("City",city);
                     etr.apply();
-                }else {
+                    double jingDu=aMapLocation.getLongitude();
+                    double weiDu=aMapLocation.getLatitude();
+                    Intent intent=new Intent("GOT_LOCATION");
+                    intent.putExtra("city",city);
+                    intent.putExtra("jingDu",jingDu);
+                    intent.putExtra("weiDu",weiDu);
+                    HomeActivity.this.sendBroadcast(intent);
                 }
             }
         };
@@ -355,8 +348,5 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       SharedPreferences  share=getSharedPreferences("City",MODE_PRIVATE);
-        share.edit().clear().apply();
-
     }
 }

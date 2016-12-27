@@ -31,7 +31,6 @@ public class DialogUtil {
             lp.alpha = 0.8f; //设置循环框的透明度
             wd.setAttributes(lp); //设置弹出框的透明度
             wd.setGravity(Gravity.CENTER); //设置水平居中
-            dialog.show();
         return dialog;
     }
     public static void goBackToLogin(final Context context,String title,String message){

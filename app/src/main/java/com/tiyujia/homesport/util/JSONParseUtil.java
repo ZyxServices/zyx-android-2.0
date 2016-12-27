@@ -431,8 +431,14 @@ public class JSONParseUtil {
                     if (imageUrl!=null&&!imageUrl.equals("")&&!imageUrl.equals("null")){
                         if (imageUrl.contains(",")){
                             String urlList[]=imageUrl.split(",");
-                            for (String s:urlList){
-                                images.add(API.PICTURE_URL+s);
+                            if (urlList.length<=3) {
+                                for (String s : urlList) {
+                                    images.add(API.PICTURE_URL + s);
+                                }
+                            }else {
+                                for (int j=0;j<3;j++) {
+                                    images.add(API.PICTURE_URL + urlList[j]);
+                                }
                             }
                         }else {
                             images.add(API.PICTURE_URL+imageUrl);
@@ -500,12 +506,21 @@ public class JSONParseUtil {
                     String imageUrl=obj.getString("imgUrl");
                     List<String> images = new ArrayList<>();
                     if (imageUrl!=null&&!imageUrl.equals("")&&!imageUrl.equals("null")) {
-                        String urlList[] = imageUrl.split(",");
-                        if (urlList.length != 0) {
-                            for (int j=0;j<3;j++) {
-                                images.add(API.PICTURE_URL + urlList[j]);
+                        if (imageUrl.contains(",")){
+                            String urlList[] = imageUrl.split(",");
+                            if (urlList.length<=3){
+                                for (String s:urlList) {
+                                    images.add(API.PICTURE_URL + s);
+                                }
+                            }else {
+                                for (int j=0;j<3;j++) {
+                                    images.add(API.PICTURE_URL + urlList[j]);
+                                }
                             }
+                        }else {
+                            images.add(API.PICTURE_URL+imageUrl);
                         }
+
                     }
                     searchDynamicEntity.setDynamicImageList(images);
                     dynamicEntityList.add(searchDynamicEntity);
