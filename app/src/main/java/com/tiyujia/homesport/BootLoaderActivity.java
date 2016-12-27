@@ -10,7 +10,7 @@ import android.os.Message;
  * 邮箱:928902646@qq.com
  */
 
-public class BootLoaderActivity extends CheckPermissionsActivity {
+public class BootLoaderActivity extends ImmersiveActivity {
     public   static final int HANDLER =1;
     Handler handler=new Handler(){
         @Override

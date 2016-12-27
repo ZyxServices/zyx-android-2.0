@@ -51,9 +51,16 @@ import com.tiyujia.homesport.util.JSONParseUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -153,67 +160,100 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
             }
         }, 500);
     }
+    Dialog dialog;
     private void setDatas() {
         try {
-            SharedPreferences share=getActivity().getSharedPreferences("UserInfo",Context.MODE_PRIVATE);
-            String s=share.getString("City","");
-            if (s.equals("")){
-                tvSearchCity.setText("定位中");
+            if (selectCity==null){
+                if (city==null){
+                    tvSearchCity.setText("定位中");
+                }else {
+                    tvSearchCity.setText(city);
+                }
             }else {
-                tvSearchCity.setText(s);
+                tvSearchCity.setText(selectCity);
             }
             tvSearchCity.invalidate();
-            HomeActivity homeActivity=new HomeActivity();
-            AMapLocationClient client = homeActivity.client;
-            homeActivity.getLocation();
-            AMapLocation location = client.getLastKnownLocation();
-            final double latitude= location.getLatitude();//纬度
-            final double longitude=location.getLongitude();//经度
-                ArrayList<String> cacheData1= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".1.json");
-                if (cacheData1==null||cacheData1.size()==0) {
+            dialog=DialogUtil.createDialog(getActivity(),"请等待。。。","正在定位");
+            if (jingDu==0.0){
+                dialog.show();
+                Log.i("tag","11111111");
+            }else {
+                ArrayList<String> cacheData1 = (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() +"_" +selectCity+ "_.1.json");
+                if (cacheData1 == null || cacheData1.size() == 0) {
                     new Thread() {
                         @Override
                         public void run() {
                             String uri = API.BASE_URL + "/v2/venue/findVenue";
                             HashMap<String, String> params = new HashMap<>();
                             params.put("type", "2");
-                            params.put("lng", longitude + "");
-                            params.put("lat", latitude + "");
+                            params.put("lng", jingDu + "");
+                            params.put("lat", weiDu + "");
+                            if (selectCity!=null){
+                                params.put("city", selectCity);
+                            }
                             params.put("number", "10");
                             params.put("pageNumber", "1");
                             String result = PostUtil.sendPostMessage(uri, params);
-                            JSONParseUtil.parseNetDataVenue(getActivity(),result,HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
+                            Log.i("tag","3333333"+"J---"+jingDu+"W---"+weiDu);
+                            JSONParseUtil.parseNetDataVenue(getActivity(), result, HomePageFragment.this.getClass().getName()+"_" +selectCity+ "_.1.json", datas, handler, HANDLE_DATA);
                         }
                     }.start();
-                }else {
-                    JSONParseUtil.parseLocalDataVenue(getActivity(),HomePageFragment.this.getClass().getName()+".1.json",datas, handler, HANDLE_DATA);
+                } else {
+                    Log.i("tag","444444");
+                    JSONParseUtil.parseLocalDataVenue(getActivity(), HomePageFragment.this.getClass().getName()+"_" +selectCity+ "_.1.json", datas, handler, HANDLE_DATA);
                 }
-            ArrayList<String> cacheData2= (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".2.json");
-            if (cacheData2==null||cacheData2.size()==0) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        String uri = API.BASE_URL + "/v2/search/deva";
-                        HashMap<String, String> params = new HashMap<>();
-                        params.put("model", "1");
-                        String result = PostUtil.sendPostMessage(uri, params);
-                        JSONParseUtil.parseNetDataHomeBanner(getActivity(),result,HomePageFragment.this.getClass().getName()+"2.json",banners, handler, HANDLE_BANNER_DATA);
-                    }
-                }.start();
-            }else {
-                JSONParseUtil.parseLocalDataHomeBanner(getActivity(),HomePageFragment.this.getClass().getName()+".2.json",banners, handler, HANDLE_BANNER_DATA);
+                ArrayList<String> cacheData2 = (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".2.json");
+                if (cacheData2 == null || cacheData2.size() == 0) {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            String uri = API.BASE_URL + "/v2/search/deva";
+                            HashMap<String, String> params = new HashMap<>();
+                            params.put("model", "1");
+                            String result = PostUtil.sendPostMessage(uri, params);
+                            Log.i("tag","55555");
+                            JSONParseUtil.parseNetDataHomeBanner(getActivity(), result, HomePageFragment.this.getClass().getName() + "2.json", banners, handler, HANDLE_BANNER_DATA);
+                        }
+                    }.start();
+                } else {
+                    Log.i("tag","66666");
+                    JSONParseUtil.parseLocalDataHomeBanner(getActivity(), HomePageFragment.this.getClass().getName() + ".2.json", banners, handler, HANDLE_BANNER_DATA);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+    private String city;
+    private double jingDu;
+    private double weiDu;
+    MyLocationReceiver myReceiver;
+    private class MyLocationReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            city=intent.getStringExtra("city");
+            jingDu=intent.getDoubleExtra("jingDu",0.0);
+            weiDu=intent.getDoubleExtra("weiDu",0.0);
+            if (dialog!=null) {
+                dialog.dismiss();
+                dialog = null;
+                Log.i("tag", "22222222");
+            }
+            setDatas();
+        }
+    }
     @Override public void onResume() {
         super.onResume();
         cbHomePage.startTurning(2500);
+        myReceiver=new MyLocationReceiver();
+        IntentFilter filter=new IntentFilter();
+        filter.addAction("GOT_LOCATION");
+        getActivity().registerReceiver(myReceiver,filter);
     }
     @Override public void onPause() {
         super.onPause();
         cbHomePage.stopTurning();
+        getActivity().unregisterReceiver(myReceiver);
     }
     @Override
     public void onClick(View v) {
@@ -239,16 +279,33 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
                 break;
         }
     }
+    private static String GAODEAPI = "http://restapi.amap.com/v3/geocode/geo?key=<key>&s=rsv3&address=<address>";
+    private static String KEY = "41b06df45821e2e8780540298badbd71";
+    private static Pattern pattern = Pattern.compile("\"location\":\"(\\d+\\.\\d+),(\\d+\\.\\d+)\"");
+    private void resetJingWeiDu(String cityName){
+        GAODEAPI = GAODEAPI.replaceAll("<key>", KEY);
+        try {
+            String requestUrl = GAODEAPI.replaceAll("<address>", URLEncoder.encode(cityName, "UTF-8"));
+            if (requestUrl != null ) {
+                Matcher matcher = pattern.matcher(requestUrl);
+                if (matcher.find() && matcher.groupCount() == 2) {
+                    jingDu = Double.valueOf(matcher.group(1));
+                    weiDu = Double.valueOf(matcher.group(2));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         if (resultCode==10002&&requestCode==10001){
             selectCity=data.getStringExtra("SelectCity");
-            tvSearchCity.setText(selectCity);
-            tvSearchCity.invalidate();
+            resetJingWeiDu(selectCity);
+            setDatas();
         }
     }
-
     public class ImageHolderView implements Holder<HomePageBannerEntity> {
         private ImageView iv;
         int pos=0;
@@ -276,6 +333,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
         }
     }
     @Override public void onRefresh() {
+        resetJingWeiDu(tvSearchCity.getText().toString());
         setDatas();
         new Handler().postDelayed(new Runnable() {
             @Override public void run() {
