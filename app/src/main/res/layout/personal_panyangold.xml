@@ -72,9 +72,10 @@
                 android:layout_marginBottom="10dp"
                 />
             <TextView
+                android:id="@+id/tvZanNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="未完成 (2/5)"
+                android:text="未完成 (0/5)"
                 android:textSize="12sp"
                 android:textColor="@color/day_edit_hit_color"
                 />
@@ -105,16 +106,17 @@
                 android:layout_marginBottom="10dp"
                 />
             <TextView
+                android:id="@+id/tvPinlun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="未完成 (2/2)"
+                android:text="未完成 (0/2)"
                 android:textSize="12sp"
                 android:textColor="@color/day_edit_hit_color"
                 />
             </LinearLayout>
             <TextView
                 style="@style/panyanbi_text"
-                android:text="+2"
+                android:text="+1"
                 />
         </RelativeLayout>
         <TextView
@@ -137,17 +139,19 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
                 />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="未完成 (2/5)"
-                android:textSize="12sp"
-                android:textColor="@color/day_edit_hit_color"
-                />
+
+                <TextView
+                    android:id="@+id/tvDynamicNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="未完成 (0/5)"
+                    android:textSize="12sp"
+                    android:textColor="@color/day_edit_hit_color"
+                    />
             </LinearLayout>
             <TextView
                 style="@style/panyanbi_text"
-                android:text="+2"
+                android:text="+3"
                 />
         </RelativeLayout>
         <TextView
@@ -171,16 +175,17 @@
                 android:layout_marginBottom="10dp"
                 />
             <TextView
+                android:id="@+id/tvShareNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="未完成 (2/3)"
+                android:text="未完成 (0/3)"
                 android:textSize="12sp"
                 android:textColor="@color/day_edit_hit_color"
                 />
             </LinearLayout>
             <TextView
                 style="@style/panyanbi_text"
-                android:text="+5"
+                android:text="+1"
                 />
         </RelativeLayout>
     </LinearLayout>

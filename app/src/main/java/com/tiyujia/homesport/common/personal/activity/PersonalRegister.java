@@ -130,14 +130,20 @@ public class PersonalRegister extends ImmersiveActivity implements View.OnClickL
         tvRegister.setOnClickListener(this);
         tvNext.setOnClickListener(this);
         tvVerCode.setOnClickListener(this);
-        tvVerCode.setOnClickListener(this);
         ivAvatar.setOnClickListener(this);
+        tvProtocol.setOnClickListener(this);
     }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.ivBack:
                 finish();
+                break;
+            case R.id.tvProtocol:
+                Intent a=new Intent(this,ProtocolAcitvity.class);
+                a.putExtra("title","趣攀岩软件许可协议");
+                a.putExtra("Url","/ip/phone/agreement/permit");
+                startActivity(a);
                 break;
             case R.id.ivAvatar:
                 showDialogs();

@@ -71,7 +71,7 @@
         <activity android:name=".common.personal.activity.PersonalPanyanGold" />
         <activity android:name=".common.personal.activity.PersonalPanyanGoldInfo" />
         <activity android:name=".common.personal.activity.PersonalPanyanGoldRecord" />
-        <activity android:name=".common.personal.activity.PersonalGoldRule" />
+        <activity android:name=".common.personal.activity.ProtocolAcitvity" />
         <activity android:name=".common.personal.activity.PersonalMsg" />
         <activity android:name=".common.personal.activity.PersonalLogin" />
         <activity android:name=".common.personal.activity.PersonalRegister" />

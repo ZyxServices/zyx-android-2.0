@@ -6,6 +6,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 
@@ -17,7 +18,7 @@ import butterknife.ButterKnife;
  * 邮箱:928902646@qq.com
  */
 
-public class PersonalGoldRule extends ImmersiveActivity {
+public class ProtocolAcitvity extends ImmersiveActivity {
     @Bind(R.id.tv_title)TextView tv_title;
     @Bind(R.id.personal_back)ImageView personal_back;
     @Bind(R.id.webview)WebView webview;
@@ -26,7 +27,10 @@ public class PersonalGoldRule extends ImmersiveActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.personal_gold_rule);
         ButterKnife.bind(this);
-        tv_title.setText("攀岩币规则");
+        String title=getIntent().getStringExtra("title");
+        String Url=getIntent().getStringExtra("Url");
+        tv_title.setText(title);
+        webview.loadUrl(API.Protocol_URL+Url);
         personal_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

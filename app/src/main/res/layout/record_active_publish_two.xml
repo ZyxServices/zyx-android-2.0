@@ -216,6 +216,7 @@
             android:textColor="@color/day_edit_hit_color"
             />
         <TextView
+            android:id="@+id/tvRule"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="《趣攀岩活动发布服务协议》"

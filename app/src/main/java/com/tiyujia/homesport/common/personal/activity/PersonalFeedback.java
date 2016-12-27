@@ -18,6 +18,7 @@ import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.EmojiFilterUtil;
 
 import butterknife.Bind;
 import okhttp3.Call;
@@ -59,7 +60,8 @@ public class PersonalFeedback extends ImmersiveActivity {
         tv_push.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String Content=content.getText().toString();
+                String tempText = content.getText().toString().trim();
+                final String Content= EmojiFilterUtil.filterEmoji(PersonalFeedback.this,tempText);
                 OkGo.post(API.BASE_URL+"/v2/user/suggest")
                         .tag(this)
                         .params("token",mToken)
