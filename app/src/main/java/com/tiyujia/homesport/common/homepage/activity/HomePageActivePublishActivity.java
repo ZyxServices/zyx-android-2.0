@@ -32,7 +32,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
@@ -44,10 +43,10 @@ import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.activity.CityAddressSelect;
-import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
-import com.tiyujia.homesport.common.personal.activity.PersonalSetInfo;
+import com.tiyujia.homesport.common.personal.activity.ProtocolAcitvity;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.EmojiFilterUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.StorePhotosUtil;
 import com.tiyujia.homesport.util.UploadUtil;
@@ -71,7 +70,6 @@ import java.util.List;
 import java.util.Locale;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Response;
 
@@ -88,6 +86,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
     @Bind(R.id.tvEndTime)    TextView tvEndTime;
     @Bind(R.id.tvApplyEndTime)    TextView tvApplyEndTime;
     @Bind(R.id.tvAddress)    TextView tvAddress;
+    @Bind(R.id.tvRule)    TextView tvRule;
     @Bind(R.id.etTitle)    EditText etTitle;
     @Bind(R.id.tvNumber)    EditText tvNumber;
     @Bind(R.id.etContent)    EditText etContent;
@@ -162,6 +161,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
         reEndTime.setOnClickListener(this);
         reApplyEndTiem.setOnClickListener(this);
         reAddress.setOnClickListener(this);
+        tvRule.setOnClickListener(this);
     }
 
     private void initImagePicker() {
@@ -213,7 +213,9 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                     if(!Chckbox.isChecked()){
                         showToast("未同意体育家活动发布服务协议无法发布活动哟");
                     }else{
-                        String Content= etContent.getText().toString();
+                       // String Content= etContent.getText().toString();
+                        String tempText = etContent.getText().toString().trim();
+                        final String Content= EmojiFilterUtil.filterEmoji(this,tempText);
                         String Title= etTitle.getText().toString();
                         String Address= tvAddress.getText().toString();
                         if(TextUtils.isEmpty(tvNumber.getText())||tvNumber.getText().equals("无限制")){
@@ -340,6 +342,12 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                 Intent i=new Intent(HomePageActivePublishActivity.this, CityAddressSelect.class);
                 i.putExtra("gone",1);
                 startActivityForResult(i,101);
+                break;
+            case R.id.tvRule:
+                Intent a=new Intent(HomePageActivePublishActivity.this, ProtocolAcitvity.class);
+                a.putExtra("title","趣攀岩活动发布服务协议");
+                a.putExtra("Url","/ip/phone/agreement/release");
+                startActivity(a);
                 break;
         }
     }

@@ -57,6 +57,7 @@ import com.tiyujia.homesport.common.community.fragment.RecommendFragment;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.EmojiFilterUtil;
 import com.tiyujia.homesport.util.GetSignTask;
 import com.tiyujia.homesport.widget.GlideImageLoader;
 import com.tiyujia.homesport.widget.ImagePickerAdapter;
@@ -324,7 +325,8 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 startActivityForResult(inten,101);
                 break;
             case R.id.tvPush:
-                final String content=etIssueContent.getText().toString();
+                String tempText = etIssueContent.getText().toString().trim();
+                final String content= EmojiFilterUtil.filterEmoji(this,tempText);
                 ArrayList<File> files=new ArrayList<>();
                 if(!TextUtils.isEmpty(content)){
                     if (images != null && images.size() > 0) {

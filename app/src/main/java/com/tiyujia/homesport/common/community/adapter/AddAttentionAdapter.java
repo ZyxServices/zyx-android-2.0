@@ -3,6 +3,7 @@ package com.tiyujia.homesport.common.community.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -56,8 +57,11 @@ public class AddAttentionAdapter extends BaseQuickAdapter<AttentionModel.Attenti
         SharedPreferences share = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         final String mToken=share.getString("Token","");
         final int mUserId=share.getInt("UserId",0);
-        PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(attentionList.avatar), 320, 320),ivAvatar,320,320);
-
+        if(TextUtils.isEmpty(attentionList.avatar)){
+            ivAvatar.setImageResource(R.mipmap.pic_gray);
+        }else {
+            PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(attentionList.avatar), 320, 320), ivAvatar, 320, 320);
+        }
         tv_yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

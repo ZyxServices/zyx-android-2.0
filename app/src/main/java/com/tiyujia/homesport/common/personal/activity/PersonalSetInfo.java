@@ -47,6 +47,7 @@ import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.DialogUtil;
+import com.tiyujia.homesport.util.EmojiFilterUtil;
 import com.tiyujia.homesport.util.GetUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -214,8 +215,10 @@ public class PersonalSetInfo extends ImmersiveActivity  implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.personal_back:
-                String nickname=etNickName.getText().toString();
-                String signtrue=etSignature.getText().toString();
+                String tempText = etNickName.getText().toString().trim();
+                final String nickname= EmojiFilterUtil.filterEmoji(PersonalSetInfo.this,tempText);
+                String tempText2 = etSignature.getText().toString().trim();
+                final String signtrue= EmojiFilterUtil.filterEmoji(PersonalSetInfo.this,tempText2);
                 OkGo.post(API.BASE_URL+"/v2/user/info")
                         .tag(this)
                         .params("token",mToken)
