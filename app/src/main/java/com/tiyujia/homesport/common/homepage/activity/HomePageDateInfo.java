@@ -27,6 +27,7 @@ import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
 import com.tiyujia.homesport.common.homepage.entity.DateInfoModel;
+import com.tiyujia.homesport.common.personal.activity.PersonalLogin;
 import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
@@ -320,11 +321,13 @@ public class HomePageDateInfo extends ImmersiveActivity implements SwipeRefreshL
                                         TextView tvContent=(TextView)builder.getWindow().findViewById(R.id.tvContent);
                                         tvContent.setText("感谢您的报名，祝您玩愉快");
                                     }else if(lzyResponse.state==10005){
-                                        showToast("请勿重复报名");
+                                        showToast("亲，请勿重复报名哦");
                                     }else if(lzyResponse.state==800){
-                                        showToast("账户失效，请重新注销登录");
+                                        showToast("亲，账户已失效或者未登录");
+                                        Intent intent=new Intent(HomePageDateInfo.this, PersonalLogin.class);
+                                        HomePageDateInfo.this.startActivity(intent);
                                     }else if(lzyResponse.state==10013){
-                                        showToast("报名人数已满，无法报名");
+                                        showToast("亲，报名人数已满，无法报名");
                                     }
                                 }
                             });

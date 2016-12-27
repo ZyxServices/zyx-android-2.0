@@ -37,7 +37,7 @@ public class HomePageRecentVenueAdapter extends RecyclerView.Adapter implements 
     List<HomePageRecentVenueEntity> mCopyInviteMessages;
     List<HomePageRecentVenueEntity> inviteMessages;
     private static final int VIEW_TYPE = -1;
-    public                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            HomePageRecentVenueAdapter(Context context, List<HomePageRecentVenueEntity> values) {
+    public  HomePageRecentVenueAdapter(Context context, List<HomePageRecentVenueEntity> values) {
         if (values.size()!=0){
             this.values = values;
         }else {
@@ -52,7 +52,7 @@ public class HomePageRecentVenueAdapter extends RecyclerView.Adapter implements 
         LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         viewItem.setLayoutParams(lp1);
         if (viewType==VIEW_TYPE){
-            View view=LayoutInflater.from(context).inflate(R.layout.empty_view, null);
+            View view=LayoutInflater.from(context).inflate(R.layout.normal_empty_image_view, null);
             LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             view.setLayoutParams(lp2);
             return new empty(view);

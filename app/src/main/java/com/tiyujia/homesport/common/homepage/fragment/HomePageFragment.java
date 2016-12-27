@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,23 +16,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.BaseFragment;
-import com.tiyujia.homesport.BootLoaderActivity;
-import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageArticleActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageCourseActivity;
@@ -45,22 +37,18 @@ import com.tiyujia.homesport.common.homepage.activity.HomePageWholeSearchActivit
 import com.tiyujia.homesport.common.homepage.adapter.HomePageRecentVenueAdapter;
 import com.tiyujia.homesport.common.homepage.entity.HomePageBannerEntity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageRecentVenueEntity;
-import com.tiyujia.homesport.util.CacheUtils;
 import com.tiyujia.homesport.util.DialogUtil;
 import com.tiyujia.homesport.util.JSONParseUtil;
+import com.tiyujia.homesport.util.NetworkUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
-
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -139,6 +127,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
             }
         });
         ((AppCompatActivity)getActivity()).setSupportActionBar(tb);
+        dialog=DialogUtil.createDialog(getActivity(),"请等待。。。。。。","         正在定位");
         return view;
     }
     @Override
@@ -173,13 +162,11 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
                 tvSearchCity.setText(selectCity);
             }
             tvSearchCity.invalidate();
-            dialog=DialogUtil.createDialog(getActivity(),"请等待。。。","正在定位");
-            if (jingDu==0.0){
+            if (tvSearchCity.getText().toString().equals("定位中")){
                 dialog.show();
-                Log.i("tag","11111111");
             }else {
-                ArrayList<String> cacheData1 = (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() +"_" +selectCity+ "_.1.json");
-                if (cacheData1 == null || cacheData1.size() == 0) {
+                boolean isNetEnable= NetworkUtil.isNetworkEnable(getActivity());
+                if (isNetEnable){
                     new Thread() {
                         @Override
                         public void run() {
@@ -194,16 +181,13 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
                             params.put("number", "10");
                             params.put("pageNumber", "1");
                             String result = PostUtil.sendPostMessage(uri, params);
-                            Log.i("tag","3333333"+"J---"+jingDu+"W---"+weiDu);
                             JSONParseUtil.parseNetDataVenue(getActivity(), result, HomePageFragment.this.getClass().getName()+"_" +selectCity+ "_.1.json", datas, handler, HANDLE_DATA);
                         }
                     }.start();
-                } else {
-                    Log.i("tag","444444");
+                }else {
                     JSONParseUtil.parseLocalDataVenue(getActivity(), HomePageFragment.this.getClass().getName()+"_" +selectCity+ "_.1.json", datas, handler, HANDLE_DATA);
                 }
-                ArrayList<String> cacheData2 = (ArrayList<String>) CacheUtils.readJson(getActivity(), HomePageFragment.this.getClass().getName() + ".2.json");
-                if (cacheData2 == null || cacheData2.size() == 0) {
+                if (isNetEnable) {
                     new Thread() {
                         @Override
                         public void run() {
@@ -211,12 +195,10 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
                             HashMap<String, String> params = new HashMap<>();
                             params.put("model", "1");
                             String result = PostUtil.sendPostMessage(uri, params);
-                            Log.i("tag","55555");
                             JSONParseUtil.parseNetDataHomeBanner(getActivity(), result, HomePageFragment.this.getClass().getName() + "2.json", banners, handler, HANDLE_BANNER_DATA);
                         }
                     }.start();
                 } else {
-                    Log.i("tag","66666");
                     JSONParseUtil.parseLocalDataHomeBanner(getActivity(), HomePageFragment.this.getClass().getName() + ".2.json", banners, handler, HANDLE_BANNER_DATA);
                 }
             }
@@ -234,16 +216,13 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
             city=intent.getStringExtra("city");
             jingDu=intent.getDoubleExtra("jingDu",0.0);
             weiDu=intent.getDoubleExtra("weiDu",0.0);
-            if (dialog!=null) {
-                dialog.dismiss();
-                dialog = null;
-                Log.i("tag", "22222222");
-            }
+            dialog.dismiss();
             setDatas();
         }
     }
     @Override public void onResume() {
         super.onResume();
+        setDatas();
         cbHomePage.startTurning(2500);
         myReceiver=new MyLocationReceiver();
         IntentFilter filter=new IntentFilter();

@@ -22,7 +22,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by zzqybyb19860112 on 2016/11/29.
@@ -82,7 +81,7 @@ public class JSONParseUtil {
                     entity.setCreate_time(data.getInt("create_time"));
                     entity.setDistance(data.getInt("distance"));
                     entity.setPnumber(data.getInt("pnumber"));
-                    entity.setTalkNumber(new Random().nextInt(5000)+1000);
+                    entity.setTalkNumber(data.getInt("commentNumber"));
                     datas.add(entity);
                 }
                 handler.sendEmptyMessage(stateFinal);

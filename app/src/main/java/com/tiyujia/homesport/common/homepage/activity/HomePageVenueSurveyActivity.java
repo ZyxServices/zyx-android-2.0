@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageSearchRecordAdapter;
@@ -74,7 +73,6 @@ public class HomePageVenueSurveyActivity extends NewBaseActivity implements View
                         @Override
                         public void onItemClick(String searchText) {
                             if (allVenueFragment!=null){
-                                Log.i("tag",searchText+"-----------------");
                                 allVenueFragment.adapter.getFilter().filter(searchText);
                                 allVenueFragment.adapter.notifyDataSetChanged();
                                 tabAdapter.notifyDataSetChanged();
@@ -116,14 +114,10 @@ public class HomePageVenueSurveyActivity extends NewBaseActivity implements View
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.i("tag",allVenueFragment.toString());//有
-                Log.i("tag",allVenueFragment.adapter.toString());//有
-                Log.i("tag",hotVenueFragment.toString());//有
-                Log.i("tag",hotVenueFragment.adapter.toString());//空
                 allVenueFragment.adapter.getFilter().filter(s);
-//                hotVenueFragment.adapter.getFilter().filter(s);
-//                hardVenueFragment.adapter.getFilter().filter(s);
-//                nearVenueFragment.adapter.getFilter().filter(s);
+                hotVenueFragment.adapter.getFilter().filter(s);
+                hardVenueFragment.adapter.getFilter().filter(s);
+                nearVenueFragment.adapter.getFilter().filter(s);
                 tabAdapter.notifyDataSetChanged();
                 if (!s.toString().trim().equals("")){
                     llSearchResult.setVisibility(View.GONE);

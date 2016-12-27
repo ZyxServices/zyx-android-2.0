@@ -9,23 +9,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.tiyujia.homesport.API;
-import com.tiyujia.homesport.App;
 import com.tiyujia.homesport.BaseFragment;
-import com.tiyujia.homesport.BootLoaderActivity;
 import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageVenueSurveyActivity;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageRecentVenueAdapter;
 import com.tiyujia.homesport.common.homepage.entity.HomePageRecentVenueEntity;
-import com.tiyujia.homesport.util.CacheUtils;
 import com.tiyujia.homesport.util.JSONParseUtil;
+import com.tiyujia.homesport.util.NetworkUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,16 +56,16 @@ public class HardVenueFragment extends BaseFragment implements  SwipeRefreshLayo
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.recycleview_layout,null);
+        recyclerView= (RecyclerView)view.findViewById(R.id.recyclerView);
+        srlRefresh= (SwipeRefreshLayout)view.findViewById(R.id.srlRefresh);
+        RefreshUtil.refresh(srlRefresh, getActivity());
+        srlRefresh.setOnRefreshListener(this);
         return view;
     }
 
     @Override
     protected void initData() {
         setData();
-        recyclerView= (RecyclerView)view.findViewById(R.id.recyclerView);
-        srlRefresh= (SwipeRefreshLayout)view.findViewById(R.id.srlRefresh);
-        RefreshUtil.refresh(srlRefresh, getActivity());
-        srlRefresh.setOnRefreshListener(this);
     }
 
     private void setData() {
@@ -77,8 +73,8 @@ public class HardVenueFragment extends BaseFragment implements  SwipeRefreshLayo
         AMapLocation location = client.getLastKnownLocation();
         final double latitude= location.getLatitude();//纬度
         final double longitude=location.getLongitude();//经度
-        ArrayList<String> cacheData= (ArrayList<String>) CacheUtils.readJson(getActivity(), HardVenueFragment.this.getClass().getName() + ".json");
-        if (cacheData==null||cacheData.size()==0) {
+        boolean isNetEnable= NetworkUtil.isNetworkEnable(getActivity());
+        if (isNetEnable)  {
             new Thread() {
                 @Override
                 public void run() {
@@ -97,7 +93,11 @@ public class HardVenueFragment extends BaseFragment implements  SwipeRefreshLayo
             JSONParseUtil.parseLocalDataVenue(getActivity(), HardVenueFragment.this.getClass().getName()+".json",datas, handler, HANDLE_DATA);
         }
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        setData();
+    }
     @Override
     public void onRefresh() {
         setData();
