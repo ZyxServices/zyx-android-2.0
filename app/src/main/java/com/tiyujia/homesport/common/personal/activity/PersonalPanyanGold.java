@@ -128,7 +128,7 @@ public class PersonalPanyanGold extends ImmersiveActivity implements View.OnClic
             case R.id.tv_rule:
                 Intent a=new Intent(this,ProtocolAcitvity.class);
                 a.putExtra("title","趣攀岩攀岩币规则");
-                a.putExtra("Url","/ip/phone/rule/climbingCoins");
+                a.putExtra("Url","/phone/rule/climbingCoins");
                 startActivity(a);
                 break;
         }

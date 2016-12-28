@@ -27,7 +27,9 @@ import com.tiyujia.homesport.common.community.activity.CommunityDynamicPublish;
 import com.tiyujia.homesport.common.homepage.activity.CityMapActivity;
 import com.tiyujia.homesport.common.record.activity.RecordTopActivity;
 import com.tiyujia.homesport.common.record.activity.RecordTrackActivity;
+import com.tiyujia.homesport.common.record.adapter.RecordTrackAdapter;
 import com.tiyujia.homesport.common.record.model.OverViewModel;
+import com.tiyujia.homesport.common.record.model.RecordModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.PickerViewUtil;
@@ -55,6 +57,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
             "5.13a","5.13b","5.13c","5.13d","5.14a","5.14b","5.14c","5.14d","5.15a","5.15b"};
     private ArrayList<String> list;
     private Date date1;
+    private Integer recordId;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -122,9 +125,9 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                             .params("venueId",levelid)
                             .params("level",levels)
                             .params("spendTime",spendTime)
-                            .execute(new LoadCallback<LzyResponse>(getActivity()) {
+                            .execute(new LoadCallback<LzyResponse<RecordModel>>(getActivity()) {
                                 @Override
-                                public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                public void onSuccess(final LzyResponse<RecordModel> lzyResponse, Call call, Response response) {
                                     if(lzyResponse.state==200){
                                         tvRecord.setVisibility(View.VISIBLE);
                                         builder = new AlertDialog.Builder(getActivity()).create();
@@ -135,13 +138,15 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                                         builder.getWindow().findViewById(R.id.tvLookRecord).setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-
+                                                startActivity(new Intent(getActivity(),RecordTrackActivity.class));
                                             }
                                         });
                                         builder.getWindow().findViewById(R.id.tvShow).setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                startActivity(new Intent(getActivity(),CommunityDynamicPublish.class));
+                                                Intent i=new Intent(getActivity(),CommunityDynamicPublish.class);
+                                                 i.putExtra("recordId",lzyResponse.data.id);
+                                                startActivity(i);
                                             }
                                         });
                                     }else {
@@ -207,6 +212,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
         SharedPreferences city=getActivity().getSharedPreferences("City", Context.MODE_PRIVATE);
         String name=city.getString("name","");
         levelid=city.getInt("id",0);
+            recordId=city.getInt("recordId",0);
         if(!TextUtils.isEmpty(name)){
             tvName.setText(name);
         }else {}

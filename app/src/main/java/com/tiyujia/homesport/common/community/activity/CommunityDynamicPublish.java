@@ -398,7 +398,8 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                         showToast("onError");
                                     }
                                 });
-                    }else if(!TextUtils.isEmpty(VideoUrl)){
+                    }
+                    else if(!TextUtils.isEmpty(VideoUrl)){
                         OkGo.post(API.BASE_URL+"/v2/cern/insert")
                                 .params("token",mToken)
                                 .params("userId",mUserId)
@@ -420,7 +421,9 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                                         showToast("失败");
                                     }
                                 });
-                    }  else {  if(recordId==null){
+                    }
+                    else if(TextUtils.isEmpty(VideoUrl)&&images == null && images.size()==0){
+                        if(recordId==null){
                         OkGo.post(API.BASE_URL+"/v2/cern/insert")
                                 .params("token",mToken)
                                 .params("userId",mUserId)

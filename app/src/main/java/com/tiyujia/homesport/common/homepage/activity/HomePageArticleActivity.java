@@ -11,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -130,7 +131,8 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                         tvTitle.setText(articleModel.data.title);
                         WindowManager wm = (WindowManager) HomePageArticleActivity.this.getSystemService(Context.WINDOW_SERVICE);
                         int width = wm.getDefaultDisplay().getWidth();
-                        if(width > 520){
+                        if(width > 720){webview.setInitialScale(190);}
+                        else if(width > 520){
                             webview.setInitialScale(160);
                         }else if(width > 450){
                             webview.setInitialScale(140);
@@ -138,6 +140,11 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                             webview.setInitialScale(120);
                         }else{
                             webview.setInitialScale(100);
+                        }
+                        DisplayMetrics dm = new DisplayMetrics();
+                        getWindowManager().getDefaultDisplay().getMetrics(dm);
+                        if (dm.densityDpi > 240 ) {
+                            webview.getSettings().setDefaultFontSize(20); //可以取1-72之间的任意值，默认16
                         }
                         webview.loadDataWithBaseURL(null, articleModel.data.content, "text/html", "utf-8", null);
                         webview.getSettings().setJavaScriptEnabled(true);
@@ -167,7 +174,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                                                 @Override
                                                 public void onClick(View v) {
                                                     Intent intent=new Intent(HomePageArticleActivity.this,PersonalOtherHome.class);
-                                                    intent.putExtra("id",userInfoModel.data.level.userId);
+                                                    intent.putExtra("id",userId);
                                                     HomePageArticleActivity.this.startActivity(intent);
                                                 }
                                             });

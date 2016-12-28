@@ -117,7 +117,7 @@ public class JSONParseUtil {
                 data.setVenuePhone(entity.getString("phone"));
                 data.setVenueName(entity.getString("name"));
                 String images=entity.getString("imgUrls");
-                List<String> urlList=new ArrayList<>();
+               /* List<String> urlList=new ArrayList<>();
                 if (images.contains(",")){
                     String[] urls=images.split(",");
                     for (String s:urls){
@@ -125,8 +125,8 @@ public class JSONParseUtil {
                     }
                 }else {
                     urlList.add(API.PICTURE_URL+images);
-                }
-                data.setVenueImages(urlList);
+                }*/
+                data.setVenueImages(images);
                 Message message=new Message();
                 message.what=stateFinal;
                 message.obj=data;

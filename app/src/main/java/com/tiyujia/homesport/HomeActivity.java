@@ -49,6 +49,7 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
     HomePageFragment homePageFragment = null;
     RecordFragment communityFragment = null;
     CommunityFragment recordFragment = null;
+    private long exitTime = 0;
     PersonalFragment personalFragment = null;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -133,27 +134,27 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Dialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("确认退出")
-                    .setIcon(R.mipmap.timg)
-                    .setMessage("请您选择是否退出系统？")
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            HomeActivity.this.finish();
-                        }
-                    }).setNeutralButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    }).create();
-            dialog.show();
+        if (KeyEvent.KEYCODE_BACK == keyCode) {
+            // 判断是否在两秒之内连续点击返回键，是则退出，否则不退出
+            if (System.currentTimeMillis() - exitTime > 2000) {
+               showToast("再按一次退出程序");
+                // 将系统当前的时间赋值给exitTime
+                exitTime = System.currentTimeMillis();
+            } else {
+                exitApp();
+            }
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
-
+    /**
+     * 退出应用程序的方法，发送退出程序的广播
+     */
+    private void exitApp() {
+        Intent intent = new Intent();
+        intent.setAction("net.loonggg.exitapp");
+        this.sendBroadcast(intent);
+    }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -319,13 +320,13 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
         tabPersonal.setSelected(false);
     }
 
-    @Override
+  /*  @Override
     public void onBackPressed() {//back to home
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         startActivity(intent);
-    }
+    }*/
 
     @Override
     public void onClick(View v) {
@@ -343,10 +344,5 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
                 setTabSelection(PERSONAL);
                 break;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }
