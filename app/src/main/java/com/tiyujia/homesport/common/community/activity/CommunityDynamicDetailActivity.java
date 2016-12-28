@@ -1,5 +1,6 @@
 package com.tiyujia.homesport.common.community.activity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,6 +40,7 @@ import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.adapter.CommunityLoveAdapter;
 import com.tiyujia.homesport.common.community.model.CommunityLoveEntity;
 import com.tiyujia.homesport.common.community.model.DynamicDetailEntity;
+import com.tiyujia.homesport.common.homepage.activity.HomePageEquipmentInfo;
 import com.tiyujia.homesport.common.homepage.adapter.HomePageCommentAdapter;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
 import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
@@ -350,7 +354,40 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                 imm.showSoftInput(etToComment,InputMethodManager.SHOW_FORCED);
                 break;
             case R.id.ivDynamicDetailMore:
-                DeleteUtil.handleDeleteOtherTransaction(CommunityDynamicDetailActivity.this,"/v2/concern/del/",token,recommendId,userId);
+                View view = getLayoutInflater().inflate(R.layout.share_dialog, null);
+                final Dialog dialog = new Dialog(CommunityDynamicDetailActivity.this,R.style.Dialog_Fullscreen);
+                TextView tvDelete=(TextView)view.findViewById(R.id.tvDelete);
+                TextView tvCancel=(TextView)view.findViewById(R.id.tvCancel);
+                //删除
+                tvDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DeleteUtil.handleDeleteOtherTransaction(CommunityDynamicDetailActivity.this,"/v2/concern/del/",token,recommendId,userId);
+                    }
+                });
+                //取消
+                tvCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showToast("取消");
+                        dialog.dismiss();
+                    }
+                });
+                dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+                Window window = dialog.getWindow();
+                // 设置显示动画
+                window.setWindowAnimations(R.style.main_menu_animstyle);
+                WindowManager.LayoutParams wl = window.getAttributes();
+                wl.x = 0;
+                wl.y = getWindowManager().getDefaultDisplay().getHeight();
+                // 以下这两句是为了保证按钮可以水平满屏
+                wl.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                wl.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                // 设置显示位置
+                dialog.onWindowAttributesChanged(wl);
+                // 设置点击外围解散
+                dialog.show();
                 break;
             case R.id.ivDynamicDetailBack:
                 finish();

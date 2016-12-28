@@ -8,7 +8,7 @@ import java.util.List;
  */
 
 public class VenueWholeBean implements Serializable {
-    private List<String> venueImages;//场馆介绍背景图片集合
+    private String venueImages;//场馆介绍背景图片集合
     private String venueName;//场馆名字
     private int venueType;//攀岩类型
     private int venueDegree;//攀岩难度
@@ -17,11 +17,11 @@ public class VenueWholeBean implements Serializable {
     private String venueDescription;//场馆介绍
     private String developBackground;//开发背景
 
-    public List<String> getVenueImages() {
+    public String getVenueImages() {
         return venueImages;
     }
 
-    public void setVenueImages(List<String> venueImages) {
+    public void setVenueImages(String venueImages) {
         this.venueImages = venueImages;
     }
 

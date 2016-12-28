@@ -346,7 +346,7 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
             case R.id.tvRule:
                 Intent a=new Intent(HomePageActivePublishActivity.this, ProtocolAcitvity.class);
                 a.putExtra("title","趣攀岩活动发布服务协议");
-                a.putExtra("Url","/ip/phone/agreement/release");
+                a.putExtra("Url","/phone/agreement/release");
                 startActivity(a);
                 break;
         }

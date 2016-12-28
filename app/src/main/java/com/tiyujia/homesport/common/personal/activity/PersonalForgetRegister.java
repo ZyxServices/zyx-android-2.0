@@ -18,6 +18,7 @@ import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.entity.JsonCallback;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.VerifyPhoneUtil;
 
 import butterknife.Bind;
 import okhttp3.Call;
@@ -83,18 +84,23 @@ public class PersonalForgetRegister extends ImmersiveActivity implements View.On
                 final String phone = etPhone.getText().toString();
                 if(TextUtils.isEmpty(phone)){
                     showToast("手机号不能为空");
-                }else{ OkGo.post(API.BASE_URL+"/v2/sendCode")
-                        .tag(this)
-                        .params("phone",phone)
-                        .execute(new LoadCallback<LzyResponse>(this) {
-                            @Override
-                            public void onSuccess(LzyResponse forgetModel, Call call, Response response) {
-                                if(forgetModel.state==200){
-                                    showToast("发送验证码");
-                                    handler.sendEmptyMessage(1);
+                }else if(phone.length()<11){
+                    showToast("手机号还差"+(11-phone.length())+"位");
+                }else if(VerifyPhoneUtil.isMobileNO(phone)){
+                    OkGo.post(API.BASE_URL+"/v2/sendCode")
+                            .tag(this)
+                            .params("phone",phone)
+                            .execute(new LoadCallback<LzyResponse>(this) {
+                                @Override
+                                public void onSuccess(LzyResponse forgetModel, Call call, Response response) {
+                                    if(forgetModel.state==200){
+                                        showToast("发送验证码");
+                                        handler.sendEmptyMessage(1);
+                                    }
                                 }
-                            }
-                        });}
+                            });
+                }
+                else{ showToast("非法手机号");}
                 break;
             case R.id.tvSucceed:
                 final  String Phone = etPhone.getText().toString();

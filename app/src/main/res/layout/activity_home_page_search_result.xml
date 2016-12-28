@@ -53,7 +53,7 @@
     tools:context="com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity">
     <TextView
         style="@style/finelin" />
-    <com.w4lle.library.NineGridlayout
+    <ImageView
         android:id="@+id/nglVenueDetail"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -180,15 +180,6 @@
             android:ellipsize="end"
             android:maxEms="15"
             android:layout_marginLeft="10dp"
-            android:layout_gravity="center_vertical"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="【我去过】"
-            android:textSize="12sp"
-            android:textColor="@color/orange"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/tvMeGone"
             android:layout_gravity="center_vertical"/>
     </LinearLayout>
     <LinearLayout

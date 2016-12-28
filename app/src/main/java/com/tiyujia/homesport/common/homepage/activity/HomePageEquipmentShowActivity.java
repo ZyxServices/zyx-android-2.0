@@ -67,7 +67,7 @@ public class HomePageEquipmentShowActivity extends ImmersiveActivity implements 
     private ArrayList<ImageItem> images;
     private String mToken;
     private int mUserId;
-    private int labelId=1;//主锁 4，头盔3，动力绳2 ，鞋子 1
+    private int labelId=3;//主锁 4，头盔3，动力绳2 ，鞋子 1
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,6 +195,7 @@ public class HomePageEquipmentShowActivity extends ImmersiveActivity implements 
                                     String imgUrl=  StringUtils.join(str,",");
                                     OkGo.post(API.BASE_URL+"/v2/equip/insert")
                                             .tag(this)
+                                            .params("token",mToken)
                                             .params("title",title)
                                             .params("content",content)
                                             .params("accountId",mUserId)
@@ -206,11 +207,10 @@ public class HomePageEquipmentShowActivity extends ImmersiveActivity implements 
                                                     if(equipment.state==200){
                                                         showToast("发布成功");
                                                         finish();
-                                                    }else {
-                                                        showToast("未知错误"+equipment.state);
+                                                    }else if (equipment.state==800){
+                                                        showToast("token失效"+equipment.state);
                                                     }
                                                 }
-
                                                 @Override
                                                 public void onError(Call call, Response response, Exception e) {
                                                     super.onError(call, response, e);

@@ -29,6 +29,7 @@
         android:layout_marginTop="30dp"
         android:background="@null"
         android:paddingBottom="5dp"
+        android:maxLength="11"
         android:textCursorDrawable="@null"
         android:inputType="phone"
         android:textColor="@color/day_edit_color"

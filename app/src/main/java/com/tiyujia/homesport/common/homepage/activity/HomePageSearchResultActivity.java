@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -56,6 +58,8 @@ import com.tiyujia.homesport.util.DegreeUtil;
 import com.tiyujia.homesport.util.EmojiFilterUtil;
 import com.tiyujia.homesport.util.JSONParseUtil;
 import com.tiyujia.homesport.util.KeyboardWatcher;
+import com.tiyujia.homesport.util.PicUtil;
+import com.tiyujia.homesport.util.PicassoUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
 import com.tiyujia.homesport.util.StringUtil;
@@ -84,7 +88,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     @Bind(R.id.rvHomePageVenueDetailWhomGone) RecyclerView rvHomePageVenueDetailWhomGone;
     @Bind(R.id.rvHomePageVenueDetailSay) RecyclerView rvHomePageVenueDetailSay;
     @Bind(R.id.ivVenueDetailBack)       ImageView ivVenueDetailBack;//左上角返回按钮
-    @Bind(R.id.nglVenueDetail)          NineGridlayout nglVenueDetail;//顶部大图片集合
+    @Bind(R.id.nglVenueDetail)          ImageView nglVenueDetail;//顶部大图片集合
     @Bind(R.id.tvVenueDetailName)       TextView tvVenueDetailName;//攀岩馆名称
     @Bind(R.id.tvVenueTypeA)            TextView tvVenueTypeA;//类型A
     @Bind(R.id.tvVenueTypeB)            TextView tvVenueTypeB;//类型B
@@ -94,7 +98,6 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
     @Bind(R.id.ivDegree4)               ImageView ivDegree4;
     @Bind(R.id.ivDegree5)               ImageView ivDegree5;//难度显示图片5
     @Bind(R.id.tvVenueDetailAddress)    TextView tvVenueDetailAddress;//场馆详细地址
-    @Bind(R.id.tvMeGone)                TextView tvMeGone;//我去过标签
     @Bind(R.id.tvVenuePhone)            TextView tvVenuePhone;//联系电话
     @Bind(R.id.wvVenueDetail)           WebView wvVenueDetail;//场馆基本介绍
     @Bind(R.id.llToTalk)                LinearLayout llToTalk;//橙色布局
@@ -145,7 +148,8 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                         DegreeUtil.handleDegrees(degree,ivDegree1,ivDegree2,ivDegree3,ivDegree4,ivDegree5);
                         WindowManager wm = (WindowManager) HomePageSearchResultActivity.this.getSystemService(Context.WINDOW_SERVICE);
                         int width = wm.getDefaultDisplay().getWidth();
-                        if(width > 520){
+                        if(width > 720){wvVenueDetail.setInitialScale(190);}
+                        else if(width > 520){
                             wvVenueDetail.setInitialScale(160);
                         }else if(width > 450){
                             wvVenueDetail.setInitialScale(140);
@@ -154,26 +158,31 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                         }else{
                             wvVenueDetail.setInitialScale(100);
                         }
+                        DisplayMetrics dm = new DisplayMetrics();
+                        getWindowManager().getDefaultDisplay().getMetrics(dm);
+                        if (dm.densityDpi > 240 ) {
+                            wvVenueDetail.getSettings().setDefaultFontSize(20); //可以取1-72之间的任意值，默认16
+                        }
                         wvVenueDetail.loadDataWithBaseURL(null, bean.getVenueDescription(), "text/html", "utf-8", null);
                         wvVenueDetail.getSettings().setJavaScriptEnabled(true);
                         // 设置启动缓存 ;
                         wvVenueDetail.getSettings().setAppCacheEnabled(true);
                         wvVenueDetail.setWebChromeClient(new WebChromeClient());
                         wvVenueDetail.getSettings().setJavaScriptEnabled(true);
-                        List<String> picUrls=bean.getVenueImages();
-                        if (picUrls!=null&&picUrls.size()!=0){
-
+                        final String picUrls= bean.getVenueImages();
+                        if (picUrls==null){
+                            nglVenueDetail.setVisibility(View.GONE);
                         }else {
-                            String url=API.PICTURE_URL+"group1/M00/00/11/dz1CN1g_lDSACHFEAAH4y2kp7rw197.jpg";
-                            picUrls.add(url);
-                            picUrls.add(url);
-                            picUrls.add(url);
-                            picUrls.add(url);
-                            picUrls.add(url);
+                            PicassoUtil.handlePic(HomePageSearchResultActivity.this, PicUtil.getImageUrlDetail(HomePageSearchResultActivity.this, StringUtil.isNullAvatar(picUrls), 1280, 720),nglVenueDetail,1280,720);
+                            final ArrayList<String>imagelist =new ArrayList<String>();
+                            imagelist.add(API.PICTURE_URL+picUrls);
+                            nglVenueDetail.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    startActivity(ImageDetailActivity.getMyStartIntent(HomePageSearchResultActivity.this, imagelist,0, ImageDetailActivity.url_path));
+                                }
+                            });
                         }
-                        NGLAdapter adapter = new NGLAdapter(HomePageSearchResultActivity.this, picUrls);
-                        nglVenueDetail.setGap(6);
-                        nglVenueDetail.setAdapter(adapter);
                     }else {
                         Toast.makeText(HomePageSearchResultActivity.this,"服务器异常，请等待",Toast.LENGTH_LONG).show();
                     }
@@ -399,6 +408,7 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
                     }
                 });
                 break;
+
         }
     }
     private void writeToCallBack(){

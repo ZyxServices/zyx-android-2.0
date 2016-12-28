@@ -38,6 +38,7 @@ public class PersonalAttention extends ImmersiveActivity implements View.OnClick
     @Bind(R.id.srlRefresh)SwipeRefreshLayout swipeRefresh;
     @Bind(R.id.recyclerView)RecyclerView recyclerView;
     @Bind(R.id.tvTitle)TextView tv_title;
+    @Bind(R.id.tv_tuijian)TextView tv_tuijian;
     private AttentionAdapter adapter;
     private String mToken;
     private int mUserId;
@@ -47,6 +48,7 @@ public class PersonalAttention extends ImmersiveActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.attention);
         setInfo();
+        tv_tuijian.setVisibility(View.GONE);
         ivBack.setOnClickListener(this);
         iv_search.setOnClickListener(this);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

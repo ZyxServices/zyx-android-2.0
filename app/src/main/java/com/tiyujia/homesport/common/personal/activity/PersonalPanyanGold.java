@@ -84,26 +84,26 @@ public class PersonalPanyanGold extends ImmersiveActivity implements View.OnClic
                                 int operId=jk.operId;
                                 int operTimes=jk.operTimes;
                                 if(operId==4){
-                                    if(operTimes<5){
-                                        tvZanNumber.setText("未完成"+"("+operTimes+"/5"+")");
+                                    if(operTimes<1){
+                                        tvZanNumber.setText("未完成"+"("+operTimes+"/1"+")");
                                     }else {
                                         tvZanNumber.setText("已完成");
                                     }
                                 }else if(operId==5){
-                                    if(operTimes<2){
-                                        tvPinlun.setText("未完成"+"("+operTimes+"/2"+")");
+                                    if(operTimes<1){
+                                        tvPinlun.setText("未完成"+"("+operTimes+"/1"+")");
                                     }else {
                                         tvPinlun.setText("已完成");
                                     }
                                 }else if(operId==7){
-                                    if(operTimes<5){
-                                        tvDynamicNumber.setText("未完成"+"("+operTimes+"/5"+")");
+                                    if(operTimes<1){
+                                        tvDynamicNumber.setText("未完成"+"("+operTimes+"/1"+")");
                                     }else {
                                         tvDynamicNumber.setText("已完成");
                                     }
                                 }else if(operId==3){
-                                    if(operTimes<3){
-                                        tvShareNumber.setText("未完成"+"("+operTimes+"/3"+")");
+                                    if(operTimes<1){
+                                        tvShareNumber.setText("未完成"+"("+operTimes+"/1"+")");
                                     }else {
                                         tvShareNumber.setText("已完成");
                                     }
@@ -128,7 +128,7 @@ public class PersonalPanyanGold extends ImmersiveActivity implements View.OnClic
             case R.id.tv_rule:
                 Intent a=new Intent(this,ProtocolAcitvity.class);
                 a.putExtra("title","趣攀岩攀岩币规则");
-                a.putExtra("Url","/ip/phone/rule/climbingCoins");
+                a.putExtra("Url","//phone/rule/climbingCoins");
                 startActivity(a);
                 break;
         }

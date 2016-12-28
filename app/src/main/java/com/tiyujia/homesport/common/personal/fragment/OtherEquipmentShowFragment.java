@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -62,6 +63,12 @@ public class OtherEquipmentShowFragment extends BaseFragment implements SwipeRef
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);
+        View view= LayoutInflater.from(getActivity()).inflate(R.layout.normal_empty_image_view,null);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        view.setLayoutParams(lp2);
+        TextView tvEmptyText= (TextView) view.findViewById(R.id.text_empty);
+        tvEmptyText.setText("暂无数据");
+        adapter.setEmptyView(view);
         RefreshUtil.refresh(srlRefresh,getActivity());
         srlRefresh.setOnRefreshListener(this);
         //adapter.setOnLoadMoreListener(this);
