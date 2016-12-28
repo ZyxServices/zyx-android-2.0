@@ -76,7 +76,7 @@ public class DynamicAdapter extends BaseQuickAdapter<MyDynamicModel.Dynamic>{
                         .tag(this)
                         .params("token",token)
                         .params("bodyId",dynamic.id)
-                        .params("bodyType",4)
+                        .params("bodyType",1)
                         .params("bodyUserId",dynamic.userIconVo.id)
                         .params("accountId",accountId)
                         .execute(new LoadCallback<LzyResponse>((Activity)mContext) {

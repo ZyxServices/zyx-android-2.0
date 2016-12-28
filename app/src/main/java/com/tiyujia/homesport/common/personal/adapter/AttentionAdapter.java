@@ -81,6 +81,9 @@ public class AttentionAdapter extends  BaseQuickAdapter<AttentionModel.Attention
                                 if(lzyResponse.state==200){
                                     Toast.makeText(activity,"取消关注成功",Toast.LENGTH_SHORT).show();
                                     tv_not.setVisibility(View.GONE);
+                                    remove(baseViewHolder.getAdapterPosition());
+                                    notifyItemRemoved(baseViewHolder.getAdapterPosition());
+                                    notifyItemRangeChanged(baseViewHolder.getAdapterPosition(),getData().size());
                                 }
                             }
                         });

@@ -75,7 +75,7 @@
                 android:id="@+id/tvZanNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="未完成 (0/5)"
+                android:text="未完成 (0/1)"
                 android:textSize="12sp"
                 android:textColor="@color/day_edit_hit_color"
                 />
@@ -109,7 +109,7 @@
                 android:id="@+id/tvPinlun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="未完成 (0/2)"
+                android:text="未完成 (0/1)"
                 android:textSize="12sp"
                 android:textColor="@color/day_edit_hit_color"
                 />
@@ -144,7 +144,7 @@
                     android:id="@+id/tvDynamicNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="未完成 (0/5)"
+                    android:text="未完成 (0/1)"
                     android:textSize="12sp"
                     android:textColor="@color/day_edit_hit_color"
                     />
@@ -178,7 +178,7 @@
                 android:id="@+id/tvShareNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="未完成 (0/3)"
+                android:text="未完成 (0/1)"
                 android:textSize="12sp"
                 android:textColor="@color/day_edit_hit_color"
                 />

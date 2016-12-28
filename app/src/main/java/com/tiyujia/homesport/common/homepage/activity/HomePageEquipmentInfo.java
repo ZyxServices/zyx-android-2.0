@@ -16,10 +16,12 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
 import com.tiyujia.homesport.common.homepage.entity.EquipmentInfoModel;
 import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.entity.LoadCallback;
+import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.DeleteUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -120,8 +122,25 @@ public class HomePageEquipmentInfo extends ImmersiveActivity {
                 tvDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DeleteUtil.handleDeleteActiveTransaction(HomePageEquipmentInfo.this,token,equipId,userId);
-                        showToast("删除活动成功");
+                        OkGo.delete(API.BASE_URL+"/v2/equip/"+token+"/del/"+equipId+"/"+userId)
+                                .tag(this)
+                                .execute(new LoadCallback<LzyResponse>(HomePageEquipmentInfo.this) {
+                                    @Override
+                                    public void onSuccess(LzyResponse lzyResponse, Call call, Response response) {
+                                        if(lzyResponse.state==200){
+                                            showToast("删除成功");
+                                            finish();
+                                        }else {
+                                            showToast("异常"+lzyResponse.state);
+                                        }
+                                    }
+                                    @Override
+                                    public void onError(Call call, Response response, Exception e) {
+                                        super.onError(call, response, e);
+                                        showToast("网络连接异常");
+                                    }
+                                });
+                        showToast("删除成功");
                         dialog.dismiss();
                     }
                 });

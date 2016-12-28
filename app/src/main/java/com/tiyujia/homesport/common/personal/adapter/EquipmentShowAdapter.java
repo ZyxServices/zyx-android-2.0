@@ -2,6 +2,7 @@ package com.tiyujia.homesport.common.personal.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.homepage.activity.HomePageEquipmentInfo;
 import com.tiyujia.homesport.common.homepage.adapter.NGLAdapter;
 import com.tiyujia.homesport.common.personal.model.EquipmentShowModel;
 import com.tiyujia.homesport.entity.LoadCallback;
@@ -55,6 +57,15 @@ public class EquipmentShowAdapter extends BaseQuickAdapter<EquipmentShowModel.Mo
         NineGridlayout nineGrid= baseViewHolder.getView(R.id.nineGrid);
         ImageView ivAvatar= baseViewHolder.getView(R.id.ivAvatar);
         final TextView tv_zan = baseViewHolder.getView(R.id.tv_zan);
+        View view = baseViewHolder.getConvertView();
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(mContext,HomePageEquipmentInfo.class);
+                i.putExtra("id",model.id);
+                mContext.startActivity(i);
+            }
+        });
         tv_zan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +73,7 @@ public class EquipmentShowAdapter extends BaseQuickAdapter<EquipmentShowModel.Mo
                         .tag(this)
                         .params("token",token)
                         .params("bodyId",model.id)
-                        .params("bodyType",4)
+                        .params("bodyType",2)
                         .params("bodyUserId",model.userIconVo.id)
                         .params("accountId",accountId)
                         .execute(new LoadCallback<LzyResponse>((Activity)mContext) {

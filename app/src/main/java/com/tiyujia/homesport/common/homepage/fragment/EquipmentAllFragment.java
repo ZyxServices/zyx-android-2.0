@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
@@ -50,6 +52,12 @@ public class EquipmentAllFragment extends BaseFragment implements SwipeRefreshLa
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);
+        View view= LayoutInflater.from(getActivity()).inflate(R.layout.normal_empty_image_view,null);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        view.setLayoutParams(lp2);
+        TextView tvEmptyText= (TextView) view.findViewById(R.id.text_empty);
+        tvEmptyText.setText("暂无数据");
+        adapter.setEmptyView(view);
         RefreshUtil.refresh(srlRefresh,getActivity());
         srlRefresh.setOnRefreshListener(this);
         onRefresh();
@@ -59,7 +67,6 @@ public class EquipmentAllFragment extends BaseFragment implements SwipeRefreshLa
         OkGo.post(API.BASE_URL+"/v2/equip/query")
                 .tag(this)
                 .params("id",0)
-                .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
                 .execute(new LoadCallback<EquipmentModel>(getActivity()) {
                     @Override
                     public void onSuccess(EquipmentModel equipmentModel, Call call, Response response) {
@@ -86,5 +93,11 @@ public class EquipmentAllFragment extends BaseFragment implements SwipeRefreshLa
                 srlRefresh.setRefreshing(refreshing);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        onRefresh();
     }
 }
