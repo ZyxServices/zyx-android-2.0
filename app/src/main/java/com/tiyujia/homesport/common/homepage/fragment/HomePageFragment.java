@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -163,6 +164,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
             }
             tvSearchCity.invalidate();
             if (tvSearchCity.getText().toString().equals("定位中")){
+                Log.i("tag","no Location");
                 dialog.show();
             }else {
                 boolean isNetEnable= NetworkUtil.isNetworkEnable(getActivity());
@@ -178,6 +180,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
                             if (selectCity!=null){
                                 params.put("city", selectCity);
                             }
+                            Log.i("tag","use");
                             params.put("number", "10");
                             params.put("pageNumber", "1");
                             String result = PostUtil.sendPostMessage(uri, params);
@@ -217,6 +220,7 @@ public class HomePageFragment extends BaseFragment implements View.OnClickListen
             jingDu=intent.getDoubleExtra("jingDu",0.0);
             weiDu=intent.getDoubleExtra("weiDu",0.0);
             dialog.dismiss();
+            Log.i("tag","receive");
             setDatas();
         }
     }

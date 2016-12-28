@@ -11,19 +11,13 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageArticleActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageWholeSearchActivity;
 import com.tiyujia.homesport.common.homepage.entity.SearchCourseEntity;
-import com.tiyujia.homesport.common.homepage.entity.SearchVenueEntity;
-import com.tiyujia.homesport.util.DegreeUtil;
-import com.tiyujia.homesport.util.TypeUtil;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by zzqybyb19860112 on 2016/12/5.

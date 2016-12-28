@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageArticleActivity;
+import com.tiyujia.homesport.common.homepage.activity.HomePageDateInfo;
 import com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
 import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
@@ -124,6 +125,13 @@ public class HomePageCommentAdapter extends BaseQuickAdapter<HomePageCommentEnti
                             CommunityDynamicDetailActivity.etToComment.requestFocus();
                             CommunityDynamicDetailActivity.etToComment.setHint("回复：" + backTo);
                             CommunityDynamicDetailActivity.rvAddPicture.setVisibility(View.GONE);
+                        }else if (mContext instanceof HomePageDateInfo) {
+                            HomePageDateInfo.replyToId = toID;
+                            HomePageDateInfo.isComment = false;
+                            HomePageDateInfo.entity = entity;
+                            HomePageDateInfo.etToComment.requestFocus();
+                            HomePageDateInfo.etToComment.setHint("回复：" + backTo);
+                            HomePageDateInfo.rvAddPicture.setVisibility(View.GONE);
                         }
                     }
                 });

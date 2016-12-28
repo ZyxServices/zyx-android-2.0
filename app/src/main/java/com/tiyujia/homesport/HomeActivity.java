@@ -107,6 +107,7 @@ public class HomeActivity extends CheckPermissionsActivity implements View.OnCli
                     intent.putExtra("city",city);
                     intent.putExtra("jingDu",jingDu);
                     intent.putExtra("weiDu",weiDu);
+                    Log.i("tag","send");
                     HomeActivity.this.sendBroadcast(intent);
                 }
             }

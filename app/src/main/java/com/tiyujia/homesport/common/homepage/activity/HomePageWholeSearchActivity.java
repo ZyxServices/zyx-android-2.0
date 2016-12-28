@@ -36,7 +36,6 @@ import com.tiyujia.homesport.common.homepage.fragment.WholeSearchFragment;
 import com.tiyujia.homesport.widget.TablayoutVPAdapter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import butterknife.Bind;
 //1
 public class HomePageWholeSearchActivity extends NewBaseActivity implements View.OnClickListener{
@@ -83,7 +82,7 @@ public class HomePageWholeSearchActivity extends NewBaseActivity implements View
                                     llWholeSearchResult.setVisibility(View.GONE);
                                     tabResult.setVisibility(View.VISIBLE);
                                     ContentValues value = new ContentValues();
-                                    value.put("content", "你是猪吗？--->"+new Random().nextBoolean());
+                                    value.put("content", etWholeSearch.getText().toString());
                                     wholeContext.insert(value);
                                 }
                             }
