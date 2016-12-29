@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -65,10 +69,26 @@ public class DynamicAdapter extends BaseQuickAdapter<MyDynamicModel.Dynamic>{
                 .setText(R.id.tvMsg, dynamic.commentCounts + "")
                 .setText(R.id.tvZan, dynamic.zanCounts + "");
         ImageView ivAvatar = baseViewHolder.getView(R.id.ivAvatar);
+        FrameLayout frVideo=baseViewHolder.getView(R.id.frVideo);
+        ImageView ivVideoStart=baseViewHolder.getView(R.id.ivVideoStart);
         TextView tvTime = baseViewHolder.getView(R.id.tvTime);
         NineGridlayout nineGrid = baseViewHolder.getView(R.id.nineGrid);
         final TextView tvZan = baseViewHolder.getView(R.id.tvZan);
         tvTime.setText(API.simpleDateFormat.format(dynamic.createTime));
+        if (TextUtils.isEmpty(dynamic.videoUrl)){
+            frVideo.setVisibility(View.GONE);
+        }else {
+            ivVideoStart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri=Uri.parse(dynamic.videoUrl);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    Log.v("URI:::::::::", uri.toString());
+                    intent.setDataAndType(uri, "video/mp4");
+                    mContext.startActivity(intent);
+                }
+            });
+        }
         tvZan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

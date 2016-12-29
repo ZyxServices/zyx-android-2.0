@@ -97,7 +97,7 @@ public class CityMapActivity extends ImmersiveActivity implements AMap.OnMarkerC
                                     @Override
                                     public void onError(Call call, Response response, Exception e) {
                                         super.onError(call, response, e);
-                                        showToast("网络连接失败");
+                                        showToast("服务器故障");
                                     }
                                 });
                     }

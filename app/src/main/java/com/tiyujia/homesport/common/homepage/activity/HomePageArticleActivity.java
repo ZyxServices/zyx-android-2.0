@@ -189,7 +189,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接失败");
+                        showToast("服务器故障");
                     }
                 });
         etToComment= (EditText) llCancelAndSend.findViewById(R.id.etToComment);

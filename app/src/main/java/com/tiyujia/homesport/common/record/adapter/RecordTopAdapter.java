@@ -1,12 +1,15 @@
 package com.tiyujia.homesport.common.record.adapter;
 
+import android.content.Intent;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.record.model.TopModel;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
@@ -26,7 +29,7 @@ public class RecordTopAdapter extends BaseQuickAdapter<TopModel.Top> {
     }
 
     @Override
-    protected void convert(BaseViewHolder baseViewHolder, TopModel.Top top) {
+    protected void convert(BaseViewHolder baseViewHolder, final TopModel.Top top) {
         baseViewHolder.setText(R.id.tvNickname,top.userIconVo.nickName);
         TextView tvRankNum=baseViewHolder.getView(R.id.tvRankNum);
         if(baseViewHolder.getAdapterPosition()==0){
@@ -55,5 +58,13 @@ public class RecordTopAdapter extends BaseQuickAdapter<TopModel.Top> {
             LvUtil.setLv(ivLv,"初学乍练");
         }
         PicassoUtil.handlePic(mContext, PicUtil.getImageUrlDetail(mContext, StringUtil.isNullAvatar(top.userIconVo.avatar), 320, 320),ivAvatar,320,320);
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i= new Intent(mContext, PersonalOtherHome.class);
+                i.putExtra("id",top.userId);
+                mContext.startActivity(i);
+            }
+        });
     }
 }

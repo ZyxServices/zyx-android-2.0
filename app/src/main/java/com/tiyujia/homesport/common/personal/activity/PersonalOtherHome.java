@@ -167,7 +167,7 @@ public class PersonalOtherHome extends ImmersiveActivity implements View.OnClick
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接错误");
+                        showToast("服务器故障");
                     }
                 });
     }
