@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -57,12 +58,15 @@ import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
+import com.tiyujia.homesport.util.PictureUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
 import com.tiyujia.homesport.util.StringUtil;
 import com.tiyujia.homesport.util.TimeUtil;
 import com.tiyujia.homesport.widget.GlideImageLoader;
 import com.tiyujia.homesport.widget.ImagePickerAdapter;
+import com.w4lle.library.NineGridlayout;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -104,6 +108,7 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
     @Bind(R.id.srlRefresh)                      SwipeRefreshLayout srlRefresh;
     @Bind(R.id.rvActiveEnrolled)                RecyclerView rvActiveEnrolled;
     @Bind(R.id.rvActiveComment)                 RecyclerView rvActiveComment;
+    @Bind(R.id.nineGrid)    NineGridlayout nineGrid;
     public static HomePageCommentEntity.HomePage entity;
     public static EditText etToComment;
     TextView tvSend,tvCancel;
@@ -208,6 +213,7 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
                             }else if(maxNumber<=memberPeople){
                                 tvSurplusNumber.setText("报名人数已满");
                             }
+
                             imgUrls=dateInfoModel.data.imgUrls;
                             tvTitle.setText(dateInfoModel.data.title);
                             activityUserId=dateInfoModel.data.user.id;
@@ -598,7 +604,9 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
                 if (images.size()!=0) {
                     ArrayList<File> files = new ArrayList<>();
                     for (int i = 0; i < images.size(); i++) {
-                        files.add(new File(images.get(i).path));
+                        Bitmap bitmap= PictureUtil.getSmallBitmap(images.get(i).path);
+                        File fil=PictureUtil.saveBitmapFile(bitmap,images.get(i).path);
+                        files.add(fil);
                     }
                     OkGo.post(API.IMAGE_URLS)
                             .tag(this)

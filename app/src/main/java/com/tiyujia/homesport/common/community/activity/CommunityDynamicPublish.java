@@ -7,17 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Parcel;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -33,7 +32,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amap.api.location.AMapLocationClient;
 import com.bumptech.glide.Glide;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
@@ -49,7 +47,6 @@ import com.tencent.upload.task.VideoAttr;
 import com.tencent.upload.task.data.FileInfo;
 import com.tencent.upload.task.impl.VideoUploadTask;
 import com.tiyujia.homesport.API;
-import com.tiyujia.homesport.HomeActivity;
 import com.tiyujia.homesport.ImmersiveActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.fragment.AttentionFragment;
@@ -57,12 +54,16 @@ import com.tiyujia.homesport.common.community.fragment.RecommendFragment;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.DialogUtil;
 import com.tiyujia.homesport.util.EmojiFilterUtil;
 import com.tiyujia.homesport.util.GetSignTask;
+import com.tiyujia.homesport.util.PicUtil;
+import com.tiyujia.homesport.util.PictureUtil;
 import com.tiyujia.homesport.widget.GlideImageLoader;
 import com.tiyujia.homesport.widget.ImagePickerAdapter;
 import org.apache.commons.lang3.StringUtils;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.Bind;
@@ -221,12 +222,15 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 break;
         }
     }
+    List<String> bitmapAddress=null;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        bitmapAddress=new ArrayList<>();
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             //添加图片返回
             if (data != null && requestCode == REQUEST_CODE_SELECT) {
+
                 images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
                 selImageList.addAll(images);
                 adapter.setImages(selImageList);
@@ -331,8 +335,9 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 if(!TextUtils.isEmpty(content)){
                     if (images != null && images.size() > 0) {
                         for (int i = 0; i < images.size(); i++) {
-                            File image = new File(images.get(i).path);
-                            files.add(image);
+                            Bitmap bitmap=PictureUtil.getSmallBitmap(images.get(i).path);
+                            File fil=PictureUtil.saveBitmapFile(bitmap,images.get(i).path);
+                            files.add(fil);
                         }
                         OkGo.post(API.IMAGE_URLS)
                                 .tag(this)

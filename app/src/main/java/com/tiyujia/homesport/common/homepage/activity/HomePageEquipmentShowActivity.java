@@ -3,6 +3,7 @@ package com.tiyujia.homesport.common.homepage.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,7 @@ import com.tiyujia.homesport.common.homepage.entity.EquipmentModel;
 import com.tiyujia.homesport.entity.ImageUploadModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
+import com.tiyujia.homesport.util.PictureUtil;
 import com.tiyujia.homesport.widget.GlideImageLoader;
 import com.tiyujia.homesport.widget.ImagePickerAdapter;
 
@@ -181,7 +183,9 @@ public class HomePageEquipmentShowActivity extends ImmersiveActivity implements 
                 }else {
                     if (images != null && images.size() > 0){
                         for (int i = 0; i < images.size(); i++) {
-                            files.add(new File(images.get(i).path));
+                            Bitmap bitmap= PictureUtil.getSmallBitmap(images.get(i).path);
+                            File fil=PictureUtil.saveBitmapFile(bitmap,images.get(i).path);
+                            files.add(fil);
                         }
                     }
                     OkGo.post(API.IMAGE_URLS)

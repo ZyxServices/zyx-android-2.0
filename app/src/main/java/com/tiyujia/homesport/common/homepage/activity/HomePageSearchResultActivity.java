@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,6 +61,7 @@ import com.tiyujia.homesport.util.JSONParseUtil;
 import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
+import com.tiyujia.homesport.util.PictureUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
 import com.tiyujia.homesport.util.StringUtil;
@@ -426,9 +428,11 @@ public class HomePageSearchResultActivity extends NewBaseActivity implements Vie
             if (isComment) {
                 if (images.size()!=0) {
                     ArrayList<File> files = new ArrayList<>();
-                        for (int i = 0; i < images.size(); i++) {
-                            files.add(new File(images.get(i).path));
-                        }
+                    for (int i = 0; i < images.size(); i++) {
+                        Bitmap bitmap= PictureUtil.getSmallBitmap(images.get(i).path);
+                        File fil=PictureUtil.saveBitmapFile(bitmap,images.get(i).path);
+                        files.add(fil);
+                    }
                     OkGo.post(API.IMAGE_URLS)
                             .tag(this)
                             .addFileParams("avatars", files)

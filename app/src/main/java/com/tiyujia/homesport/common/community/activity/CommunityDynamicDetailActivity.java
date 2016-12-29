@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
@@ -54,6 +55,7 @@ import com.tiyujia.homesport.util.EmojiFilterUtil;
 import com.tiyujia.homesport.util.FollowUtil;
 import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.LvUtil;
+import com.tiyujia.homesport.util.PictureUtil;
 import com.tiyujia.homesport.util.PostUtil;
 import com.tiyujia.homesport.util.RefreshUtil;
 import com.tiyujia.homesport.util.StringUtil;
@@ -413,7 +415,9 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
                 if (images.size()!=0) {
                     ArrayList<File> files = new ArrayList<>();
                     for (int i = 0; i < images.size(); i++) {
-                        files.add(new File(images.get(i).path));
+                        Bitmap bitmap= PictureUtil.getSmallBitmap(images.get(i).path);
+                        File fil=PictureUtil.saveBitmapFile(bitmap,images.get(i).path);
+                        files.add(fil);
                     }
                     OkGo.post(API.IMAGE_URLS)
                             .tag(this)
