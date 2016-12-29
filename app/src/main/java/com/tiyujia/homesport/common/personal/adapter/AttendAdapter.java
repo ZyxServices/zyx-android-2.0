@@ -78,7 +78,7 @@ public class AttendAdapter extends BaseQuickAdapter<ActiveModel.Active> {
         if(maxPeople==0){
             tv_apply.setText("已报名："+memberPeople);
         }else if(maxPeople>memberPeople) {
-            tv_apply.setText("已报名："+memberPeople+"还剩: "+(maxPeople-memberPeople)+"名");
+            tv_apply.setText("已报名："+memberPeople+"，还剩: "+(maxPeople-memberPeople)+"名");
         }else if(maxPeople<=memberPeople){
             tv_apply.setText("报名人数已满");
         }

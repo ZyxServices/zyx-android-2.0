@@ -117,7 +117,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
             case R.id.tvRecord:
                 String levels =tvDifficulty.getText().toString();
                 String s=tvTimer.getText().toString();
-                if(!TextUtils.isEmpty(levels)&&!TextUtils.isEmpty(s)){
+                if(!levels.equals("0.0")&&!s.equals("0")){
                     long spendTime = date1.getTime();
                     OkGo.post(API.BASE_URL+"/v2/record/upload")
                             .tag(this)
@@ -160,7 +160,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                                 }
                             });
                 }else {
-                    showToast("信息不完整");
+                    showToast("还未选择无法记录哦");
                 }
                 break;
             case R.id.llTrack:

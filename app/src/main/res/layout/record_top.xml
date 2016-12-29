@@ -51,6 +51,7 @@
             android:drawableRight="@mipmap/btn_down3"
             android:layout_alignParentRight="true"
             android:drawablePadding="4dp"
+            android:visibility="gone"
             />
     </RelativeLayout>
     <TextView
@@ -70,7 +71,6 @@
             android:layout_height="wrap_content"
             android:textColor="@color/orange"
             android:textSize="12sp"
-            android:text="22"
             />
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/ivAvatar"
@@ -86,7 +86,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="萌妹子"
             android:textColor="@color/day_edit_color"
             android:layout_marginRight="10dp"
             />
@@ -94,7 +93,6 @@
             android:id="@+id/ivLv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/img_lv1"
             />
         <TextView
             android:layout_width="0dp"
@@ -113,7 +111,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="13sp"
-            android:text="334"
             android:layout_marginLeft="6dp"
             android:textColor="@color/orange"
             />
