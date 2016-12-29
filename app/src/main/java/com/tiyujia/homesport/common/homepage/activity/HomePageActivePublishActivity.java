@@ -262,12 +262,10 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                         });
                         if(startTime>endTime){
                             showToast("开始时间不能小于结束时间");
-                        }else if(lastTime>endTime){
-                            showToast("报名截止时间不能大于结束时间");
-                        }else if(startTime>lastTime){
-                            showToast("开始时间不能大于报名截止时间");
-                        }else if(lastTime<startTime){
-                            showToast("报名截止时间不能小于开始时间");
+                        }else if(lastTime>startTime){
+                            showToast("报名截止时间不能大于开始时间");
+                        }else if(endTime<lastTime){
+                            showToast("结束时间不能小于报名截止时间");
                         }
                         else {
                             OkGo.post(API.BASE_URL+"/v2/activity/release")

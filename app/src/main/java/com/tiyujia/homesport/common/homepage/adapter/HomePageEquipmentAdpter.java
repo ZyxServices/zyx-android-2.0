@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.homepage.activity.HomePageEquipmentInfo;
@@ -56,11 +57,17 @@ public class HomePageEquipmentAdpter extends BaseQuickAdapter<EquipmentModel.Equ
         NineGridlayout nineGrid=baseViewHolder.getView(R.id.nineGrid);
         if(equipment.imgUrl!=null){
             String str= equipment.imgUrl;
-            List<String> imgUrls=StringUtil.stringToList(str);
+            final ArrayList<String> imgUrls= (ArrayList<String>) StringUtil.stringToList(str);
             NGLAdapter adapter = new NGLAdapter(context, imgUrls);
             nineGrid.setVisibility(View.VISIBLE);
             nineGrid.setGap(6);
             nineGrid.setAdapter(adapter);
+            nineGrid.setOnItemClickListerner(new NineGridlayout.OnItemClickListerner() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    mContext.startActivity(ImageDetailActivity.getMyStartIntent(mContext, imgUrls,position, ImageDetailActivity.url_path));
+                }
+            });
         }else {}
 
         if( equipment.labelId==1){
@@ -81,7 +88,7 @@ public class HomePageEquipmentAdpter extends BaseQuickAdapter<EquipmentModel.Equ
             LvUtil.setLv(ivLv,"初学乍练");
         }
         PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(equipment.userIconVo.avatar), 320, 320),ivAvatar,320,320);
-       View view= baseViewHolder.getConvertView();
+        View view= baseViewHolder.getConvertView();
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
