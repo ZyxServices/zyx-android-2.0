@@ -53,6 +53,7 @@ import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.DeleteUtil;
 import com.tiyujia.homesport.util.EmojiFilterUtil;
+import com.tiyujia.homesport.util.FollowUtil;
 import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.LvUtil;
 import com.tiyujia.homesport.util.PicUtil;
@@ -98,6 +99,7 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
     @Bind(R.id.tvStartTime)                     TextView tvStartTime;
     @Bind(R.id.tvPhone)                         TextView tvPhone;
     @Bind(R.id.tvCity)                          TextView tvCity;
+    @Bind(R.id.tvPraise)                        TextView tvPraise;
     @Bind(R.id.tvSurplusNumber)                 TextView tvSurplusNumber;//剩余报名名额
     @Bind(R.id.llToTalk)                        LinearLayout llToTalk;//橙色布局
     @Bind(R.id.llCancelAndSend)                 LinearLayout llCancelAndSend;//输入框布局
@@ -144,8 +146,6 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_date_info);
-        llToTalk.setVisibility(View.VISIBLE);
-        llCancelAndSend.setVisibility(View.GONE);
         etToComment= (EditText) llCancelAndSend.findViewById(R.id.etToComment);
         tvCancel= (TextView) llCancelAndSend.findViewById(R.id.tvCancel);
         tvSend= (TextView) llCancelAndSend.findViewById(R.id.tvSend);
@@ -188,8 +188,8 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
         tvCancel.setOnClickListener(this);
         ivBackground.setOnClickListener(this);
         ivAvatar.setOnClickListener(this);
+        tvPraise.setOnClickListener(this);
     }
-
     @Override
     public void onRefresh() {
         OkGo.post(API.BASE_URL+"/v2/activity/activityById")
@@ -338,20 +338,16 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        etToComment.setText("");
-        llToTalk.setVisibility(View.VISIBLE);
-        llCancelAndSend.setVisibility(View.GONE);
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
-        return super.onKeyDown(keyCode, event);
-
-    }
-
-    @Override
     public void onClick(View v) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             switch (v.getId()){
+                case R.id.tvPraise:
+                    if (mUserId==0){
+                        showToast("您还没有登陆呢，亲！");
+                    }else {
+                        FollowUtil.goToPraise(this,mToken,activityId,4,activityUserId,mUserId);
+                    }
+                    break;
                 case R.id.ivAvatar:
                     Intent i=new Intent(HomePageDateInfo.this, PersonalOtherHome.class);
                     i.putExtra("id",activityUserId);
@@ -566,17 +562,6 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
         rvAddPicture.setHasFixedSize(true);
         rvAddPicture.setAdapter(adapter);
     }
-    private void showDialog(){
-        builder = new AlertDialog.Builder(this).create();
-        builder.setView(this.getLayoutInflater().inflate(R.layout.share_succeed_dialog, null));
-        builder.show();
-        //去掉dialog四边的黑角
-        builder.getWindow().setBackgroundDrawable(new BitmapDrawable());
-        TextView tvTitle=(TextView)builder.getWindow().findViewById(R.id.tvTitle);
-        tvTitle.setText("分享成功");
-        TextView tvContent=(TextView)builder.getWindow().findViewById(R.id.tvContent);
-        tvContent.setText("感谢您的分享，祝您玩愉快");
-    }
     public void setRefreshing(final boolean refreshing) {
         srlRefresh.post(new Runnable() {
             @Override
@@ -739,18 +724,43 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
         keyboardWatcher.destroy();
         super.onDestroy();
     }
+    boolean test=true;
+    @Override
+    public void onBackPressed() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        etToComment.setText("");
+        llToTalk.setVisibility(View.VISIBLE);
+        llCancelAndSend.setVisibility(View.GONE);
+        imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+        super.onBackPressed();
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        etToComment.setText("");
+        llToTalk.setVisibility(View.VISIBLE);
+        llCancelAndSend.setVisibility(View.GONE);
+        imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+        return super.onKeyDown(keyCode, event);
+    }
+
     @Override
     public void onKeyboardShown(int keyboardSize) {
-        llCancelAndSend.setVisibility(View.VISIBLE);
-        if (isComment){
-            rvAddPicture.setVisibility(View.VISIBLE);
-        }else {
-            rvAddPicture.setVisibility(View.GONE);
+        if (!test){
+            Log.i("tag","1111111111111111111");
+            llCancelAndSend.setVisibility(View.VISIBLE);
+            if (isComment){
+                rvAddPicture.setVisibility(View.VISIBLE);
+            }else {
+                rvAddPicture.setVisibility(View.GONE);
+            }
+            llToTalk.setVisibility(View.GONE);
+            test=false;
         }
-        llToTalk.setVisibility(View.GONE);
     }
     @Override
     public void onKeyboardClosed() {
+        Log.i("tag","22222222222222222");
         llCancelAndSend.setVisibility(View.GONE);
         llToTalk.setVisibility(View.VISIBLE);
         isComment=true;
@@ -759,7 +769,7 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
     boolean isFirstIn=true;
     @Override
     protected void onResume() {
-        super.onResume();
+        Log.i("tag","33333333333333333333");
         if (!isFirstIn&&isBackFromSelectPic){
             etToComment.requestFocus();
             Timer timer = new Timer();
@@ -775,14 +785,16 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
         }
+        super.onResume();
     }
     @Override
     protected void onPause() {
-        super.onPause();
+        Log.i("tag","55555555555555555");
         isFirstIn=false;
         etToComment.clearFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+        super.onPause();
     }
     boolean isBackFromSelectPic=false;
     @Override

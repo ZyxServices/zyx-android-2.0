@@ -88,6 +88,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     @Bind(R.id.tvDynamicDetailCancel)       TextView tvDynamicDetailCancel;//当前用户取消对该用户的关注
     @Bind(R.id.tvDynamicDetailConcern)      TextView tvDynamicDetailConcern;//当前用户关注该用户
     @Bind(R.id.tvDynamicDetailText)         TextView tvDynamicDetailText;//用户的动态文字详情
+    @Bind(R.id.tvPraise)                    TextView tvPraise;//用户点赞
     @Bind(R.id.nglDynamicDetailImages)      NineGridlayout nglDynamicDetailImages;//用户的动态的图片
     @Bind(R.id.rvDynamicDetailLove)         RecyclerView rvDynamicDetailLove;//喜欢该条动态的用户列表
     @Bind(R.id.rvDynamicDetailSay)          RecyclerView rvDynamicDetailSay;//评论列表
@@ -167,6 +168,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
         rivDynamicDetailAvatar.setOnClickListener(this);
         tvDynamicDetailConcern.setOnClickListener(this);
         tvDynamicDetailCancel.setOnClickListener(this);
+        tvPraise.setOnClickListener(this);
     }
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
@@ -316,6 +318,13 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     public void onClick(View v) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         switch (v.getId()){
+            case R.id.tvPraise:
+                if (userId==0){
+                    showToast("您还没有登陆呢，亲！");
+                }else {
+                    FollowUtil.goToPraise(this,token,recommendId,1,dynamicOwnerId,userId);
+                }
+                break;
             case R.id.tvDynamicDetailConcern:
                 FollowUtil.handleFollowTransaction(CommunityDynamicDetailActivity.this,API.BASE_URL+"/v2/follow/add",token,
                         nowUserId,dynamicOwnerId,tvDynamicDetailConcern,tvDynamicDetailCancel);
@@ -546,6 +555,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     }
     @Override
     public void onKeyboardShown(int keyboardSize) {
+        Log.i("tag","1111111111111111111BBBBBBBBBBB");
         llCancelAndSend.setVisibility(View.VISIBLE);
         if (isComment){
             rvAddPicture.setVisibility(View.VISIBLE);
@@ -556,6 +566,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     }
     @Override
     public void onKeyboardClosed() {
+        Log.i("tag","22222222222222222BBBBBBBBBBBBB");
         llCancelAndSend.setVisibility(View.GONE);
         llToTalk.setVisibility(View.VISIBLE);
         isComment=true;
@@ -565,6 +576,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i("tag","33333333333333333333BBBBBBBBBBBBBB");
         if (!isFirstIn&&isBackFromSelectPic){
             etToComment.requestFocus();
             Timer timer = new Timer();
@@ -583,6 +595,7 @@ public class CommunityDynamicDetailActivity extends NewBaseActivity implements V
     }
     @Override
     protected void onPause() {
+        Log.i("tag","55555555555555555BBBBBBBBBBBBBBBBB");
         super.onPause();
         isFirstIn=false;
         etToComment.clearFocus();
