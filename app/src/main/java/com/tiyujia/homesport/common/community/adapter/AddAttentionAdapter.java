@@ -2,6 +2,7 @@ package com.tiyujia.homesport.common.community.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.activity.CommunityAddAttention;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.personal.model.AttentionModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -67,6 +69,14 @@ public class AddAttentionAdapter extends BaseQuickAdapter<AttentionModel.Attenti
         }else {
             PicassoUtil.handlePic(context, PicUtil.getImageUrlDetail(context, StringUtil.isNullAvatar(attentionList.avatar), 320, 320), ivAvatar, 320, 320);
         }
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(mContext, PersonalOtherHome.class);
+                intent.putExtra("id",attentionList.id);
+                mContext.startActivity(intent);
+            }
+        });
         tv_yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
