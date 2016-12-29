@@ -331,7 +331,8 @@ public class CommunityDynamicPublish extends ImmersiveActivity implements ImageP
                 if(!TextUtils.isEmpty(content)){
                     if (images != null && images.size() > 0) {
                         for (int i = 0; i < images.size(); i++) {
-                            files.add(new File(images.get(i).path));
+                            File image = new File(images.get(i).path);
+                            files.add(image);
                         }
                         OkGo.post(API.IMAGE_URLS)
                                 .tag(this)
