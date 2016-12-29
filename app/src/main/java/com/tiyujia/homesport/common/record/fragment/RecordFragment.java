@@ -156,7 +156,7 @@ public class RecordFragment extends BaseFragment implements View.OnClickListener
                                 @Override
                                 public void onError(Call call, Response response, Exception e) {
                                     super.onError(call, response, e);
-                                    showToast("网络连接失败");
+                                    showToast("服务器故障");
                                 }
                             });
                 }else {

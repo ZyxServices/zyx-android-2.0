@@ -2,6 +2,7 @@ package com.tiyujia.homesport.common.personal.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +14,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
 import com.tiyujia.homesport.R;
+import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
 import com.tiyujia.homesport.common.personal.model.AttentionModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
@@ -73,6 +75,14 @@ Context context;
                                 }
                             }
                         });
+            }
+        });
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i= new Intent(mContext, PersonalOtherHome.class);
+                i.putExtra("id",attentionList.id);
+                mContext.startActivity(i);
             }
         });
     }

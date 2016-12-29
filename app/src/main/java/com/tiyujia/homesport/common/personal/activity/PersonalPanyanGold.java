@@ -67,7 +67,7 @@ public class PersonalPanyanGold extends ImmersiveActivity implements View.OnClic
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接失败");
+                        showToast("服务器故障");
                     }
                 });
         //｛1-新用户第一次使用 2-完善资料 3-分享 4-关注 点赞 5-发布评论 6-发布活动 7-发布动态 8-老带新 9-装备秀 10-被举报｝

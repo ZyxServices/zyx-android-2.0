@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,7 +42,6 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
     @Bind(R.id.tvTotalScore)    TextView tvTotalScore;
     private String mToken;
     private RecordTrackAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +62,12 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         adapter.isFirstOnly(false);
         recyclerView.setAdapter(adapter);
+        View view= LayoutInflater.from(this).inflate(R.layout.normal_empty_image_view,null);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        view.setLayoutParams(lp2);
+        TextView tvEmptyText= (TextView) view.findViewById(R.id.text_empty);
+        tvEmptyText.setText("暂无数据");
+        adapter.setEmptyView(view);
         OkGo.post(API.BASE_URL+"/v2/record/overview")
                 .tag(this)
                 .params("token",mToken)
@@ -89,7 +96,7 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接错误");
+                        showToast("服务器故障");
                     }
                 });
     }
@@ -100,7 +107,7 @@ public class RecordTrackActivity extends ImmersiveActivity implements View.OnCli
                 finish();
                 break;
             case R.id.llTrack:
-                startActivity(new Intent(RecordTrackActivity.this,CityMapHistoryActivity.class));
+                        startActivity(new Intent(RecordTrackActivity.this,CityMapHistoryActivity.class));
                 break;
         }
     }

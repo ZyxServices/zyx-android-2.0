@@ -116,6 +116,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
         mToken=share.getString("Token","");
         mUserId=share.getInt("UserId",0);
         Log.e("token",mToken);
+        Log.e("userid",mUserId+"");
         if(!TextUtils.isEmpty(mToken)){
             re_login.setVisibility(View.GONE);
             setData();

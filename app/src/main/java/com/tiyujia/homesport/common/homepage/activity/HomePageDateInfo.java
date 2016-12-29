@@ -18,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -244,7 +245,7 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接错误");
+                        showToast("服务器故障");
                     }
                     @Override
                     public void onAfter(@Nullable DateInfoModel dateInfoModel, @Nullable Exception e) {
@@ -301,7 +302,6 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
                 }
             }
         }.start();
-
         OkGo.get(API.BASE_URL+"/v2/comment/query/"+3+"/"+activityId)
                 .tag(this)
                 .execute(new LoadCallback<HomePageCommentEntity>(this) {
@@ -335,6 +335,17 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
                         setRefreshing(false);
                     }
                 });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        etToComment.setText("");
+        llToTalk.setVisibility(View.VISIBLE);
+        llCancelAndSend.setVisibility(View.GONE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(etToComment.getWindowToken(), 0);
+        return super.onKeyDown(keyCode, event);
+
     }
 
     @Override

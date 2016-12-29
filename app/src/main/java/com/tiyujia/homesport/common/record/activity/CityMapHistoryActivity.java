@@ -99,36 +99,35 @@ public class CityMapHistoryActivity extends ImmersiveActivity {
                                     @Override
                                     public void onSuccess(CityMapHistroyModel city, Call call, Response response) {
                                         if(city.state==200){
-                                            for (int i=0;i<city.data.size();i++){
-                                                CityMapHistroyModel.History jk = city.data.get(i);
-                                                for(int j=0;j<jk.footprints.size();j++){
-                                                    CityMapHistroyModel.History.Footprints js = jk.footprints.get(j);
-                                                    LatLng mlatlng = new LatLng(js.latitude,js.longitude);
-                                                    MarkerOptions markerOptions=new MarkerOptions();
-                                                    markerOptions.position(mlatlng);
-                                                    markerOptions.title(js.venueName).snippet(js.address+"");
-                                                    markerOptions.draggable(true);
-                                                    View view=getLayoutInflater().inflate(R.layout.city_info_bubble,null);
-                                                    tvCity=(TextView)view.findViewById(R.id.tvCity);
-                                                    TextView  tvNumber=(TextView)view.findViewById(R.id.tvNumber);
-                                                    tvNumber.setText(j+"");
-                                                    tvCity.setText(js.venueName);
-                                                    markerOptions.icon(BitmapDescriptorFactory.fromView(view));
-                                                    //markerOptions.setFlat(true);
-                                                    aMap.addMarker(markerOptions);
-                                                    aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Latitude,Longitude), 10));
+                                            if(city.data!=null&&city.data.size()>0){
+                                                for (int i=0;i<city.data.size();i++){
+                                                    CityMapHistroyModel.History jk = city.data.get(i);
+                                                    for(int j=0;j<jk.footprints.size();j++){
+                                                        CityMapHistroyModel.History.Footprints js = jk.footprints.get(j);
+                                                        LatLng mlatlng = new LatLng(js.latitude,js.longitude);
+                                                        MarkerOptions markerOptions=new MarkerOptions();
+                                                        markerOptions.position(mlatlng);
+                                                        markerOptions.title(js.venueName).snippet(js.address+"");
+                                                        markerOptions.draggable(true);
+                                                        View view=getLayoutInflater().inflate(R.layout.city_info_bubble,null);
+                                                        tvCity=(TextView)view.findViewById(R.id.tvCity);
+                                                        TextView  tvNumber=(TextView)view.findViewById(R.id.tvNumber);
+                                                        tvNumber.setText(j+"");
+                                                        tvCity.setText(js.venueName);
+                                                        markerOptions.icon(BitmapDescriptorFactory.fromView(view));
+                                                        //markerOptions.setFlat(true);
+                                                        aMap.addMarker(markerOptions);
+                                                        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Latitude,Longitude), 10));
+                                                    }
                                                 }
-                                            }
-                                        }
-                                           /* for (int i=0;i<city..size();i++){
-                                                CityMapHistroyModel.History.Footprints jk = city.footprints.get(i);
+                                            }else {
 
-                                        }*/
+                                        }}
                                     }
                                     @Override
                                     public void onError(Call call, Response response, Exception e) {
                                         super.onError(call, response, e);
-                                        showToast("网络连接失败");
+                                        showToast("服务器故障");
                                     }
                                 });
                 }

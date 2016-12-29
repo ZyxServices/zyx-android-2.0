@@ -207,7 +207,8 @@ public class HomePageActivePublishActivity extends ImmersiveActivity implements 
                         TextUtils.isEmpty(etTitle.getText())||
                         TextUtils.isEmpty(tvStartTime.getText())||
                         TextUtils.isEmpty(tvApplyEndTime.getText())||
-                        TextUtils.isEmpty(tvEndTime.getText())){
+                        TextUtils.isEmpty(tvEndTime.getText())||
+                        TextUtils.isEmpty(tvAddress.getText())){
                     showToast("信息填写不完整");
                 }else {
                     if(!Chckbox.isChecked()){

@@ -4,11 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/personal_layout">
     <RelativeLayout
-        style="@style/personal_title_background"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        android:paddingRight="10dp"
         >
         <TextView
             style="@style/personal_title"
             android:text="活动详情"
+            android:paddingTop="0dp"
             />
         <ImageView
             android:id="@+id/ivShare"
@@ -16,13 +20,14 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:src="@mipmap/btn_more"
-            android:paddingTop="20dp"
+            android:paddingTop="0dp"
             android:layout_alignParentRight="true"
             android:visibility="gone"
             />
         <ImageView
             android:id="@+id/ivBack"
             style="@style/personal_back"
+            android:paddingTop="0dp"
             />
     </RelativeLayout>
     <TextView
@@ -313,6 +318,8 @@
                 android:background="#ffffff"
                 android:visibility="gone"
                 android:layout_gravity="bottom"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 xmlns:android="http://schemas.android.com/apk/res/android">
                 <TextView
                     style="@style/boldlin" />

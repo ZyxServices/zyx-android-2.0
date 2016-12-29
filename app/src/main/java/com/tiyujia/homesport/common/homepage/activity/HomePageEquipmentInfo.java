@@ -222,7 +222,7 @@ public class HomePageEquipmentInfo extends NewBaseActivity implements View.OnCli
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("网络连接错误");
+                        showToast("服务器故障");
                     }
                 });
         OkGo.get(API.BASE_URL+"/v2/comment/query/"+2+"/"+equipId)
@@ -315,7 +315,7 @@ public class HomePageEquipmentInfo extends NewBaseActivity implements View.OnCli
                                     @Override
                                     public void onError(Call call, Response response, Exception e) {
                                         super.onError(call, response, e);
-                                        showToast("网络连接异常");
+                                        showToast("服务器故障");
                                     }
                                 });
                         showToast("删除成功");
