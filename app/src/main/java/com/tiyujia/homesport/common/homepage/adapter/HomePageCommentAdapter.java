@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.ff.imagezoomdrag.ImageDetailActivity;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.tiyujia.homesport.R;
@@ -72,12 +73,18 @@ public class HomePageCommentAdapter extends BaseQuickAdapter<HomePageCommentEnti
             if (text2 == null) {
                 text2 = "";
             }
-            List<String> picList = StringUtil.stringToList(text2);
+            final List<String> picList = StringUtil.stringToList(text2);
             if (picList != null && picList.size() != 0) {
                 NGLAdapter adapter = new NGLAdapter(mContext, picList);
                 nglMainUserImage.setVisibility(View.VISIBLE);
                 nglMainUserImage.setGap(6);
                 nglMainUserImage.setAdapter(adapter);
+                nglMainUserImage.setOnItemClickListerner(new NineGridlayout.OnItemClickListerner() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        mContext.startActivity(ImageDetailActivity.getMyStartIntent(mContext, (ArrayList<String>) picList,position, ImageDetailActivity.url_path));
+                    }
+                });
             } else {
                 nglMainUserImage.setVisibility(View.GONE);
             }

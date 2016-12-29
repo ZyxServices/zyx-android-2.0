@@ -84,6 +84,7 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
     @Bind(R.id.tv_not)                      TextView tv_not;
     @Bind(R.id.tv_yes)                      TextView tv_yes;
     @Bind(R.id.tvTitle)                     TextView tvTitle;
+    @Bind(R.id.tvPraise)                    TextView tvPraise;
     @Bind(R.id.webview)                     WebView webview;
     @Bind(R.id.llToTalk)                    LinearLayout llToTalk;//橙色布局
     @Bind(R.id.llCancelAndSend)             LinearLayout llCancelAndSend;//输入框布局
@@ -110,7 +111,6 @@ public class HomePageArticleActivity extends NewBaseActivity implements View.OnC
     public static final int IMAGE_ITEM_ADD = -1;
     public static final int REQUEST_CODE_SELECT = 100;
     public static final int REQUEST_CODE_PREVIEW = 101;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

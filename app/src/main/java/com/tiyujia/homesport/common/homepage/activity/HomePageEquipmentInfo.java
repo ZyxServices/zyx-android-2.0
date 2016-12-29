@@ -51,6 +51,7 @@ import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.entity.LzyResponse;
 import com.tiyujia.homesport.util.DeleteUtil;
 import com.tiyujia.homesport.util.EmojiFilterUtil;
+import com.tiyujia.homesport.util.FollowUtil;
 import com.tiyujia.homesport.util.KeyboardWatcher;
 import com.tiyujia.homesport.util.PicUtil;
 import com.tiyujia.homesport.util.PicassoUtil;
@@ -91,6 +92,7 @@ public class HomePageEquipmentInfo extends NewBaseActivity implements View.OnCli
     @Bind(R.id.tvTime)                  TextView tvTime;
     @Bind(R.id.tvTitle)                 TextView tvTitle;
     @Bind(R.id.tvContent)               TextView tvContent;
+    @Bind(R.id.tvPraise)                TextView tvPraise;
     @Bind(R.id.nineGrid)                NineGridlayout nineGrid;
     @Bind(R.id.llToTalk)                LinearLayout llToTalk;//橙色布局
     @Bind(R.id.llCancelAndSend)         LinearLayout llCancelAndSend;//输入框布局
@@ -180,10 +182,11 @@ public class HomePageEquipmentInfo extends NewBaseActivity implements View.OnCli
         llToTalk.setOnClickListener(this);
         tvSend.setOnClickListener(this);
         tvCancel.setOnClickListener(this);
+        tvPraise.setOnClickListener(this);
         keyboardWatcher = new KeyboardWatcher(this);
         keyboardWatcher.setListener(this);
     }
-
+private int equipOwnerId=0;
     public void onRefresh() {
         OkGo.get(API.BASE_URL+"/v2/equip/queryOne")
                 .tag(this)
@@ -193,6 +196,7 @@ public class HomePageEquipmentInfo extends NewBaseActivity implements View.OnCli
                     @Override
                     public void onSuccess(final EquipmentInfoModel Model, Call call, Response response) {
                         if(Model.state==200){
+                            equipOwnerId=Model.data.accountId;
                             tvNickname.setText(Model.data.userIconVo.nickName);
                             tvTime.setText(API.simpleYear.format(Model.data.createTime));
                             PicassoUtil.handlePic(HomePageEquipmentInfo.this, PicUtil.getImageUrlDetail(HomePageEquipmentInfo.this, StringUtil.isNullAvatar(Model.data.userIconVo.avatar), 320, 320), ivAvatar, 320, 320);
@@ -266,6 +270,13 @@ public class HomePageEquipmentInfo extends NewBaseActivity implements View.OnCli
     public void onClick(View v) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         switch (v.getId()){
+            case R.id.tvPraise:
+                if (userId==0){
+                    showToast("您还没有登陆呢，亲！");
+                }else {
+                    FollowUtil.goToPraise(this,token,equipId,2,equipOwnerId,userId);
+                }
+                break;
             case R.id.tvCancel:
                 etToComment.setText("");
                 llToTalk.setVisibility(View.VISIBLE);
