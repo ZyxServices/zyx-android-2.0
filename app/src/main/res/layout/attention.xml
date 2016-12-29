@@ -28,7 +28,7 @@
         style="@style/finelin"
         />
     <TextView
-        android:id="@+id/tv_tuijian"
+        android:id="@+id/tvSuggest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background"
@@ -37,5 +37,49 @@
         android:padding="@dimen/dip12"
         android:textSize="@dimen/sp_12"
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="29dp"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:visibility="gone"
+        android:id="@+id/llSearchUser"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        >
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="0.83"
+            android:layout_height="29dp"
+            android:id="@+id/etSearchUser"
+            android:textColor="@color/day_edit_color"
+            android:background="@drawable/background_search"
+            android:layout_centerVertical="true"
+            android:textSize="12sp"
+            android:paddingLeft="10dp"
+            android:hint="输入关键字搜索"
+            android:drawableLeft="@mipmap/btn_seach2"
+            android:drawablePadding="5dp"
+            android:layout_marginRight="12dp"
+            android:textColorHint="@color/day_edit_hit_color"
+            android:textCursorDrawable="@null"
+            />
+        <TextView
+            android:id="@+id/tvSearchUserClose"
+            android:layout_width="0dp"
+            android:layout_weight="0.09"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:textColor="@color/orange"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#ffffff"/>
     <include layout="@layout/recycleview_layout"/>
 </LinearLayout>

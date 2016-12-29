@@ -8,23 +8,26 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
 import com.tiyujia.homesport.API;
-import com.tiyujia.homesport.ImmersiveActivity;
+import com.tiyujia.homesport.NewBaseActivity;
 import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.adapter.AddAttentionAdapter;
 import com.tiyujia.homesport.common.personal.model.AttentionModel;
 import com.tiyujia.homesport.entity.LoadCallback;
 import com.tiyujia.homesport.util.RefreshUtil;
-
 import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Response;
@@ -34,14 +37,17 @@ import okhttp3.Response;
  * 邮箱:928902646@qq.com
  */
 
-public class CommunityAddAttention extends ImmersiveActivity implements View.OnClickListener ,SwipeRefreshLayout.OnRefreshListener{
+public class CommunityAddAttention extends NewBaseActivity implements View.OnClickListener ,SwipeRefreshLayout.OnRefreshListener{
 
-    @Bind(R.id.ivBack)ImageView personal_back;
-    @Bind(R.id.ivSearch) ImageView iv_search;
-    @Bind(R.id.srlRefresh)SwipeRefreshLayout swipeRefresh;
-    @Bind(R.id.recyclerView)RecyclerView recyclerView;
-    @Bind(R.id.tvTitle)TextView tv_title;
-    @Bind(R.id.tv_tuijian)TextView tv_tuijian;
+    @Bind(R.id.ivBack)              ImageView ivBack;
+    @Bind(R.id.ivSearch)            ImageView ivSearch;
+    @Bind(R.id.srlRefresh)          SwipeRefreshLayout swipeRefresh;
+    @Bind(R.id.recyclerView)        RecyclerView recyclerView;
+    @Bind(R.id.tvTitle)             TextView tv_title;
+    @Bind(R.id.tvSuggest)           TextView tvSuggest;
+    @Bind(R.id.llSearchUser)        LinearLayout llSearchUser;
+    @Bind(R.id.tvSearchUserClose)   TextView tvSearchUserClose;
+    static EditText etSearchUser;
     private AddAttentionAdapter adapter;
     private String mToken;
     private int mUserId;
@@ -50,8 +56,7 @@ public class CommunityAddAttention extends ImmersiveActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.attention);
         setInfo();
-        personal_back.setOnClickListener(this);
-        iv_search.setOnClickListener(this);
+        etSearchUser= (EditText) llSearchUser.findViewById(R.id.etSearchUser);
         adapter =new AddAttentionAdapter(this,null);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -67,7 +72,28 @@ public class CommunityAddAttention extends ImmersiveActivity implements View.OnC
         RefreshUtil.refresh(swipeRefresh,this);
         swipeRefresh.setOnRefreshListener(this);
         onRefresh();
+        setListeners();
     }
+
+    private void setListeners() {
+        ivBack.setOnClickListener(this);
+        ivSearch.setOnClickListener(this);
+        tvSearchUserClose.setOnClickListener(this);
+        etSearchUser.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                s=s.toString().trim();
+                adapter.getFilter().filter(s);
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
     private void setInfo() {
         SharedPreferences share = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         mToken=share.getString("Token","");
@@ -76,13 +102,35 @@ public class CommunityAddAttention extends ImmersiveActivity implements View.OnC
     }
     @Override
     public void onClick(View v) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         switch (v.getId()){
             case R.id.ivBack:
                 finish();
                 break;
-            case R.id.ivSearch:
-
+            case R.id.tvSearchUserClose:
+                tvSuggest.setVisibility(View.VISIBLE);
+                llSearchUser.setVisibility(View.GONE);
+                ivSearch.setVisibility(View.VISIBLE);
+                etSearchUser.clearFocus();
+                etSearchUser.setText("");
+                imm.hideSoftInputFromWindow(etSearchUser.getWindowToken(), 0);
+                adapter.getFilter().filter("");
                 break;
+            case R.id.ivSearch:
+                llSearchUser.setVisibility(View.VISIBLE);
+                tvSuggest.setVisibility(View.GONE);
+                ivSearch.setVisibility(View.GONE);
+                etSearchUser.requestFocus();
+                etSearchUser.setText("");
+                imm.showSoftInput(etSearchUser,InputMethodManager.SHOW_FORCED);
+                break;
+        }
+    }
+    public static String getSearchText(){
+        if (etSearchUser==null){
+            return "";
+        }else {
+            return etSearchUser.getText().toString().trim().equals("")?"":etSearchUser.getText().toString().trim();
         }
     }
     @Override
@@ -96,6 +144,8 @@ public class CommunityAddAttention extends ImmersiveActivity implements View.OnC
                     public void onSuccess(AttentionModel attentionModel, Call call, Response response) {
                         if(attentionModel.state==200){
                             adapter.setNewData(attentionModel.data);
+                            adapter.setFriends(attentionModel.data);
+                            Log.i("tag","size-------------"+attentionModel.data.size());
                         }
                     }
                     @Override

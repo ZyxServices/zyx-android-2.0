@@ -22,6 +22,7 @@ import com.tiyujia.homesport.R;
 import com.tiyujia.homesport.common.community.activity.CommunityDynamicDetailActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageArticleActivity;
 import com.tiyujia.homesport.common.homepage.activity.HomePageDateInfo;
+import com.tiyujia.homesport.common.homepage.activity.HomePageEquipmentInfo;
 import com.tiyujia.homesport.common.homepage.activity.HomePageSearchResultActivity;
 import com.tiyujia.homesport.common.homepage.entity.HomePageCommentEntity;
 import com.tiyujia.homesport.common.personal.activity.PersonalOtherHome;
@@ -132,6 +133,13 @@ public class HomePageCommentAdapter extends BaseQuickAdapter<HomePageCommentEnti
                             HomePageDateInfo.etToComment.requestFocus();
                             HomePageDateInfo.etToComment.setHint("回复：" + backTo);
                             HomePageDateInfo.rvAddPicture.setVisibility(View.GONE);
+                        }else if (mContext instanceof HomePageEquipmentInfo) {
+                            HomePageEquipmentInfo.replyToId = toID;
+                            HomePageEquipmentInfo.isComment = false;
+                            HomePageEquipmentInfo.entity = entity;
+                            HomePageEquipmentInfo.etToComment.requestFocus();
+                            HomePageEquipmentInfo.etToComment.setHint("回复：" + backTo);
+                            HomePageEquipmentInfo.rvAddPicture.setVisibility(View.GONE);
                         }
                     }
                 });
