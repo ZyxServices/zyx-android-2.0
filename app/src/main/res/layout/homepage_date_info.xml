@@ -37,254 +37,252 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/rlTop"
-            >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
-            <LinearLayout
+            <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/dip12"
-                android:paddingRight="@dimen/dip12"
-                android:orientation="vertical"
                 >
-                <ImageView
-                    android:id="@+id/ivBackground"
-                    android:layout_width="match_parent"
-                    android:layout_height="210dp"
-                    android:scaleType="fitXY"
-                    />
-                <TextView
-                    android:id="@+id/tvTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/login_input_text_color"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                    />
-                <TextView
-                    android:id="@+id/tvTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/day_edit_hit_color"
-                    android:textSize="12sp"
-                    />
-                <TextView
-                    android:id="@+id/tvContent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/hot_info_circle_content_color"
-                    android:textSize="13sp"
-                    android:layout_marginTop="15dp"
-                    />
-                <TextView
-                    android:id="@+id/tvAddress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/hot_info_circle_content_color"
-                    android:textSize="12sp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    />
-            </LinearLayout>
-            <TextView
-                style="@style/boldlin"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/dip12"
-                android:paddingRight="@dimen/dip12"
-                android:paddingTop="15dp"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="发布人"
-                    android:textSize="16sp"
-                    android:textColor="@color/login_input_text_color"
-                    />
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="65dp"
-                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     >
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/ivAvatar"
-                        app:riv_oval="true"
-                        app:riv_tile_mode="clamp"
-                        style="@style/small_avatar"
-                        />
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/dip12"
+                        android:paddingRight="@dimen/dip12"
                         android:orientation="vertical"
                         >
-                        <LinearLayout
+                        <ImageView
+                            android:id="@+id/ivBackground"
+                            android:layout_width="match_parent"
+                            android:layout_height="210dp"
+                            android:scaleType="fitXY"
+                            />
+                        <TextView
+                            android:id="@+id/tvTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/dip10"
-                            android:layout_marginRight="@dimen/dip12"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="18dp"
-                            >
-                            <TextView
-                                android:id="@+id/tvNickname"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/day_edit_color"
-                                android:textSize="15sp"
-                                />
-                            <ImageView
-                                android:id="@+id/ivLv"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="10dp"
-                                />
-                        </LinearLayout>
+                            android:textSize="15sp"
+                            android:textColor="@color/login_input_text_color"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginBottom="10dp"
+                            />
                         <TextView
-                            android:id="@+id/tvSign"
+                            android:id="@+id/tvTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/day_edit_hit_color"
                             android:textSize="12sp"
-                            android:paddingTop="2dp"
-                            android:ellipsize="end"
-                            android:maxEms="15"
-                            android:singleLine="true"
-                            android:maxLines="1"
-                            android:paddingLeft="@dimen/dip10"
+                            />
+                        <TextView
+                            android:id="@+id/tvContent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/hot_info_circle_content_color"
+                            android:textSize="13sp"
+                            android:layout_marginTop="15dp"
+                            />
+                        <TextView
+                            android:id="@+id/tvAddress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/hot_info_circle_content_color"
+                            android:textSize="12sp"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginBottom="15dp"
                             />
                     </LinearLayout>
                     <TextView
-                        android:layout_width="0dp"
+                        style="@style/boldlin"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dip12"
+                        android:paddingRight="@dimen/dip12"
+                        android:paddingTop="15dp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="发布人"
+                            android:textSize="16sp"
+                            android:textColor="@color/login_input_text_color"
+                            />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="65dp"
+                            android:orientation="horizontal"
+                            >
+                            <com.makeramen.roundedimageview.RoundedImageView
+                                android:id="@+id/ivAvatar"
+                                app:riv_oval="true"
+                                app:riv_tile_mode="clamp"
+                                style="@style/small_avatar"
+                                />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                >
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="@dimen/dip10"
+                                    android:layout_marginRight="@dimen/dip12"
+                                    android:orientation="horizontal"
+                                    android:layout_marginTop="18dp"
+                                    >
+                                    <TextView
+                                        android:id="@+id/tvNickname"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/day_edit_color"
+                                        android:textSize="15sp"
+                                        />
+                                    <ImageView
+                                        android:id="@+id/ivLv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginLeft="10dp"
+                                        />
+                                </LinearLayout>
+                                <TextView
+                                    android:id="@+id/tvSign"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/day_edit_hit_color"
+                                    android:textSize="12sp"
+                                    android:paddingTop="2dp"
+                                    android:ellipsize="end"
+                                    android:maxEms="15"
+                                    android:singleLine="true"
+                                    android:maxLines="1"
+                                    android:paddingLeft="@dimen/dip10"
+                                    />
+                            </LinearLayout>
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <TextView
+                        style="@style/boldlin"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dip12"
+                        android:paddingRight="@dimen/dip12"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="16dp"
+                            >
+                            <TextView
+                                android:id="@+id/tvStartTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/day_edit_hit_color"
+                                android:textSize="@dimen/dip12"
+                                android:drawableLeft="@mipmap/btn_time"
+                                android:gravity="center"
+                                android:drawablePadding="2dp"
+                                />
+                            <TextView
+                                android:layout_width="40dp"
+                                android:layout_height="wrap_content"
+                                />
+                            <TextView
+                                android:id="@+id/tvPhone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/day_edit_hit_color"
+                                android:textSize="@dimen/dip12"
+                                android:drawableLeft="@mipmap/btn_phone2"
+                                android:gravity="center"
+                                android:drawablePadding="2dp"
+                                />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvCity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/day_edit_hit_color"
+                            android:textSize="@dimen/dip12"
+                            android:drawableLeft="@mipmap/btn_adress"
+                            android:gravity="center"
+                            android:drawablePadding="2dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="16dp"
+                            />
+                    </LinearLayout>
+                    <TextView
+                        style="@style/boldlin"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="17.5dp"
+                            android:layout_marginBottom="17.5dp"
+                            android:text="他们报名了"
+                            android:textColor="#333333"
+                            android:textSize="16sp"
+                            android:layout_marginLeft="12dp" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="17.5dp"
+                            android:layout_marginBottom="17.5dp"
+                            android:gravity="right"
+                            android:textColor="#999999"
+                            android:textSize="12sp"
+                            android:id="@+id/tvSurplusNumber"
+                            android:layout_marginRight="12dp" />
+                    </LinearLayout>
+                    <android.support.v7.widget.RecyclerView
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/rvActiveEnrolled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
+                        app:layoutManager="LinearLayoutManager"
+                        android:layout_marginBottom="15dp"
+                        />
+                    <TextView
+                        style="@style/boldlin" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="17.5dp"
+                        android:layout_marginBottom="17.5dp"
+                        android:text="他们都在说"
+                        android:textColor="#333333"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="12dp" />
+                    <android.support.v7.widget.RecyclerView
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/rvActiveComment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginBottom="50dp"
+                        app:layoutManager="LinearLayoutManager"
                         />
                 </LinearLayout>
-            </LinearLayout>
-            <TextView
-                style="@style/boldlin"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/dip12"
-                android:paddingRight="@dimen/dip12"
-                >
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="16dp"
-                    >
-                    <TextView
-                        android:id="@+id/tvStartTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/day_edit_hit_color"
-                        android:textSize="@dimen/dip12"
-                        android:drawableLeft="@mipmap/btn_time"
-                        android:gravity="center"
-                        android:drawablePadding="2dp"
-                        />
-                    <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="wrap_content"
-                        />
-                    <TextView
-                        android:id="@+id/tvPhone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/day_edit_hit_color"
-                        android:textSize="@dimen/dip12"
-                        android:drawableLeft="@mipmap/btn_phone2"
-                        android:gravity="center"
-                        android:drawablePadding="2dp"
-                        />
-                </LinearLayout>
-                <TextView
-                    android:id="@+id/tvCity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/day_edit_hit_color"
-                    android:textSize="@dimen/dip12"
-                    android:drawableLeft="@mipmap/btn_adress"
-                    android:gravity="center"
-                    android:drawablePadding="2dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="16dp"
-                    />
-            </LinearLayout>
-            <TextView
-                style="@style/boldlin"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="17.5dp"
-                android:layout_marginBottom="17.5dp"
-                android:text="他们报名了"
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:layout_marginLeft="12dp" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="17.5dp"
-                android:layout_marginBottom="17.5dp"
-                android:text="剩余名额:"
-                android:gravity="right"
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:id="@+id/tvSurplusNumber"
-                android:layout_marginRight="12dp" />
-            </LinearLayout>
-            <android.support.v7.widget.RecyclerView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/rvActiveEnrolled"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                app:layoutManager="LinearLayoutManager"
-                android:layout_marginBottom="15dp"
-                />
-            <TextView
-                style="@style/boldlin" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="17.5dp"
-                android:layout_marginBottom="17.5dp"
-                android:text="他们都在说"
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:layout_marginLeft="12dp" />
-            <android.support.v7.widget.RecyclerView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/rvActiveComment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginBottom="50dp"
-                app:layoutManager="LinearLayoutManager"
-                />
-        </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -292,7 +290,6 @@
                 android:layout_alignParentBottom="true"
                 android:id="@+id/llToTalk"
                 android:layout_gravity="bottom"
-                android:visibility="visible"
                 android:background="@color/orange">
                 <TextView
                     android:layout_width="wrap_content"
@@ -358,7 +355,6 @@
                     android:hint="你想说点什么？"
                     android:textCursorDrawable="@drawable/color_cursor"
                     android:textColorHint="#b3b3b3"
-
                     android:textSize="14sp"
                     android:gravity="left"
                     android:textColor="#333333"

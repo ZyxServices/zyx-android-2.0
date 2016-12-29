@@ -132,9 +132,6 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
         @Override
         public void handleMessage(Message msg) {
             if (msg.what==HANDLE_BASE_DATA){
-                int inNumber= (int) msg.obj;
-                int rest=maxNumber-inNumber;
-                tvSurplusNumber.setText("剩余名额："+rest+"人");
                 userAdapter=new HomePageVenueUserAdapter(HomePageDateInfo.this,list);
                 LinearLayoutManager manager1 = new LinearLayoutManager(HomePageDateInfo.this, LinearLayoutManager.HORIZONTAL, false);
                 rvActiveEnrolled.setLayoutManager(manager1);
@@ -146,6 +143,8 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_date_info);
+        llToTalk.setVisibility(View.VISIBLE);
+        llCancelAndSend.setVisibility(View.GONE);
         etToComment= (EditText) llCancelAndSend.findViewById(R.id.etToComment);
         tvCancel= (TextView) llCancelAndSend.findViewById(R.id.tvCancel);
         tvSend= (TextView) llCancelAndSend.findViewById(R.id.tvSend);
@@ -162,27 +161,7 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
         tvEmptyText.setText("没有更多评论");
         commentAdapter.setEmptyView(view);
         getInfo();
-        activityId=getIntent().getIntExtra("id",0);
-        Log.i("tag","activityId========"+activityId);
-        RefreshUtil.refresh(srlRefresh,this);
-        srlRefresh.setOnRefreshListener(this);
         onRefresh();
-        ivBackground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArrayList<String> list = new ArrayList<String>();
-                list.add(API.PICTURE_URL+imgUrls);
-                startActivity(ImageDetailActivity.getMyStartIntent(HomePageDateInfo.this, list,0, ImageDetailActivity.url_path));
-            }
-        });
-        ivAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i=new Intent(HomePageDateInfo.this, PersonalOtherHome.class);
-                i.putExtra("id",activityUserId);
-                startActivity(i);
-            }
-        });
         initImagePicker();
         initWidget();
         setView();
@@ -193,9 +172,12 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
         SharedPreferences share= getSharedPreferences("UserInfo",MODE_PRIVATE);
         mToken= share.getString("Token","");
         mUserId=share.getInt("UserId",0);
+        activityId=getIntent().getIntExtra("id",0);
     }
 
     private void setView() {
+        RefreshUtil.refresh(srlRefresh,this);
+        srlRefresh.setOnRefreshListener(this);
         ivBack.setOnClickListener(this);
         ivShare.setOnClickListener(this);
         tvPhone.setOnClickListener(this);
@@ -203,9 +185,9 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
         llToTalk.setOnClickListener(this);
         tvSend.setOnClickListener(this);
         tvCancel.setOnClickListener(this);
+        ivBackground.setOnClickListener(this);
+        ivAvatar.setOnClickListener(this);
     }
-    private int surplusedNumber=0;//已报名人数
-    private int maxNumber=0;//最大报名人数
 
     @Override
     public void onRefresh() {
@@ -216,7 +198,15 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
                     @Override
                     public void onSuccess(DateInfoModel dateInfoModel, Call call, Response response) {
                         if(dateInfoModel.state==200){
-                            maxNumber=dateInfoModel.data.maxPeople;
+                            int maxNumber=dateInfoModel.data.maxPeople;
+                            int memberPeople=dateInfoModel.data.memberPeople;
+                            if(maxNumber==0){
+                                tvSurplusNumber.setText("已报名："+memberPeople+"人");
+                            }else if(maxNumber>memberPeople) {
+                                tvSurplusNumber.setText("剩余名额： "+(maxNumber-memberPeople)+"人");
+                            }else if(maxNumber<=memberPeople){
+                                tvSurplusNumber.setText("报名人数已满");
+                            }
                             imgUrls=dateInfoModel.data.imgUrls;
                             tvTitle.setText(dateInfoModel.data.title);
                             activityUserId=dateInfoModel.data.user.id;
@@ -278,7 +268,6 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
                     if (state==200){
                         JSONArray array=obj.getJSONArray("data");
                         if (array.length()!=0){
-                            surplusedNumber=array.length();
                             int getDataNumber=0;
                             if (array.length()<=4){
                                 getDataNumber=array.length();
@@ -306,10 +295,7 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
                         HomePageVenueWhomGoneEntity empty=new HomePageVenueWhomGoneEntity();
                         list.add(empty);
                     }
-                    Message message=new Message();
-                    message.what=HANDLE_BASE_DATA;
-                    message.obj=surplusedNumber;
-                    handler.sendMessage(message);
+                    handler.sendEmptyMessage(HANDLE_BASE_DATA);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -355,6 +341,16 @@ public class HomePageDateInfo extends NewBaseActivity implements View.OnClickLis
     public void onClick(View v) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             switch (v.getId()){
+                case R.id.ivAvatar:
+                    Intent i=new Intent(HomePageDateInfo.this, PersonalOtherHome.class);
+                    i.putExtra("id",activityUserId);
+                    startActivity(i);
+                    break;
+                case R.id.ivBackground:
+                    ArrayList<String> list = new ArrayList<String>();
+                    list.add(API.PICTURE_URL+imgUrls);
+                    startActivity(ImageDetailActivity.getMyStartIntent(HomePageDateInfo.this, list,0, ImageDetailActivity.url_path));
+                    break;
                 case R.id.tvCancel:
                     etToComment.setText("");
                     llToTalk.setVisibility(View.VISIBLE);

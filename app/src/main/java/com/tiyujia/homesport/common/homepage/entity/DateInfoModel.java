@@ -39,6 +39,7 @@ public class DateInfoModel implements Serializable {
         public long lastTime;
         public long createTime;
         public int maxPeople;
+        public int memberPeople;
         public String address;
         public String city;
         public int paymentType;
